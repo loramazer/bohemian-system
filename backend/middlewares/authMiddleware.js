@@ -1,17 +1,19 @@
-const jwt = require('jsonwebtoken');
-require('dotenv').config();
+const db = require('../config/db');
 
-function autenticarToken(req, res, next) {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader?.split(' ')[1];
-
-  if (!token) return res.status(401).json({ message: 'Token não fornecido' });
-
-  jwt.verify(token, process.env.JWT_SECRET, (err, usuario) => {
-    if (err) return res.status(403).json({ message: 'Token inválido' });
-    req.usuario = usuario;
-    next();
-  });
+async function criarCliente(nome, email, telefone, senhaCriptografada) {
+  const [result] = await db.execute(
+    'INSERT INTO cliente (nome, email, telefone, senha) VALUES (?, ?, ?, ?)',
+    [nome, email, telefone, senhaCriptografada]
+  );
+  return result.insertId;
 }
 
-module.exports = autenticarToken;
+async function buscarClientePorEmail(email) {
+  const [rows] = await db.execute('SELECT * FROM cliente WHERE email = ?', [email]);
+  return rows[0];
+}
+
+module.exports = {
+  criarCliente,
+  buscarClientePorEmail,
+};
