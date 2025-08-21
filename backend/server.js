@@ -15,7 +15,7 @@ app.use(express.json());
 app.use('/auth', authRoutes);
 app.use('/categorias', categoriaRoutes);
 app.use('/produtos', produtoRoutes);
-app.use('./carrinho', carrinhoRoutes);
+app.use('/carrinho', carrinhoRoutes);
 
 
 // Porta
