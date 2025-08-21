@@ -1,0 +1,42 @@
+.categories-section {
+    padding: 60px 20px;
+    background-color: #f8f7fa;
+    text-align: center; /* Centraliza o título */
+}
+
+.categories-tabs {
+    display: flex;
+    justify-content: center; /* Centraliza os botões de categoria */
+    gap: 20px;
+    margin-top: 30px;
+    margin-bottom: 40px;
+}
+
+.tab-button {
+    background-color: transparent;
+    border: none;
+    color: #888;
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 10px 15px;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.tab-button.active {
+    color: #5d7a7b;
+    border-bottom: 2px solid #5d7a7b;
+    font-weight: bold;
+}
+
+.categories-section .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+    justify-content: center;
+    align-items: center;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}

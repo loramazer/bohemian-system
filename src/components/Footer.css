@@ -1,0 +1,66 @@
+.main-footer {
+  background-color: #EEEFFB;
+  color: #515577;
+  padding: 40px 20px 20px;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.footer-section {
+  flex-basis: 20%;
+  margin-bottom: 20px;
+}
+
+.footer-section h4 {
+  font-size: 18px;
+  margin-bottom: 15px;
+}
+
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-section ul li a {
+  text-decoration: none;
+  color: #515577;
+  line-height: 1.8;
+}
+
+.footer-logo {
+  height: 150px; 
+  margin-bottom: 15px;
+}
+
+.newsletter {
+  margin-top: 15px;
+  display: flex;
+}
+
+.newsletter input {
+  padding: 8px;
+  border: 1px solid #989dc2;
+  border-radius: 5px 0 0 5px;
+  outline: none;
+}
+
+.newsletter .login-button {
+  background-color: #516A6A;
+  color: #fff;
+  border: 1px solid #555;
+  padding: 8px 15px;
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+}
+
+.footer-bottom {
+  border-top: 1px solid #555;
+  padding-top: 10px;
+  margin-top: 20px;
+  text-align: center;
+  font-size: 12px;
+}
