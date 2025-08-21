@@ -1,5 +1,6 @@
 const carrinhoModel = require("../models/carrinhoModel");
 const itemModel = require("../models/itemCarrinhoModel");
+const db = require('../config/db');
 
 exports.iniciarCarrinho = async (req, res) => {
   try {
@@ -24,13 +25,17 @@ exports.adicionarItem = async (req, res) => {
     const clienteId = req.user.cliente_id;
 
     const carrinho = await carrinhoModel.buscarCarrinhoAtivo(clienteId);
-    if (!carrinho) return res.status(400).json({ error: "Carrinho não iniciado" });
+    if (!carrinho) {
+      return res.status(400).json({ error: "Carrinho não iniciado" });
+    }
 
+    // Esta linha é a única que deve chamar o banco de dados para adicionar o item.
     await itemModel.adicionarItem(carrinho.carrinho_id, produtoId, quantidade, preco);
 
     const itens = await itemModel.listarItens(carrinho.carrinho_id);
     res.json(itens);
   } catch (err) {
+    console.error("Erro ao adicionar item:", err);
     res.status(500).json({ error: "Erro ao adicionar item" });
   }
 };
