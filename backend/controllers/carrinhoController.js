@@ -14,6 +14,7 @@ exports.iniciarCarrinho = async (req, res) => {
 
     res.json(carrinho);
   } catch (err) {
+    console.error("ERRO DETALHADO: ", err);
     res.status(500).json({ error: "Erro ao iniciar carrinho" });
   }
 };

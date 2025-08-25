@@ -2,7 +2,7 @@ const db = require("../config/db");
 
 exports.criarCarrinho = async (clienteId) => {
   const [result] = await db.query(
-    "INSERT INTO carrinho (cliente_id) VALUES (?)",
+    "INSERT INTO carrinho (id_cliente) VALUES (?)",
     [clienteId]
   );
   return result.insertId;
@@ -10,7 +10,7 @@ exports.criarCarrinho = async (clienteId) => {
 
 exports.buscarCarrinhoAtivo = async (clienteId) => {
   const [rows] = await db.query(
-    "SELECT * FROM carrinho WHERE cliente_id = ? AND status = 'ATIVO' LIMIT 1",
+    "SELECT * FROM carrinho WHERE id_cliente = ? AND status = 'ATIVO' LIMIT 1",
     [clienteId]
   );
   return rows[0];
