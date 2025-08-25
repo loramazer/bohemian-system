@@ -16,27 +16,30 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `cidade`
+-- Table structure for table `produto`
 --
 
-DROP TABLE IF EXISTS `cidade`;
+DROP TABLE IF EXISTS `produto`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `cidade` (
-  `id_cidade` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `produto` (
+  `id_produto` int NOT NULL AUTO_INCREMENT,
   `nome` varchar(100) NOT NULL,
-  `sigla_UF` char(2) NOT NULL,
-  PRIMARY KEY (`id_cidade`)
+  `preco_venda` decimal(10,2) NOT NULL,
+  `descricao` text,
+  `status` enum('ativo','inativo') NOT NULL,
+  PRIMARY KEY (`id_produto`),
+  KEY `idx_produto_nome` (`nome`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `cidade`
+-- Dumping data for table `produto`
 --
 
-LOCK TABLES `cidade` WRITE;
-/*!40000 ALTER TABLE `cidade` DISABLE KEYS */;
-/*!40000 ALTER TABLE `cidade` ENABLE KEYS */;
+LOCK TABLES `produto` WRITE;
+/*!40000 ALTER TABLE `produto` DISABLE KEYS */;
+/*!40000 ALTER TABLE `produto` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -48,4 +51,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-11 19:53:41
+-- Dump completed on 2025-08-25 20:13:03

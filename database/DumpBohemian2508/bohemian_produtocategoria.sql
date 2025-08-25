@@ -16,36 +16,29 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `forma_pagamento`
+-- Table structure for table `produtocategoria`
 --
 
-DROP TABLE IF EXISTS `forma_pagamento`;
+DROP TABLE IF EXISTS `produtocategoria`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `forma_pagamento` (
-  `id_forma_pagamento` int NOT NULL AUTO_INCREMENT,
-  `descricao` varchar(100) NOT NULL,
-  `status_transacao` enum('pending','approved','authorized','in_process','in_mediation','rejected','cancelled','refunded','charged_back') NOT NULL DEFAULT 'pending',
-  `codigo_pagamento` varchar(100) DEFAULT NULL,
-  `id_transacao_mp` varchar(100) DEFAULT NULL,
-  `codigo_gateway` varchar(100) DEFAULT NULL,
-  `data_pagamento` date DEFAULT NULL,
-  `qr_code` text,
-  `qr_code_url` text,
-  PRIMARY KEY (`id_forma_pagamento`),
-  UNIQUE KEY `id_transacao_mp` (`id_transacao_mp`),
-  UNIQUE KEY `id_transacao_mp_2` (`id_transacao_mp`),
-  CONSTRAINT `chk_dt_pago` CHECK ((((`status_transacao` = _utf8mb4'approved') and (`data_pagamento` is not null)) or ((`status_transacao` <> _utf8mb4'approved') and (`data_pagamento` is null))))
+CREATE TABLE `produtocategoria` (
+  `fk_produto_id_produto` int NOT NULL,
+  `fk_categoria_id_categoria` int NOT NULL,
+  PRIMARY KEY (`fk_produto_id_produto`,`fk_categoria_id_categoria`),
+  KEY `fk_categoria_id_categoria` (`fk_categoria_id_categoria`),
+  CONSTRAINT `produtocategoria_ibfk_1` FOREIGN KEY (`fk_produto_id_produto`) REFERENCES `produto` (`id_produto`) ON DELETE CASCADE ON UPDATE RESTRICT,
+  CONSTRAINT `produtocategoria_ibfk_2` FOREIGN KEY (`fk_categoria_id_categoria`) REFERENCES `categoria` (`id_categoria`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `forma_pagamento`
+-- Dumping data for table `produtocategoria`
 --
 
-LOCK TABLES `forma_pagamento` WRITE;
-/*!40000 ALTER TABLE `forma_pagamento` DISABLE KEYS */;
-/*!40000 ALTER TABLE `forma_pagamento` ENABLE KEYS */;
+LOCK TABLES `produtocategoria` WRITE;
+/*!40000 ALTER TABLE `produtocategoria` DISABLE KEYS */;
+/*!40000 ALTER TABLE `produtocategoria` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -57,4 +50,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-11 19:53:43
+-- Dump completed on 2025-08-25 20:13:03

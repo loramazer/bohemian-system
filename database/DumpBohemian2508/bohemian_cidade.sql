@@ -16,33 +16,27 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `endereco`
+-- Table structure for table `cidade`
 --
 
-DROP TABLE IF EXISTS `endereco`;
+DROP TABLE IF EXISTS `cidade`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `endereco` (
-  `id_endereco` int NOT NULL AUTO_INCREMENT,
-  `numero` varchar(10) DEFAULT NULL,
-  `complemento` varchar(100) DEFAULT NULL,
-  `id_cidade` int NOT NULL,
-  `cep` varchar(8) DEFAULT NULL,
-  `nome` varchar(100) DEFAULT NULL,
-  PRIMARY KEY (`id_endereco`),
-  KEY `endereco_ibfk_1` (`id_cidade`),
-  CONSTRAINT `endereco_ibfk_1` FOREIGN KEY (`id_cidade`) REFERENCES `cidade` (`id_cidade`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `chk_cep_format` CHECK (regexp_like(`cep`,_utf8mb4'^[0-9]{8}$'))
+CREATE TABLE `cidade` (
+  `id_cidade` int NOT NULL AUTO_INCREMENT,
+  `nome` varchar(100) NOT NULL,
+  `sigla_UF` char(2) NOT NULL,
+  PRIMARY KEY (`id_cidade`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `endereco`
+-- Dumping data for table `cidade`
 --
 
-LOCK TABLES `endereco` WRITE;
-/*!40000 ALTER TABLE `endereco` DISABLE KEYS */;
-/*!40000 ALTER TABLE `endereco` ENABLE KEYS */;
+LOCK TABLES `cidade` WRITE;
+/*!40000 ALTER TABLE `cidade` DISABLE KEYS */;
+/*!40000 ALTER TABLE `cidade` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -54,4 +48,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-11 19:53:42
+-- Dump completed on 2025-08-25 20:13:01

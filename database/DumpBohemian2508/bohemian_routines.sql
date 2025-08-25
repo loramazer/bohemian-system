@@ -16,16 +16,18 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Temporary view structure for view `entregas_amanha`
+-- Temporary view structure for view `pedidos_pendentes_pagamento`
 --
 
-DROP TABLE IF EXISTS `entregas_amanha`;
-/*!50001 DROP VIEW IF EXISTS `entregas_amanha`*/;
+DROP TABLE IF EXISTS `pedidos_pendentes_pagamento`;
+/*!50001 DROP VIEW IF EXISTS `pedidos_pendentes_pagamento`*/;
 SET @saved_cs_client     = @@character_set_client;
 /*!50503 SET character_set_client = utf8mb4 */;
-/*!50001 CREATE VIEW `entregas_amanha` AS SELECT 
+/*!50001 CREATE VIEW `pedidos_pendentes_pagamento` AS SELECT 
  1 AS `id_pedido`,
  1 AS `cliente`,
+ 1 AS `status_transacao`,
+ 1 AS `dataPedido`,
  1 AS `data_entrega`*/;
 SET character_set_client = @saved_cs_client;
 
@@ -40,6 +42,34 @@ SET @saved_cs_client     = @@character_set_client;
 /*!50001 CREATE VIEW `vw_produtos_mais_vendidos` AS SELECT 
  1 AS `nome`,
  1 AS `total_vendido`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `entregas_amanha`
+--
+
+DROP TABLE IF EXISTS `entregas_amanha`;
+/*!50001 DROP VIEW IF EXISTS `entregas_amanha`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `entregas_amanha` AS SELECT 
+ 1 AS `id_pedido`,
+ 1 AS `cliente`,
+ 1 AS `data_entrega`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `clientes_fieis`
+--
+
+DROP TABLE IF EXISTS `clientes_fieis`;
+/*!50001 DROP VIEW IF EXISTS `clientes_fieis`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `clientes_fieis` AS SELECT 
+ 1 AS `cliente`,
+ 1 AS `total_pedidos`,
+ 1 AS `total_gasto`*/;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -86,34 +116,40 @@ SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = @saved_cs_client;
 
 --
--- Temporary view structure for view `pedidos_pendentes_pagamento`
+-- Final view structure for view `pedidos_pendentes_pagamento`
 --
 
-DROP TABLE IF EXISTS `pedidos_pendentes_pagamento`;
 /*!50001 DROP VIEW IF EXISTS `pedidos_pendentes_pagamento`*/;
-SET @saved_cs_client     = @@character_set_client;
-/*!50503 SET character_set_client = utf8mb4 */;
-/*!50001 CREATE VIEW `pedidos_pendentes_pagamento` AS SELECT 
- 1 AS `id_pedido`,
- 1 AS `cliente`,
- 1 AS `status_transacao`,
- 1 AS `dataPedido`,
- 1 AS `data_entrega`*/;
-SET character_set_client = @saved_cs_client;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `pedidos_pendentes_pagamento` AS select `p`.`id_pedido` AS `id_pedido`,`c`.`nome` AS `cliente`,`fp`.`status_transacao` AS `status_transacao`,`p`.`dataPedido` AS `dataPedido`,`p`.`data_entrega` AS `data_entrega` from ((`pedido` `p` join `cliente` `c` on((`p`.`fk_cliente_id_cliente` = `c`.`id_cliente`))) join `forma_pagamento` `fp` on((`p`.`fk_forma_pagamento_id_forma_pagamento` = `fp`.`id_forma_pagamento`))) where (`fp`.`status_transacao` <> 'Aprovado') */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
 
 --
--- Temporary view structure for view `clientes_fieis`
+-- Final view structure for view `vw_produtos_mais_vendidos`
 --
 
-DROP TABLE IF EXISTS `clientes_fieis`;
-/*!50001 DROP VIEW IF EXISTS `clientes_fieis`*/;
-SET @saved_cs_client     = @@character_set_client;
-/*!50503 SET character_set_client = utf8mb4 */;
-/*!50001 CREATE VIEW `clientes_fieis` AS SELECT 
- 1 AS `cliente`,
- 1 AS `total_pedidos`,
- 1 AS `total_gasto`*/;
-SET character_set_client = @saved_cs_client;
+/*!50001 DROP VIEW IF EXISTS `vw_produtos_mais_vendidos`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `vw_produtos_mais_vendidos` AS select `pr`.`nome` AS `nome`,sum(`ip`.`quantidade`) AS `total_vendido` from (`itempedido` `ip` join `produto` `pr` on((`pr`.`id_produto` = `ip`.`fk_produto_id_produto`))) group by `pr`.`nome` order by `total_vendido` desc */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
 
 --
 -- Final view structure for view `entregas_amanha`
@@ -134,10 +170,10 @@ SET character_set_client = @saved_cs_client;
 /*!50001 SET collation_connection      = @saved_col_connection */;
 
 --
--- Final view structure for view `vw_produtos_mais_vendidos`
+-- Final view structure for view `clientes_fieis`
 --
 
-/*!50001 DROP VIEW IF EXISTS `vw_produtos_mais_vendidos`*/;
+/*!50001 DROP VIEW IF EXISTS `clientes_fieis`*/;
 /*!50001 SET @saved_cs_client          = @@character_set_client */;
 /*!50001 SET @saved_cs_results         = @@character_set_results */;
 /*!50001 SET @saved_col_connection     = @@collation_connection */;
@@ -146,7 +182,7 @@ SET character_set_client = @saved_cs_client;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `vw_produtos_mais_vendidos` AS select `pr`.`nome` AS `nome`,sum(`ip`.`quantidade`) AS `total_vendido` from (`itempedido` `ip` join `produto` `pr` on((`pr`.`id_produto` = `ip`.`fk_produto_id_produto`))) group by `pr`.`nome` order by `total_vendido` desc */;
+/*!50001 VIEW `clientes_fieis` AS select `c`.`nome` AS `cliente`,count(`p`.`id_pedido`) AS `total_pedidos`,sum((`ip`.`precoUnitario` * `ip`.`quantidade`)) AS `total_gasto` from ((`cliente` `c` join `pedido` `p` on((`c`.`id_cliente` = `p`.`fk_cliente_id_cliente`))) join `itempedido` `ip` on((`p`.`id_pedido` = `ip`.`fk_pedido_id_pedido`))) group by `c`.`id_cliente` order by `total_gasto` desc */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -204,50 +240,6 @@ SET character_set_client = @saved_cs_client;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
-
---
--- Final view structure for view `pedidos_pendentes_pagamento`
---
-
-/*!50001 DROP VIEW IF EXISTS `pedidos_pendentes_pagamento`*/;
-/*!50001 SET @saved_cs_client          = @@character_set_client */;
-/*!50001 SET @saved_cs_results         = @@character_set_results */;
-/*!50001 SET @saved_col_connection     = @@collation_connection */;
-/*!50001 SET character_set_client      = utf8mb4 */;
-/*!50001 SET character_set_results     = utf8mb4 */;
-/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
-/*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `pedidos_pendentes_pagamento` AS select `p`.`id_pedido` AS `id_pedido`,`c`.`nome` AS `cliente`,`fp`.`status_transacao` AS `status_transacao`,`p`.`dataPedido` AS `dataPedido`,`p`.`data_entrega` AS `data_entrega` from ((`pedido` `p` join `cliente` `c` on((`p`.`fk_cliente_id_cliente` = `c`.`id_cliente`))) join `forma_pagamento` `fp` on((`p`.`fk_forma_pagamento_id_forma_pagamento` = `fp`.`id_forma_pagamento`))) where (`fp`.`status_transacao` <> 'Aprovado') */;
-/*!50001 SET character_set_client      = @saved_cs_client */;
-/*!50001 SET character_set_results     = @saved_cs_results */;
-/*!50001 SET collation_connection      = @saved_col_connection */;
-
---
--- Final view structure for view `clientes_fieis`
---
-
-/*!50001 DROP VIEW IF EXISTS `clientes_fieis`*/;
-/*!50001 SET @saved_cs_client          = @@character_set_client */;
-/*!50001 SET @saved_cs_results         = @@character_set_results */;
-/*!50001 SET @saved_col_connection     = @@collation_connection */;
-/*!50001 SET character_set_client      = utf8mb4 */;
-/*!50001 SET character_set_results     = utf8mb4 */;
-/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
-/*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `clientes_fieis` AS select `c`.`nome` AS `cliente`,count(`p`.`id_pedido`) AS `total_pedidos`,sum((`ip`.`precoUnitario` * `ip`.`quantidade`)) AS `total_gasto` from ((`cliente` `c` join `pedido` `p` on((`c`.`id_cliente` = `p`.`fk_cliente_id_cliente`))) join `itempedido` `ip` on((`p`.`id_pedido` = `ip`.`fk_pedido_id_pedido`))) group by `c`.`id_cliente` order by `total_gasto` desc */;
-/*!50001 SET character_set_client      = @saved_cs_client */;
-/*!50001 SET character_set_results     = @saved_cs_results */;
-/*!50001 SET collation_connection      = @saved_col_connection */;
-
---
--- Dumping events for database 'bohemian'
---
-
---
--- Dumping routines for database 'bohemian'
---
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -258,4 +250,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-11 19:53:43
+-- Dump completed on 2025-08-25 20:13:04
