@@ -16,36 +16,33 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `pedido`
+-- Table structure for table `colaborador`
 --
 
-DROP TABLE IF EXISTS `pedido`;
+DROP TABLE IF EXISTS `colaborador`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `pedido` (
-  `id_pedido` int NOT NULL AUTO_INCREMENT,
-  `data_entrega` date DEFAULT NULL,
-  `dataPedido` date NOT NULL,
-  `fk_cliente_id_cliente` int NOT NULL,
-  `fk_forma_pagamento_id_forma_pagamento` int NOT NULL,
-  `fk_endereco_id_endereco` int NOT NULL,
-  PRIMARY KEY (`id_pedido`),
-  KEY `fk_cliente_id_cliente` (`fk_cliente_id_cliente`),
-  KEY `fk_forma_pagamento_id_forma_pagamento` (`fk_forma_pagamento_id_forma_pagamento`),
-  KEY `fk_endereco_id_endereco` (`fk_endereco_id_endereco`),
-  CONSTRAINT `pedido_ibfk_2` FOREIGN KEY (`fk_forma_pagamento_id_forma_pagamento`) REFERENCES `forma_pagamento` (`id_forma_pagamento`),
-  CONSTRAINT `pedido_ibfk_3` FOREIGN KEY (`fk_endereco_id_endereco`) REFERENCES `endereco` (`id_endereco`),
-  CONSTRAINT `chk_data_entrega` CHECK (((`data_entrega` is null) or (`data_entrega` >= `dataPedido`)))
+CREATE TABLE `colaborador` (
+  `id_colaborador` int NOT NULL AUTO_INCREMENT,
+  `nome` varchar(100) NOT NULL,
+  `tipo` enum('admin','vendedor','entregador') NOT NULL,
+  `fk_pedido_id_pedido` int DEFAULT NULL,
+  `fk_usuario_id_usuario` int DEFAULT NULL,
+  PRIMARY KEY (`id_colaborador`),
+  KEY `fk_pedido_id_pedido` (`fk_pedido_id_pedido`),
+  KEY `fk_usuario` (`fk_usuario_id_usuario`),
+  CONSTRAINT `colaborador_ibfk_1` FOREIGN KEY (`fk_pedido_id_pedido`) REFERENCES `pedido` (`id_pedido`),
+  CONSTRAINT `fk_usuario` FOREIGN KEY (`fk_usuario_id_usuario`) REFERENCES `usuario` (`id_usuario`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `pedido`
+-- Dumping data for table `colaborador`
 --
 
-LOCK TABLES `pedido` WRITE;
-/*!40000 ALTER TABLE `pedido` DISABLE KEYS */;
-/*!40000 ALTER TABLE `pedido` ENABLE KEYS */;
+LOCK TABLES `colaborador` WRITE;
+/*!40000 ALTER TABLE `colaborador` DISABLE KEYS */;
+/*!40000 ALTER TABLE `colaborador` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -57,4 +54,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-25 20:13:03
+-- Dump completed on 2025-08-25 20:31:13

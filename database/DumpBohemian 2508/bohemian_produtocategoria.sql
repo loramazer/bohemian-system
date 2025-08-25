@@ -16,32 +16,29 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `carrinho`
+-- Table structure for table `produtocategoria`
 --
 
-DROP TABLE IF EXISTS `carrinho`;
+DROP TABLE IF EXISTS `produtocategoria`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `carrinho` (
-  `carrinho_id` int NOT NULL AUTO_INCREMENT,
-  `id_cliente` int NOT NULL,
-  `criado_em` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `atualizado_em` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `status` enum('ativo','convertido','abandonado') DEFAULT 'ativo',
-  PRIMARY KEY (`carrinho_id`),
-  KEY `fk_carrinho_cliente` (`id_cliente`),
-  CONSTRAINT `fk_carrinho_cliente` FOREIGN KEY (`id_cliente`) REFERENCES `cliente` (`id_cliente`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `produtocategoria` (
+  `fk_produto_id_produto` int NOT NULL,
+  `fk_categoria_id_categoria` int NOT NULL,
+  PRIMARY KEY (`fk_produto_id_produto`,`fk_categoria_id_categoria`),
+  KEY `fk_categoria_id_categoria` (`fk_categoria_id_categoria`),
+  CONSTRAINT `produtocategoria_ibfk_1` FOREIGN KEY (`fk_produto_id_produto`) REFERENCES `produto` (`id_produto`) ON DELETE CASCADE ON UPDATE RESTRICT,
+  CONSTRAINT `produtocategoria_ibfk_2` FOREIGN KEY (`fk_categoria_id_categoria`) REFERENCES `categoria` (`id_categoria`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `carrinho`
+-- Dumping data for table `produtocategoria`
 --
 
-LOCK TABLES `carrinho` WRITE;
-/*!40000 ALTER TABLE `carrinho` DISABLE KEYS */;
-INSERT INTO `carrinho` VALUES (1,1,'2025-08-25 21:58:57','2025-08-25 21:58:57','ativo');
-/*!40000 ALTER TABLE `carrinho` ENABLE KEYS */;
+LOCK TABLES `produtocategoria` WRITE;
+/*!40000 ALTER TABLE `produtocategoria` DISABLE KEYS */;
+/*!40000 ALTER TABLE `produtocategoria` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -53,4 +50,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-25 20:13:02
+-- Dump completed on 2025-08-25 20:31:15
