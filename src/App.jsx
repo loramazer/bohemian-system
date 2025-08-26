@@ -10,6 +10,7 @@ import RegisterPage from './pages/RegisterPage.jsx';
 import CatalogPage from './pages/CatalogPage.jsx';
 import ProductDetailsPage from './pages/ProductDetailsPage.jsx';
 import AboutPage from './pages/AboutPage.jsx';
+import DashboardPage from './pages/DashboardPage.jsx';
 
 import './styles/App.css';
 
@@ -27,6 +28,7 @@ function App() {
          <Route path="/products" element={<CatalogPage />} />
          <Route path="/product/:productId" element={<ProductDetailsPage />} />
          <Route path="/sobre-nos" element={<AboutPage />} />
+         <Route path="/dashboard" element={<DashboardPage />} />
       </Routes>
       <Footer />
     </div>

@@ -13,6 +13,7 @@ const Header = () => {
                 </div>
                 <div className="user-actions">
                     <Link to="/login" className="user-link">Login</Link>
+                    <Link to="/dashboard" className="user-link">Admin</Link>
                     <span> | </span>
                     <Link to="/wishlist" className="user-link">Wishlist</Link>
                     <Link to="/wishlist" className="icon-container"><FaHeart /></Link>
@@ -25,6 +26,7 @@ const Header = () => {
                         <img src="/bohemian-logo.png" alt="Bohemian Home Floral Decor Logo" className="logo" />
                     </Link>
                 </div>
+                
                 <nav className="main-nav">
                     <ul>
                         <li><Link to="/">Home</Link></li>
