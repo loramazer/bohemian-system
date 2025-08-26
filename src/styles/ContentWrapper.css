@@ -1,0 +1,35 @@
+.content-wrapper {
+    width: 100%;
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 20px;
+}
+.orders-table input[type="checkbox"] {
+  display: none;
+}
+
+.orders-table input[type="checkbox"] + label {
+  position: relative;
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  border-radius: 3px;
+  transition: all 0.2s ease-in-out;
+}
+
+.orders-table input[type="checkbox"]:checked + label {
+  background-color: #E91E63; /* Cor rosa quando marcado */
+  border-color: #E91E63;
+}
+
+.orders-table input[type="checkbox"]:checked + label::before {
+  content: '✔';
+  font-size: 12px;
+  position: absolute;
+  top: -1px;
+  left: 2px;
+  color: #fff;
+}

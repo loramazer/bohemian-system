@@ -1,0 +1,39 @@
+.services-section {
+  text-align: center;
+  padding: 50px 20px;
+}
+
+.services-title h2 {
+  font-size: 2rem;
+  margin-bottom: 40px;
+}
+
+.services-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.service-item {
+  width: 250px;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+}
+
+.service-icon {
+  font-size: 3rem;
+  margin-bottom: 15px;
+}
+
+.service-item h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.service-item p {
+  font-size: 0.9rem;
+  color: #777;
+}

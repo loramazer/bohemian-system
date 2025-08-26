@@ -1,0 +1,22 @@
+.register-main-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+}
+
+.register-breadcrumbs {
+    font-size: 0.9rem;
+    color: #888;
+    margin-bottom: 20px;
+}
+
+.register-breadcrumbs a {
+    color: #888;
+    text-decoration: none;
+}
+
+.register-form-wrapper {
+    max-width: 500px;
+    width: 100%;
+}
