@@ -22,7 +22,7 @@ exports.iniciarCarrinho = async (req, res) => {
 
 exports.adicionarItem = async (req, res) => {
   try {
-    const { produtoId, quantidade, preco } = req.body;
+    const { produto_id, quantidade, preco_unitario } = req.body;
     const clienteId = req.user.cliente_id;
 
     const carrinho = await carrinhoModel.buscarCarrinhoAtivo(clienteId);
@@ -31,7 +31,7 @@ exports.adicionarItem = async (req, res) => {
     }
 
     // Esta linha é a única que deve chamar o banco de dados para adicionar o item.
-    await itemModel.adicionarItem(carrinho.carrinho_id, produtoId, quantidade, preco);
+    await itemModel.adicionarItem(carrinho.carrinho_id, produto_id, quantidade, preco_unitario);
 
     const itens = await itemModel.listarItens(carrinho.carrinho_id);
     res.json(itens);
