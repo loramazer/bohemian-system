@@ -16,13 +16,20 @@ async function getById(id) {
 }
 
 // Criar produto
-async function create({ nome, preco_venda, descricao = null, status = 'ativo' }) {
+// backend/models/produtoModel.js
+
+// ... (outras funções)
+
+exports.criar = async (produto) => {
+  const { nome, descricao, preco, qtd_estoque, categoria_id, imagem_url } = produto; // Adicione imagem_url aqui
   const [result] = await db.execute(
-    'INSERT INTO produto (nome, preco_venda, descricao, status) VALUES (?, ?, ?, ?)',
-    [nome, preco_venda, descricao, status]
+    'INSERT INTO produto (nome, descricao, preco, qtd_estoque, categoria_id, imagem_url) VALUES (?, ?, ?, ?, ?, ?)', // Adicione a coluna no INSERT
+    [nome, descricao, preco, qtd_estoque, categoria_id, imagem_url] // Adicione a variável na lista
   );
-  return { id_produto: result.insertId, nome, preco_venda, descricao, status };
-}
+  return result.insertId;
+};
+
+// ... (resto do arquivo)
 
 // Atualizar produto
 async function update(id, { nome, preco_venda, descricao = null, status = 'ativo' }) {
