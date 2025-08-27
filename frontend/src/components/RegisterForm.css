@@ -53,3 +53,30 @@
 .register-button:hover {
     background-color: #4a6263;
 }
+
+/* Adicione este código no final de RegisterForm.css */
+
+.feedback-message {
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.feedback-message.success {
+    background-color: #e6ffed;
+    color: #2f855a;
+    border: 1px solid #c6f6d5;
+}
+
+.feedback-message.error {
+    background-color: #fed7d7;
+    color: #c53030;
+    border: 1px solid #fed7d7;
+}
+
+.register-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}

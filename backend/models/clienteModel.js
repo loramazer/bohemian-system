@@ -1,19 +1,27 @@
+// backend/models/clienteModel.js
 const db = require('../config/db');
 
-async function criarCliente(nome, email, telefone, senhaCriptografada) {
+// Função para criar um novo cliente
+async function create(cliente) {
+  const { nome, email, telefone, senha } = cliente;
   const [result] = await db.execute(
     'INSERT INTO cliente (nome, email, telefone, senha) VALUES (?, ?, ?, ?)',
-    [nome, email, telefone, senhaCriptografada]
+    // Se o telefone for uma string vazia, converte para null
+    [nome, email, telefone || null, senha]
   );
   return result.insertId;
 }
 
-async function buscarClientePorEmail(email) {
-  const [rows] = await db.execute('SELECT * FROM cliente WHERE email = ?', [email]);
+// Função para encontrar um cliente pelo e-mail
+async function findByEmail(email) {
+  const [rows] = await db.execute(
+    'SELECT id_cliente, nome, email, senha FROM cliente WHERE email = ?',
+    [email]
+  );
   return rows[0];
 }
 
 module.exports = {
-  criarCliente,
-  buscarClientePorEmail,
+  create,
+  findByEmail,
 };

@@ -1,49 +1,42 @@
 const db = require('../config/db');
 
+// Manteremos as suas funções com os nomes originais em português
+
 // Buscar todos os produtos
 async function getAll() {
-  const [rows] = await db.execute(`
-    SELECT id_produto, nome, preco_venda, descricao, status
-    FROM produto
-  `);
+  const [rows] = await db.execute('SELECT * FROM produto');
   return rows;
 }
 
 // Buscar produto por ID
 async function getById(id) {
-  const [rows] = await db.execute('SELECT * FROM produto WHERE id_produto = ?', [id]);
+  const [rows] = await db.execute('SELECT * FROM produto WHERE produto_id = ?', [id]);
   return rows[0];
 }
 
-// Criar produto
-// backend/models/produtoModel.js
-
-// ... (outras funções)
-
-exports.criar = async (produto) => {
-  const { nome, descricao, preco, qtd_estoque, categoria_id, imagem_url } = produto; // Adicione imagem_url aqui
+// Criar um novo produto
+async function criar(produto) {
+  const { nome, descricao, preco, qtd_estoque, categoria_id, imagem_url } = produto;
   const [result] = await db.execute(
-    'INSERT INTO produto (nome, descricao, preco, qtd_estoque, categoria_id, imagem_url) VALUES (?, ?, ?, ?, ?, ?)', // Adicione a coluna no INSERT
-    [nome, descricao, preco, qtd_estoque, categoria_id, imagem_url] // Adicione a variável na lista
+    'INSERT INTO produto (nome, descricao, preco, qtd_estoque, categoria_id, imagem_url) VALUES (?, ?, ?, ?, ?, ?)',
+    [nome, descricao, preco, qtd_estoque, categoria_id, imagem_url]
   );
   return result.insertId;
-};
+}
 
-// ... (resto do arquivo)
-
-// Atualizar produto
-async function update(id, { nome, preco_venda, descricao = null, status = 'ativo' }) {
+// Atualizar um produto
+async function update(id, produto) {
+  const { nome, descricao, preco, qtd_estoque, categoria_id, imagem_url } = produto;
   await db.execute(
-    'UPDATE produto SET nome = ?, preco_venda = ?, descricao = ?, status = ? WHERE id_produto = ?',
-    [nome, preco_venda, descricao, status, id]
+    'UPDATE produto SET nome = ?, descricao = ?, preco = ?, qtd_estoque = ?, categoria_id = ?, imagem_url = ? WHERE produto_id = ?',
+    [nome, descricao, preco, qtd_estoque, categoria_id, imagem_url, id]
   );
-  return { id_produto: id, nome, preco_venda, descricao, status };
 }
 
-// Deletar produto
+// Remover um produto
 async function remove(id) {
-  await db.execute('DELETE FROM produto WHERE id_produto = ?', [id]);
-  return { message: 'Produto removido com sucesso' };
+  await db.execute('DELETE FROM produto WHERE produto_id = ?', [id]);
 }
 
-module.exports = { getAll, getById, create, update, remove };
+// CORREÇÃO: Altere 'create' para 'criar' para corresponder ao nome da função
+module.exports = { getAll, getById, criar, update, remove };
