@@ -9,12 +9,14 @@ const isEmailValid = (email) => {
   return emailRegex.test(email);
 };
 
-// Função de Registro (agora corrigida)
-exports.registrar = async (req, res) => {
+// Objeto que vamos exportar
+const authController = {};
+
+// Função de Registro
+authController.registrar = async (req, res) => {
   const { nome, email, telefone, senha } = req.body;
 
   try {
-    // Validação no backend
     if (!nome || !email || !senha) {
       return res.status(400).json({ error: 'Nome, e-mail e senha são obrigatórios.' });
     }
@@ -30,7 +32,6 @@ exports.registrar = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const senhaHash = await bcrypt.hash(senha, salt);
 
-    // O objeto novoCliente é enviado para o model, que irá tratar o telefone vazio
     const novoCliente = { nome, email, telefone, senha: senhaHash };
     const clienteId = await clienteModel.create(novoCliente);
 
@@ -39,7 +40,6 @@ exports.registrar = async (req, res) => {
       clienteId: clienteId,
     });
   } catch (error) {
-    // Verifica se o erro é de violação de constraint do banco de dados
     if (error.code === 'ER_CHECK_CONSTRAINT_VIOLATED') {
       return res.status(400).json({ error: 'O formato dos dados fornecidos é inválido.' });
     }
@@ -48,8 +48,8 @@ exports.registrar = async (req, res) => {
   }
 };
 
-// Função de Login (sem alterações)
-exports.login = async (req, res) => {
+// Função de Login
+authController.login = async (req, res) => {
   const { email, senha } = req.body;
   try {
     const cliente = await clienteModel.findByEmail(email);
@@ -71,3 +71,5 @@ exports.login = async (req, res) => {
     res.status(500).json({ error: 'Erro interno do servidor.' });
   }
 };
+
+module.exports = authController;
