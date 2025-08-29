@@ -11,6 +11,10 @@ import CatalogPage from './pages/CatalogPage.jsx';
 import ProductDetailsPage from './pages/ProductDetailsPage.jsx';
 import AboutPage from './pages/AboutPage.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
+import AllProductsPage from './pages/AllProductsPage.jsx';
+import AddProductPage from './pages/AddProductPage.jsx';
+import OrderDetailPage from './pages/OrderDetailPage.jsx';
+import AllOrdersPage from './pages/AllOrdersPage.jsx';
 
 import './styles/App.css';
 
@@ -29,6 +33,10 @@ function App() {
          <Route path="/product/:productId" element={<ProductDetailsPage />} />
          <Route path="/sobre-nos" element={<AboutPage />} />
          <Route path="/dashboard" element={<DashboardPage />} />
+         <Route path="/admin/products" element={<AllProductsPage />} />
+         <Route path="/admin/products/add" element={<AddProductPage />} />
+         <Route path="/admin/orders/:orderId" element={<OrderDetailPage />} />
+         <Route path="/admin/orders" element={<AllOrdersPage />} />
       </Routes>
       <Footer />
     </div>

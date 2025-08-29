@@ -1,0 +1,87 @@
+.image-upload-container {
+    flex: 1;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.upload-box {
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    padding: 40px 20px;
+    text-align: center;
+    color: #888;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.upload-icon {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+.thumbnail-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.thumbnail-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 5px;
+}
+
+.thumbnail-item img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.checkmark-icon {
+    color: #4CAF50;
+    font-size: 1.2rem;
+    margin-left: auto;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.action-buttons button {
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.save-btn {
+    background-color: #5d7a7b;
+    color: #fff;
+    border: none;
+}
+
+.delete-btn {
+    background-color: #f44336;
+    color: #fff;
+    border: none;
+}
+
+.cancel-btn {
+    background-color: #ccc;
+    color: #333;
+    border: none;
+}
+
+.image-upload-container {
+    flex: 1; 
+    min-width: 300px;
+}
