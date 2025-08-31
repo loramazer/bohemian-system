@@ -1,51 +1,71 @@
+/* frontend/src/components/Header.css */
 .main-header {
     background-color: #fff;
     border-bottom: 1px solid #e0e0e0;
-    padding: 10px 20px;
+    padding: 0;
+    /* Removido o padding extra para o header-top tomar conta */
+    font-family: 'Arial', sans-serif;
 }
 
 .header-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #e0e0e0;
-    padding-bottom: 10px;
-    margin-bottom: 10px;
+    padding: 8px 40px;
+    /* Padding horizontal maior */
     background-color: #516A6A;
     color: #E0E7E9;
+    font-size: 14px;
 }
 
 .contact-info span {
     margin-right: 20px;
-    color: inherit;
-    font-size: 14px;
 }
 
 .user-actions {
     display: flex;
     align-items: center;
+    gap: 15px;
+    /* Espaçamento entre os itens */
 }
 
-.user-actions .user-link {
+.user-actions .user-link,
+.user-actions .auth-link,
+.user-actions button.user-link {
     text-decoration: none;
     color: inherit;
-    margin-right: 15px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: inherit;
+    padding: 0;
+}
+
+.user-actions .user-link:hover,
+.user-actions button.user-link:hover {
+    text-decoration: underline;
 }
 
 .user-actions .icon-container {
-    margin-left: 10px;
-    cursor: pointer;
     color: inherit;
+    font-size: 16px;
+}
+
+.welcome-message {
+    font-weight: bold;
 }
 
 .header-bottom {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 10px 40px;
 }
 
 .logo-container .logo {
-    height: 120px;
+    height: 100px;
+    /* Reduzido um pouco para um visual mais limpo */
 }
 
 .main-nav ul {
@@ -53,16 +73,20 @@
     margin: 0;
     padding: 0;
     display: flex;
-}
-
-.main-nav ul li {
-    margin-right: 20px;
+    gap: 30px;
+    /* Espaçamento entre os links de navegação */
 }
 
 .main-nav ul li a {
     text-decoration: none;
-    color: #555;
+    color: #333;
     font-weight: bold;
+    font-size: 16px;
+    transition: color 0.3s;
+}
+
+.main-nav ul li a:hover {
+    color: #516A6A;
 }
 
 .search-container {
@@ -72,14 +96,17 @@
 
 .search-container input {
     border: 1px solid #ccc;
-    padding: 5px;
-    border-radius: 5px;
+    padding: 8px 12px;
+    border-radius: 20px 0 0 20px;
+    border-right: none;
+    outline: none;
 }
 
 .search-container .search-button {
-    background-color: transparent;
-    border: none;
+    background-color: #516A6A;
+    border: 1px solid #516A6A;
     cursor: pointer;
-    color: #555;
-    margin-left: 5px;
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 0 20px 20px 0;
 }

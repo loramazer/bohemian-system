@@ -1,32 +1,42 @@
-// frontend/src/components/LoginForm.jsx
 import React, { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
-import apiClient from '../api';
-import AuthContext from '../context/AuthContext';
+import { useNavigate, Link } from 'react-router-dom';
+import AuthContext from '../context/AuthContext.jsx';
+import apiClient from '../api.js';
 import '../styles/LoginForm.css';
 
 const LoginForm = () => {
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
-    const [error, setError] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
+    const [message, setMessage] = useState('');
+    const [isError, setIsError] = useState(false);
+    const [formIsLoading, setFormIsLoading] = useState(false);
 
+    const { login, isLoading: isAuthLoading } = useContext(AuthContext) || {};
     const navigate = useNavigate();
-    const { login } = useContext(AuthContext);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError('');
-        setIsLoading(true);
+        setMessage('');
+        setIsError(false);
+        setFormIsLoading(true);
+
+        if (!login) {
+            setFormIsLoading(false);
+            setMessage('A página ainda está a carregar, por favor, tente novamente em um momento.');
+            setIsError(true);
+            return;
+        }
 
         try {
             const response = await apiClient.post('/auth/login', { email, senha });
-            login(response.data.token); // Usa a função de login do contexto
-            navigate('/'); // Redireciona para a Home
+            login(response.data.token);
+            setFormIsLoading(false);
+            navigate('/'); // Redireciona para a home após o login
         } catch (err) {
-            setIsLoading(false);
-            const errorMessage = err.response?.data?.error || 'Erro ao fazer login. Verifique suas credenciais.';
-            setError(errorMessage);
+            setFormIsLoading(false);
+            const errorMessage = err.response?.data?.error || 'E-mail ou senha inválidos.';
+            setMessage(errorMessage);
+            setIsError(true);
             console.error('Erro no login:', err);
         }
     };
@@ -34,8 +44,14 @@ const LoginForm = () => {
     return (
         <div className="login-form-container">
             <form onSubmit={handleSubmit} className="login-form">
-                <h2>Entrar</h2>
-                {error && <p className="feedback-message error">{error}</p>}
+                <h2>Entrar na sua Conta</h2>
+
+                {message && (
+                    <p className={isError ? 'feedback-message error' : 'feedback-message success'}>
+                        {message}
+                    </p>
+                )}
+
                 <div className="form-group">
                     <label htmlFor="email">E-mail</label>
                     <input
@@ -44,7 +60,7 @@ const LoginForm = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
-                        disabled={isLoading}
+                        disabled={formIsLoading || isAuthLoading}
                     />
                 </div>
                 <div className="form-group">
@@ -55,15 +71,19 @@ const LoginForm = () => {
                         value={senha}
                         onChange={(e) => setSenha(e.target.value)}
                         required
-                        disabled={isLoading}
+                        disabled={formIsLoading || isAuthLoading}
                     />
                 </div>
-                <button type="submit" className="login-button" disabled={isLoading}>
-                    {isLoading ? 'Entrando...' : 'Entrar'}
+                <button type="submit" className="login-button" disabled={formIsLoading || isAuthLoading}>
+                    {formIsLoading ? 'A entrar...' : 'Entrar'}
                 </button>
+                <p className="register-link">
+                    Não tem uma conta? <Link to="/register">Crie uma aqui</Link>
+                </p>
             </form>
         </div>
     );
 };
 
 export default LoginForm;
+
