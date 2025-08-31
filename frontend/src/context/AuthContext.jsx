@@ -1,77 +1,74 @@
-import React, { createContext, useState, useEffect, useCallback } from 'react';
-import jwtDecode from 'jwt-decode'; // Correção na importação
-import apiClient from '/src/api.js'; // Correção no caminho
+// loramazer/bohemian-system/bohemian-system-front-back-carrinhos/frontend/src/context/AuthContext.jsx
 
-export const AuthContext = createContext({
-    token: null,
-    user: null,
-    isLoading: true,
-    login: () => { },
-    logout: () => { },
-});
+import React, { createContext, useState, useEffect } from 'react';
+// Correção: Mude a importação para usar chaves {} e renomeie a função para o padrão camelCase
+import { jwtDecode } from 'jwt-decode';
+import apiClient from '../api';
+
+export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [token, setToken] = useState(null);
     const [user, setUser] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const [loading, setLoading] = useState(true);
 
-    const login = useCallback((newToken) => {
-        localStorage.setItem('token', newToken);
-        apiClient.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
-        const decodedUser = jwtDecode(newToken);
-        setUser(decodedUser);
-        setToken(newToken);
-    }, []);
-
-    const logout = useCallback(() => {
-        localStorage.removeItem('token');
-        delete apiClient.defaults.headers.common['Authorization'];
-        setUser(null);
-        setToken(null);
-    }, []);
-
-    // Este efeito é executado APENAS UMA VEZ quando a aplicação carrega.
     useEffect(() => {
-        const storedToken = localStorage.getItem('token');
-        try {
-            if (storedToken) {
-                const decodedUser = jwtDecode(storedToken);
-                const currentTime = Date.now() / 1000;
+        const token = localStorage.getItem('token');
+        if (token) {
+            try {
+                // Correção: Use a função importada corretamente
+                const decoded = jwtDecode(token);
 
-                if (decodedUser.exp > currentTime) {
-                    // Se o token for válido, configuramos o estado diretamente aqui
-                    setToken(storedToken);
-                    setUser(decodedUser);
-                    apiClient.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
+                // Verificar se o token não expirou
+                if (decoded.exp * 1000 > Date.now()) {
+                    setUser({
+                        cliente_id: decoded.cliente_id,
+                        nome: decoded.nome,
+                        email: decoded.email
+                        // ... outros dados do usuário que você coloca no token
+                    });
                 } else {
-                    // Se o token estiver expirado, limpamos
+                    // Token expirado
                     localStorage.removeItem('token');
                 }
+            } catch (error) {
+                console.error("Token inválido:", error);
+                localStorage.removeItem('token');
             }
-        } catch (error) {
-            // Se o token for inválido, limpamos
-            console.error("Falha ao descodificar o token, a removê-lo.", error);
-            localStorage.removeItem('token');
-        } finally {
-            // Após a verificação, o carregamento está concluído
-            setIsLoading(false);
         }
-    }, []); // A lista de dependências vazia [] garante que isto só acontece uma vez.
+        setLoading(false);
+    }, []);
 
-    const contextValue = {
-        token,
-        user,
-        login,
-        logout,
-        isLoading,
+    const login = async (email, senha) => {
+        try {
+            const response = await apiClient.post('/auth/login', { email, senha });
+            const { token } = response.data;
+            localStorage.setItem('token', token);
+
+            // Correção: Use a função importada corretamente
+            const decoded = jwtDecode(token);
+            setUser({
+                cliente_id: decoded.cliente_id,
+                nome: decoded.nome,
+                email: decoded.email
+            });
+        } catch (error) {
+            console.error('Falha no login', error);
+            throw error;
+        }
+    };
+
+    const logout = () => {
+        localStorage.removeItem('token');
+        setUser(null);
+    };
+
+    const isAuthenticated = () => {
+        return user !== null;
     };
 
     return (
-        <AuthContext.Provider value={contextValue}>
+        <AuthContext.Provider value={{ user, login, logout, isAuthenticated, loading }}>
             {children}
         </AuthContext.Provider>
     );
 };
-
-export default AuthContext;
-
