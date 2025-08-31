@@ -1,49 +1,94 @@
-import React from 'react';
-import Header from '../components/Header.jsx';
-import Footer from '../components/Footer.jsx';
+import React, { useState, useEffect } from 'react';
 import KpiCards from '../components/Dashboard/KpiCards.jsx';
 import SalesChart from '../components/Dashboard/SalesChart.jsx';
 import BestSellers from '../components/Dashboard/BestSellers.jsx';
 import RecentOrdersTable from '../components/Dashboard/RecentOrdersTable.jsx';
+import OrderDetailsModal from '../components/Dashboard/OrderDetailsModal.jsx';
 import ContentWrapper from '../components/ContentWrapper.jsx';
 
 import '../styles/Dashboard.css';
 
-const dashboardData = {
-  kpis: [
-    { title: 'Total Pedidos', value: '50.000', change: '+34.7%', comparison: 'Comparado ao Mês 2024' },
-    { title: 'Pedidos Ativos', value: '120', change: '↑ 34.7%', comparison: 'Comparado ao Mês 2024' },
-    { title: 'Pedidos Fechados', value: '19.880', change: '↑ 34.7%', comparison: 'Comparado ao Mês 2024' },
-    { title: 'Pedidos Previstos', value: '350', change: '↑ 34.7%', comparison: 'Comparado ao Mês 2024' },
-  ],
-  bestSellers: [
-    { name: 'Lorem Ipsum', price: 'R$55.900', sales: '215 vendas' },
-    { name: 'Lorem Ipsum', price: 'R$55.900', sales: '215 vendas' },
-    { name: 'Lorem Ipsum', price: 'R$55.900', sales: '215 vendas' },
-    { name: 'Lorem Ipsum', price: 'R$55.900', sales: '215 vendas' },
-  ],
-  recentOrders: [
-    { id: '#25426', date: 'Nov 8, 2025', client: 'Kevin Emanuel', status: 'Enviado', value: 'R$260' },
-    { id: '#25425', date: 'Nov 8, 2025', client: 'Rafael Lucas', status: 'Cancelado', value: 'R$260' },
-    { id: '#25424', date: 'Nov 8, 2025', client: 'Nikôl José', status: 'Enviado', value: 'R$260' },
-    { id: '#25423', date: 'Nov 8, 2025', client: 'Nikôl José', status: 'Cancelado', value: 'R$260' },
-    { id: '#25422', date: 'Nov 8, 2025', client: 'Shahdah Maria', status: 'Enviado', value: 'R$260' },
-    { id: '#25421', date: 'Nov 8, 2025', client: 'Yogesh Valentin', status: 'Enviado', value: 'R$260' },
-  ]
-};
-
 const DashboardPage = () => {
+  const [kpis, setKpis] = useState([]);
+  const [bestSellers, setBestSellers] = useState([]);
+  const [monthlyRevenue, setMonthlyRevenue] = useState([]);
+  const [recentOrders, setRecentOrders] = useState([]);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [chartPeriod, setChartPeriod] = useState('monthly');
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const kpisResponse = await fetch('http://localhost:3000/dashboard/kpis');
+        const kpisData = await kpisResponse.json();
+        setKpis([
+          { title: 'Total Pedidos', value: kpisData.totalPedidos },
+          { title: 'Pedidos Ativos', value: kpisData.pedidosAtivos },
+          { title: 'Pedidos Fechados', value: kpisData.pedidosFechados },
+          { title: 'Pedidos Previstos', value: kpisData.pedidosPrevistos },
+        ]);
+
+        const bestSellersResponse = await fetch('http://localhost:3000/dashboard/best-sellers');
+        const bestSellersData = await bestSellersResponse.json();
+        setBestSellers(bestSellersData);
+
+        const recentOrdersResponse = await fetch('http://localhost:3000/dashboard/recent-orders');
+        const recentOrdersData = await recentOrdersResponse.json();
+        setRecentOrders(recentOrdersData.map(order => ({
+            ...order,
+            valor_total_pedido: parseFloat(order.valor_total_pedido),
+        })));
+      } catch (error) {
+        console.error('Erro ao buscar dados do dashboard:', error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchChartData = async () => {
+      try {
+        const chartResponse = await fetch(`http://localhost:3000/dashboard/monthly-revenue?period=${chartPeriod}`);
+        const chartData = await chartResponse.json();
+        setMonthlyRevenue(chartData);
+      } catch (error) {
+        console.error('Erro ao buscar dados do gráfico:', error);
+      }
+    };
+    fetchChartData();
+  }, [chartPeriod]);
+
+  const fetchOrderDetails = async (orderId) => {
+    try {
+        const response = await fetch(`http://localhost:3000/dashboard/orders/${orderId}`);
+        const data = await response.json();
+        setSelectedOrder(data);
+    } catch (error) {
+        console.error('Erro ao buscar detalhes do pedido:', error);
+        setSelectedOrder(null);
+    }
+  };
+
+  const handleSelectOrder = (order) => {
+    fetchOrderDetails(order.id_pedido);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedOrder(null);
+  };
+
   return (
     <ContentWrapper>
       <main className="dashboard-main-content">
-        <h1 className="dashboard-title">Dashboard</h1>
-        <KpiCards kpis={dashboardData.kpis} />
+        <h1 className-="dashboard-title">Dashboard</h1>
+        <KpiCards kpis={kpis} />
         <div className="dashboard-charts-container">
-          <SalesChart />
-          <BestSellers bestSellers={dashboardData.bestSellers} />
+          <SalesChart monthlyRevenue={monthlyRevenue} chartPeriod={chartPeriod} setChartPeriod={setChartPeriod} />
+          <BestSellers bestSellers={bestSellers} />
         </div>
-        <RecentOrdersTable orders={dashboardData.recentOrders} />
+        <RecentOrdersTable orders={recentOrders} onSelectOrder={handleSelectOrder} />
       </main>
+      {selectedOrder && <OrderDetailsModal order={selectedOrder} onClose={handleCloseModal} />}
     </ContentWrapper>
   );
 };
