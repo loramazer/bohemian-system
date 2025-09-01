@@ -1,7 +1,28 @@
 import React from 'react';
 import '../../styles/Dashboard.css';
 
-const RecentOrdersTable = ({ orders }) => {
+const RecentOrdersTable = ({ orders, onSelectOrder }) => {
+  // Mapeia o status do backend para um texto amigável no frontend
+  const mapStatusToLabel = (status) => {
+    if (!status) {
+      return 'N/A';
+    }
+    switch (status) {
+      case 'approved':
+        return 'Enviado';
+      case 'pending':
+        return 'Pendente';
+      case 'in_process':
+        return 'Em Processo';
+      case 'rejected':
+        return 'Rejeitado';
+      case 'cancelled':
+        return 'Cancelado';
+      default:
+        return 'Desconhecido';
+    }
+  };
+
   return (
     <div className="recent-orders-container">
       <div className="table-header">
@@ -21,17 +42,21 @@ const RecentOrdersTable = ({ orders }) => {
         </thead>
         <tbody>
           {orders.map((order, index) => (
-            <tr key={index}>
+            <tr key={index} onClick={() => onSelectOrder(order)}>
               <td>
                 <input type="checkbox" id={`order-${index}`} />
                 <label htmlFor={`order-${index}`}></label>
               </td>
-              <td>Lorem Ipsum</td>
-              <td>{order.id}</td>
-              <td>{order.date}</td>
-              <td>{order.client}</td>
-              <td><span className={`status-badge status-${order.status.toLowerCase()}`}>{order.status}</span></td>
-              <td>{order.value}</td>
+              <td>{order.nome_produtos}</td>
+              <td>{order.id_pedido}</td>
+              <td>{new Date(order.dataPedido).toLocaleDateString()}</td>
+              <td>{order.cliente}</td>
+              <td>
+                <span className={`status-badge status-${order.status.toLowerCase()}`}>
+                  {mapStatusToLabel(order.status)}
+                </span>
+              </td>
+              <td>{`R$${parseFloat(order.valor_total_pedido).toFixed(2)}`}</td>
             </tr>
           ))}
         </tbody>
