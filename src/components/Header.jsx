@@ -30,10 +30,20 @@ const Header = () => {
                         <li><Link to="/">Home</Link></li>
                         <li><Link to="/sobre-nos">Sobre Nós</Link></li>
                         <li><Link to="/products">Produtos</Link></li>
-                        <li><Link to="/admin/orders">Pedidos</Link></li> {/* Adicionado o link para Pedidos */}
+                        {/* A opção "Pedidos" foi removida daqui, pois é uma funcionalidade exclusiva do administrador. */}
                         <li><Link to="/cart">Comprar</Link></li>
                         <li><Link to="/contato">Contato</Link></li>
-                        <li><Link to="/admin/products">Admin</Link></li>
+                        
+                        {/* Menu dropdown para o Admin */}
+                        <li className="admin-menu">
+                            <Link to="/dashboard" className="admin-link">Admin</Link>
+                            <ul className="admin-menu-dropdown">
+                                <li><Link to="/dashboard">Painel</Link></li>
+                                <li><Link to="/admin/products">Todos Produtos</Link></li>
+                                <li><Link to="/admin/products/add">Adicionar Produtos</Link></li>
+                                <li><Link to="/admin/orders">Pedidos</Link></li>
+                            </ul>
+                        </li>
                     </ul>
                 </nav>
                 <div className="search-container">

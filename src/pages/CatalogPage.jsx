@@ -3,6 +3,7 @@ import ContentWrapper from '../components/ContentWrapper.jsx';
 import Sidebar from '../components/Catalog/Sidebar.jsx';
 import ProductGrid from '../components/Catalog/ProductGrid.jsx';
 
+// Importe as imagens locais que você já tem na pasta assets
 import img1 from '../assets/1.png';
 import img2 from '../assets/2.png';
 import img3 from '../assets/3.png';

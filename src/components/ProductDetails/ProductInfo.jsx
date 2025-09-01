@@ -1,6 +1,5 @@
 import React from 'react';
 import '../../styles/ProductDetails.css';
-
 import { FaHeart, FaShareAlt, FaShoppingCart } from 'react-icons/fa';
 
 const ProductInfo = ({ product }) => {

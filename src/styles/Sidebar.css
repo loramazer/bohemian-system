@@ -30,18 +30,18 @@
     cursor: pointer;
 }
 
-
+/* Estilo para os checkboxes personalizados */
 .filter-group input[type="checkbox"] {
-    display: none;
+    display: none; /* Esconde o checkbox padrão */
 }
 
 .filter-group input[type="checkbox"] + label {
     position: relative;
-    padding-left: 25px; 
+    padding-left: 25px; /* Espaço para o checkbox customizado */
     cursor: pointer;
 }
 
-
+/* O quadrado do checkbox */
 .filter-group input[type="checkbox"] + label::before {
     content: '';
     position: absolute;
@@ -55,13 +55,13 @@
     transition: all 0.2s ease-in-out;
 }
 
-
+/* Cor de fundo e borda quando o checkbox está marcado */
 .filter-group input[type="checkbox"]:checked + label::before {
     background-color: #603EFF;
     border-color: #603EFF;
 }
 
-
+/* O ícone de checkmark quando o checkbox está marcado */
 .filter-group input[type="checkbox"]:checked + label::after {
     content: '✔';
     font-size: 12px;
