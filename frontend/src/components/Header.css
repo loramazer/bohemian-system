@@ -1,83 +1,37 @@
-/* frontend/src/components/Header.css */
-.main-header {
+/* Estilo principal para o contêiner do cabeçalho */
+.header {
     background-color: #fff;
-    border-bottom: 1px solid #e0e0e0;
-    padding: 0;
-    /* Removido o padding extra para o header-top tomar conta */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1rem 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
     font-family: 'Arial', sans-serif;
 }
 
-.header-top {
+/* Flex container para alinhar logo, navegação e ações */
+.header-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 40px;
-    /* Padding horizontal maior */
-    background-color: #516A6A;
-    color: #E0E7E9;
-    font-size: 14px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
-.contact-info span {
-    margin-right: 20px;
+/* Estilo para a logo */
+.logo img {
+    height: 60px;
+    /* Ajuste a altura conforme necessário */
 }
 
-.user-actions {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    /* Espaçamento entre os itens */
-}
-
-.user-actions .user-link,
-.user-actions .auth-link,
-.user-actions button.user-link {
-    text-decoration: none;
-    color: inherit;
-    cursor: pointer;
-    background: none;
-    border: none;
-    font-family: inherit;
-    font-size: inherit;
-    padding: 0;
-}
-
-.user-actions .user-link:hover,
-.user-actions button.user-link:hover {
-    text-decoration: underline;
-}
-
-.user-actions .icon-container {
-    color: inherit;
-    font-size: 16px;
-}
-
-.welcome-message {
-    font-weight: bold;
-}
-
-.header-bottom {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 40px;
-}
-
-.logo-container .logo {
-    height: 100px;
-    /* Reduzido um pouco para um visual mais limpo */
-}
-
-.main-nav ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+/* Contêiner para os links de navegação */
+.nav-links {
     display: flex;
     gap: 30px;
-    /* Espaçamento entre os links de navegação */
+    /* Espaçamento entre os links */
 }
 
-.main-nav ul li a {
+.nav-links a {
     text-decoration: none;
     color: #333;
     font-weight: bold;
@@ -85,16 +39,26 @@
     transition: color 0.3s;
 }
 
-.main-nav ul li a:hover {
-    color: #516A6A;
+.nav-links a:hover {
+    color: #c58c85;
+    /* Cor de destaque ao passar o mouse */
 }
 
-.search-container {
+/* Contêiner para a barra de pesquisa e ações do usuário */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    /* Espaçamento entre os grupos de ação */
+}
+
+/* Barra de pesquisa */
+.search-bar {
     display: flex;
     align-items: center;
 }
 
-.search-container input {
+.search-bar input {
     border: 1px solid #ccc;
     padding: 8px 12px;
     border-radius: 20px 0 0 20px;
@@ -102,11 +66,46 @@
     outline: none;
 }
 
-.search-container .search-button {
-    background-color: #516A6A;
-    border: 1px solid #516A6A;
+.search-bar button {
+    background-color: #c58c85;
+    border: 1px solid #c58c85;
     cursor: pointer;
     color: #fff;
     padding: 8px 12px;
     border-radius: 0 20px 20px 0;
+}
+
+/* Menu do usuário quando logado */
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color:#333;
+}
+
+/* Botões de entrar e sair */
+.login-btn,
+.logout-btn {
+    text-decoration: none;
+    color: #fff;
+    background-color: #516A6A;
+    padding: 8px 15px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.login-btn:hover,
+.logout-btn:hover {
+    background-color: #3e5252;
+}
+
+/* Ícone do carrinho */
+.cart-icon {
+    font-size: 24px;
+    /* Tamanho do emoji/ícone */
+    text-decoration: none;
+    color: #333;
 }
