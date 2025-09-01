@@ -1,17 +1,37 @@
+const db = require('../config/db');
 const jwt = require('jsonwebtoken');
-require('dotenv').config();
 
-function autenticarToken(req, res, next) {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader?.split(' ')[1];
+const authMiddleware = (req, res, next) => {
+  const authHeader = req.headers.authorization;
 
-  if (!token) return res.status(401).json({ message: 'Token não fornecido' });
+  // 1. Verifica se o token foi enviado
+  if (!authHeader) {
+    return res.status(401).json({ error: 'Token não fornecido.' });
+  }
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, usuario) => {
-    if (err) return res.status(403).json({ message: 'Token inválido' });
-    req.usuario = usuario;
-    next();
-  });
-}
+  // 2. Separa o "Bearer" do token
+  const parts = authHeader.split(' ');
+  if (parts.length !== 2) {
+    return res.status(401).json({ error: 'Erro no formato do token.' });
+  }
 
-module.exports = autenticarToken;
+  const [scheme, token] = parts;
+  if (!/^Bearer$/i.test(scheme)) {
+    return res.status(401).json({ error: 'Token mal formatado.' });
+  }
+
+  // 3. Verifica se o token é válido
+  try {
+    // Substitua 'SEU_SEGREDO_JWT' pela mesma chave que você usa ao criar o token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'sua_chave_secreta');
+
+    // Adiciona o ID do cliente ao objeto 'req' para ser usado nos controllers
+    req.user = { cliente_id: decoded.id }; // Supondo que o ID está no payload do token como 'id'
+
+    return next();
+  } catch (err) {
+    return res.status(401).json({ error: 'Token inválido.' });
+  }
+};
+
+module.exports = authMiddleware;
