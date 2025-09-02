@@ -52,7 +52,7 @@ const CartPage = () => {
                 {error && <p className="error-message">{error}</p>}
                 <div className="cart-layout">
                     <CartItems items={cartItems} onEmptyCart={emptyCart} />
-                    <CartSummary subtotal={subtotal} />
+                    <CartSummary subtotal={subtotal} itens = {cartItems}/>
                 </div>
             </div>
         </main>
