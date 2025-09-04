@@ -11,9 +11,9 @@ import CatalogPage from './pages/CatalogPage.jsx';
 import ProductDetailsPage from './pages/ProductDetailsPage.jsx';
 import AboutPage from './pages/AboutPage.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
+import CreateProductPage from './pages/CreateProductPage.jsx'; // Importe o novo componente
 
 import './styles/App.css';
-
 
 function App() {
   return (
@@ -25,10 +25,11 @@ function App() {
         <Route path="/order-confirmed" element={<OrderConfirmedPage />} />
         <Route path="/cart" element={<CartPage />} /> 
         <Route path="/register" element={<RegisterPage />} />
-         <Route path="/products" element={<CatalogPage />} />
-         <Route path="/product/:productId" element={<ProductDetailsPage />} />
-         <Route path="/sobre-nos" element={<AboutPage />} />
-         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/products" element={<CatalogPage />} />
+        <Route path="/product/:productId" element={<ProductDetailsPage />} />
+        <Route path="/sobre-nos" element={<AboutPage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/create-product" element={<CreateProductPage />} /> {/* Adicione a nova rota */}
       </Routes>
       <Footer />
     </div>

@@ -36,6 +36,16 @@ const Header = () => {
                         <li><Link to="/contato">Contato</Link></li>
                     </ul>
                 </nav>
+                <nav className="main-nav">
+                    <ul>
+                        <li><Link to="/">Home</Link></li>
+                        <li><Link to="/sobre-nos">Sobre Nós</Link></li>
+                        <li><Link to="/products">Produtos</Link></li>
+                        <li><Link to="/comprar">Comprar</Link></li> 
+                        <li><Link to="/contato">Contato</Link></li>
+                        <li><Link to="/create-product">Criar Produto</Link></li> {/* Adicione este link */}
+                    </ul>
+                </nav>
                 <div className="search-container">
                     <input type="text" placeholder="Pesquisar..." />
                     <button className="search-button"><FaSearch /></button>
