@@ -1,3 +1,4 @@
+
 import React from 'react';
 import ContentWrapper from '../components/ContentWrapper.jsx';
 import Sidebar from '../components/Catalog/Sidebar.jsx';
@@ -40,9 +41,12 @@ const CatalogPage = () => {
                     <Sidebar />
                     <ProductGrid products={productData} />
                 </div>
+                
             </main>
+            
         </ContentWrapper>
     );
 };
+
 
 export default CatalogPage;

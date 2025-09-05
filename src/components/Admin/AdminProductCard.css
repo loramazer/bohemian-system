@@ -57,6 +57,7 @@
     margin-bottom: 10px;
     flex-grow: 1;
 }
+
 .admin-product-description p:first-child {
     font-weight: bold;
     margin-bottom: 5px;
@@ -95,7 +96,7 @@
 }
 
 .progress {
-    background-color: #FFA52F;
+    background-color: #FFA52F; /* Cor laranja */
     height: 100%;
     border-radius: 5px;
 }

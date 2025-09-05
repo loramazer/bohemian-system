@@ -1,8 +1,10 @@
+// src/pages/AllProductsPage.jsx
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import ContentWrapper from '../components/ContentWrapper.jsx';
-import ProductGrid from '../components/Catalog/ProductGrid.jsx';
-import AdminProductCard from '../components/Admin/AdminProductCard.jsx';
+import AdminProductGrid from '../components/Admin/AdminProductGrid.jsx'; // Importe o novo componente AdminProductGrid
+// Importe as imagens locais que você já tem na pasta assets
 import img1 from '../assets/1.png';
 import img2 from '../assets/2.png';
 import img3 from '../assets/3.png';
@@ -33,7 +35,8 @@ const AllProductsPage = () => {
                     <h1 className="admin-page-title">Todos Produtos</h1>
                     <Link to="/admin/products/add" className="add-product-btn">ADD NOVO PRODUTO</Link>
                 </div>
-                <ProductGrid products={adminProductData} cardComponent={AdminProductCard} />
+              
+                <AdminProductGrid products={adminProductData} />
             </main>
         </ContentWrapper>
     );

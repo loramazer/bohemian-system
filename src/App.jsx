@@ -15,6 +15,8 @@ import AllProductsPage from './pages/AllProductsPage.jsx';
 import AddProductPage from './pages/AddProductPage.jsx';
 import OrderDetailPage from './pages/OrderDetailPage.jsx';
 import AllOrdersPage from './pages/AllOrdersPage.jsx';
+import ForgotPasswordPage from './pages/ForgotPasswordPage.jsx';
+import ResetPasswordPage from './pages/ResetPasswordPage.jsx';
 
 import './styles/App.css';
 
@@ -37,6 +39,8 @@ function App() {
          <Route path="/admin/products/add" element={<AddProductPage />} />
          <Route path="/admin/orders/:orderId" element={<OrderDetailPage />} />
          <Route path="/admin/orders" element={<AllOrdersPage />} />
+         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+         <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
       </Routes>
       <Footer />
     </div>

@@ -17,7 +17,7 @@ const LoginForm = () => {
                     <input type="password" id="password" name="password" placeholder="Sua senha" required />
                 </div>
                 <div className="forgot-password">
-                    <Link to="/forgot-password">Esqueceu sua Senha?</Link>
+                     <Link to="/forgot-password">Esqueceu sua Senha?</Link>
                 </div>
                 <button type="submit" className="login-button">Login</button>
             </form>

@@ -13,7 +13,40 @@ async function buscarClientePorEmail(email) {
   return rows[0];
 }
 
+function salvarTokenRecuperacao(id_cliente, token, expires) {
+  return new Promise((resolve, reject) => {
+    const query = 'UPDATE cliente SET resetPasswordToken = ?, resetPasswordExpires = ? WHERE id_cliente = ?';
+    db.query(query, [token, expires, id_cliente], (error, results) => {
+      if (error) return reject(error);
+      resolve(results);
+    });
+  });
+}
+
+function buscarClientePorToken(token) {
+  return new Promise((resolve, reject) => {
+    const query = 'SELECT * FROM cliente WHERE resetPasswordToken = ? AND resetPasswordExpires > ?';
+    db.query(query, [token, Date.now()], (error, results) => {
+      if (error) return reject(error);
+      resolve(results[0]);
+    });
+  });
+}
+
+function atualizarSenhaCliente(id_cliente, novaSenhaCriptografada) {
+  return new Promise((resolve, reject) => {
+    const query = 'UPDATE cliente SET senha = ?, resetPasswordToken = NULL, resetPasswordExpires = NULL WHERE id_cliente = ?';
+    db.query(query, [novaSenhaCriptografada, id_cliente], (error, results) => {
+      if (error) return reject(error);
+      resolve(results);
+    });
+  });
+}
+
 module.exports = {
   criarCliente,
   buscarClientePorEmail,
+  salvarTokenRecuperacao,
+  buscarClientePorToken,
+  atualizarSenhaCliente,
 };

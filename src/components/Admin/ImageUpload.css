@@ -14,6 +14,12 @@
     color: #888;
     cursor: pointer;
     margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.upload-box.dragging {
+    border-color: #5d7a7b;
+    background-color: #f0f8ff;
 }
 
 .upload-icon {
@@ -35,6 +41,7 @@
     padding: 10px;
     border: 1px solid #eee;
     border-radius: 5px;
+    position: relative;
 }
 
 .thumbnail-item img {
@@ -44,10 +51,46 @@
     border-radius: 5px;
 }
 
+.file-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.file-info span {
+    font-size: 0.9rem;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 5px;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+
+.progress.loading {
+    height: 100%;
+    background-color: #5d7a7b;
+    width: 0;
+    animation: loading-animation 1s infinite;
+}
+
+@keyframes loading-animation {
+    0% { width: 0%; }
+    100% { width: 100%; }
+}
+
 .checkmark-icon {
     color: #4CAF50;
     font-size: 1.2rem;
     margin-left: auto;
+}
+
+.delete-icon {
+    color: #f44336;
+    cursor: pointer;
+    margin-left: 10px;
 }
 
 .action-buttons {
@@ -84,4 +127,9 @@
 .image-upload-container {
     flex: 1; 
     min-width: 300px;
+}
+
+.no-files-message {
+    color: #888;
+    text-align: center;
 }
