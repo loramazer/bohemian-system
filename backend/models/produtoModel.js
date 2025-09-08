@@ -4,7 +4,10 @@ const db = require('../config/db');
 
 // Buscar todos os produtos
 async function getAll() {
-  const [rows] = await db.execute('SELECT * FROM produto');
+  const [rows] = await db.execute(`
+    SELECT id_produto, nome, preco_venda, descricao, status, imagem_url
+    FROM produto
+  `);
   return rows;
 }
 
@@ -14,23 +17,22 @@ async function getById(id) {
   return rows[0];
 }
 
-// Criar um novo produto
-async function criar(produto) {
-  const { nome, descricao, preco, qtd_estoque, categoria_id, imagem_url } = produto;
+// Criar produto
+async function create({ nome, preco_venda, descricao = null, status = 'ativo', imagem_url = null }) {
   const [result] = await db.execute(
-    'INSERT INTO produto (nome, descricao, preco, qtd_estoque, categoria_id, imagem_url) VALUES (?, ?, ?, ?, ?, ?)',
-    [nome, descricao, preco, qtd_estoque, categoria_id, imagem_url]
+    'INSERT INTO produto (nome, preco_venda, descricao, status, imagem_url) VALUES (?, ?, ?, ?, ?)',
+    [nome, preco_venda, descricao, status, imagem_url]
   );
-  return result.insertId;
+  return { id_produto: result.insertId, nome, preco_venda, descricao, status, imagem_url };
 }
 
-// Atualizar um produto
-async function update(id, produto) {
-  const { nome, descricao, preco, qtd_estoque, categoria_id, imagem_url } = produto;
+// Atualizar produto
+async function update(id, { nome, preco_venda, descricao = null, status = 'ativo', imagem_url = null }) {
   await db.execute(
-    'UPDATE produto SET nome = ?, descricao = ?, preco = ?, qtd_estoque = ?, categoria_id = ?, imagem_url = ? WHERE produto_id = ?',
-    [nome, descricao, preco, qtd_estoque, categoria_id, imagem_url, id]
+    'UPDATE produto SET nome = ?, preco_venda = ?, descricao = ?, status = ?, imagem_url = ? WHERE id_produto = ?',
+    [nome, preco_venda, descricao, status, imagem_url, id]
   );
+  return { id_produto: id, nome, preco_venda, descricao, status, imagem_url };
 }
 
 // Remover um produto

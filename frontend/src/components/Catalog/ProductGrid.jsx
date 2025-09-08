@@ -1,4 +1,3 @@
-// Em seu arquivo ProductGrid.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 import ProductCard from '../ProductCard.jsx';
@@ -10,11 +9,10 @@ const ProductGrid = ({ products }) => {
                 {products.map(product => (
                     <Link to={`/product/${product.id}`} key={product.id} style={{ textDecoration: 'none' }}>
                         <ProductCard
-                            name={product.name}
-                            price={product.price}
-                            oldPrice={product.oldPrice}
-                            imageSrc={product.image}
-                            tag={product.tag}
+                            name={product.nome}
+                            price={`R$${product.preco_venda}`}
+                            imageSrc={product.imagem_url} // Usa a URL da imagem da API
+                            tag={null}
                         />
                     </Link>
                 ))}
