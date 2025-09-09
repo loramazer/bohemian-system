@@ -7,11 +7,11 @@ const ProductGrid = ({ products }) => {
         <div className="product-grid-container">
             <div className="product-grid">
                 {products.map(product => (
-                    <Link to={`/product/${product.id}`} key={product.id} style={{ textDecoration: 'none' }}>
+                    <Link to={`/product/${product.id_produto}`} key={product.id_produto} style={{ textDecoration: 'none' }}>
                         <ProductCard
                             name={product.nome}
                             price={`R$${product.preco_venda}`}
-                            imageSrc={product.imagem_url} // Usa a URL da imagem da API
+                            imageSrc={product.imagem_url} 
                             tag={null}
                         />
                     </Link>

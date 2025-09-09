@@ -6,20 +6,17 @@ import { FaHeart, FaShareAlt, FaShoppingCart } from 'react-icons/fa';
 const ProductInfo = ({ product }) => {
     return (
         <div className="product-info-section">
-            <h1 className="product-title">{product.name}</h1>
+            <h1 className="product-title">{product.nome}</h1>
             <div className="product-prices">
-                <span className="old-price">{product.oldPrice}</span>
-                <span className="current-price">{product.price}</span>
+                <span className="current-price">{`R$${product.preco_venda}`}</span>
             </div>
             <div className="product-rating">
                 {/* Estrelas de avaliação */}
             </div>
-            <p className="product-description">{product.description}</p>
+            <p className="product-description">{product.descricao}</p>
             <div className="color-options">
                 <span>Cores:</span>
-                {product.colors.map((color, index) => (
-                    <div key={index} className="color-swatch" style={{ backgroundColor: color }}></div>
-                ))}
+                {/* Aqui você pode mapear as cores se tiver no banco */}
             </div>
             <div className="product-actions">
                 <button className="add-to-cart-btn">
