@@ -9,11 +9,9 @@ require('dotenv').config();
 
 const saltRounds = 10;
 
-// Configuração do Nodemailer com as credenciais do Ethereal
+// Configuração do Nodemailer para o Gmail
 const transporter = nodemailer.createTransport({
-    host: 'smtp.ethereal.email',
-    port: 587,
-    secure: false, // Ethereal não usa SSL, use 'false'
+    service: 'gmail',
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
@@ -62,21 +60,40 @@ async function forgotPassword(req, res) {
 
     await db.execute('INSERT INTO password_resets (fk_cliente_id, token, expires_at) VALUES (?, ?, ?)', [cliente.id_cliente, token, expiresAt]);
 
-    const resetUrl = `http://localhost:5173/reset-password/${token}`;
+    const resetUrl = `${process.env.FRONTEND_URL}reset-password/${token}`;
 
-    const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: cliente.email,
-        subject: 'Redefinição de Senha - Bohemian Floral',
-        html: `
-            <p>Olá ${cliente.nome},</p>
-            <p>Você solicitou a redefinição de sua senha. Clique no link abaixo para criar uma nova senha:</p>
-            <a href="${resetUrl}">${resetUrl}</a>
-            <p>Este link é válido por 1 hora.</p>
-            <p>Se você não solicitou isso, por favor, ignore este e-mail.</p>
-        `,
-    };
-
+   const mailOptions = {
+  from: process.env.EMAIL_USER,
+  to: cliente.email,
+  subject: 'Redefinição de Senha - Bohemian Floral',
+  html: `
+    <div style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
+      <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+          <td align="center">
+            <table width="600" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+              <tr>
+                <td style="padding: 40px; text-align: center;">
+                  <img src="cid:bohemianLogo" alt="Bohemian Home" style="width: 150px; margin-bottom: 20px;">
+                  <h1 style="color: #333333;">Redefina Sua Senha</h1>
+                  <p style="color: #555555;">Olá, ${cliente.nome}.</p>
+                  <a href="${resetUrl}" style="background-color: #5d7a7b; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;">Redefinir Senha</a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>
+  `,
+  attachments: [
+    {
+      filename: 'bohemian-logo.png',
+      path: __dirname + '/../public/bohemian-logo.png', // caminho no backend
+      cid: 'bohemianLogo' // mesmo id usado no src do HTML
+    }
+  ]
+};
     await transporter.sendMail(mailOptions);
 
     res.status(200).json({ message: 'Se as informações estiverem corretas, você receberá um e-mail com as instruções para redefinir sua senha.' });

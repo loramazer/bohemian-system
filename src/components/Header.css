@@ -123,3 +123,15 @@
     color: #555;
     margin-left: 5px;
 }
+
+.logout-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: inherit;
+    font-size: inherit;
+    padding: 0;
+    margin-left: 5px;
+    font-weight: normal;
+}
+
