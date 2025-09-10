@@ -1,111 +1,137 @@
-/* Estilo principal para o contêiner do cabeçalho */
-.header {
+.main-header {
     background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 1rem 2rem;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    font-family: 'Arial', sans-serif;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 10px 20px;
 }
 
-/* Flex container para alinhar logo, navegação e ações */
-.header-content {
+.header-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-/* Estilo para a logo */
-.logo img {
-    height: 60px;
-    /* Ajuste a altura conforme necessário */
-}
-
-/* Contêiner para os links de navegação */
-.nav-links {
-    display: flex;
-    gap: 30px;
-    /* Espaçamento entre os links */
-}
-
-.nav-links a {
-    text-decoration: none;
-    color: #333;
-    font-weight: bold;
-    font-size: 16px;
-    transition: color 0.3s;
-}
-
-.nav-links a:hover {
-    color: #c58c85;
-    /* Cor de destaque ao passar o mouse */
-}
-
-/* Contêiner para a barra de pesquisa e ações do usuário */
-.header-actions {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    /* Espaçamento entre os grupos de ação */
-}
-
-/* Barra de pesquisa */
-.search-bar {
-    display: flex;
-    align-items: center;
-}
-
-.search-bar input {
-    border: 1px solid #ccc;
-    padding: 8px 12px;
-    border-radius: 20px 0 0 20px;
-    border-right: none;
-    outline: none;
-}
-
-.search-bar button {
-    background-color: #c58c85;
-    border: 1px solid #c58c85;
-    cursor: pointer;
-    color: #fff;
-    padding: 8px 12px;
-    border-radius: 0 20px 20px 0;
-}
-
-/* Menu do usuário quando logado */
-.user-menu {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color:#333;
-}
-
-/* Botões de entrar e sair */
-.login-btn,
-.logout-btn {
-    text-decoration: none;
-    color: #fff;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
     background-color: #516A6A;
-    padding: 8px 15px;
-    border-radius: 20px;
+    color: #E0E7E9;
+}
+
+.contact-info span {
+    margin-right: 20px;
+    color: inherit;
+    font-size: 14px;
+}
+
+.user-actions {
+    display: flex;
+    align-items: center;
+}
+
+.user-actions .user-link {
+    text-decoration: none;
+    color: inherit;
+    margin-right: 5px;
+}
+
+.user-actions .icon-container {
+    margin-left: 10px;
+    cursor: pointer;
+    color: inherit;
+}
+
+.header-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-container .logo {
+    height: 120px;
+}
+
+.main-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+.main-nav ul li {
+    margin-right: 20px;
+    position: relative;
+    /* Removido o padding da lista */
+    padding: 0;
+}
+
+.main-nav ul li a {
+    text-decoration: none;
+    color: #555;
+    font-weight: bold;
+}
+
+/* Estilos para o dropdown (ajustados) */
+.admin-menu-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 50%; /* Centraliza o menu na largura do item */
+    transform: translateX(-50%); /* Ajuste para centralizar perfeitamente */
+    background-color: #fff;
+    border: 1px solid #f0f0f0;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    list-style: none;
+    padding: 8px 0;
+    min-width: 180px;
+    z-index: 1000;
+    opacity: 0; /* Começa invisível */
+    visibility: hidden; /* Garante que não é clicável */
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.admin-menu:hover .admin-menu-dropdown {
+    opacity: 1; /* Transição suave de visibilidade */
+    visibility: visible;
+}
+
+.admin-menu-dropdown li a {
+    color: #555;
+    font-weight: normal;
+    display: block;
+    padding: 8px 16px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.admin-menu-dropdown li a:hover {
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+}
+
+.search-container input {
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.search-container .search-button {
+    background-color: transparent;
     border: none;
     cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s;
+    color: #555;
+    margin-left: 5px;
 }
 
-.login-btn:hover,
-.logout-btn:hover {
-    background-color: #3e5252;
+.logout-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: inherit;
+    font-size: inherit;
+    padding: 0;
+    margin-left: 5px;
+    font-weight: normal;
 }
 
-/* Ícone do carrinho */
-.cart-icon {
-    font-size: 24px;
-    /* Tamanho do emoji/ícone */
-    text-decoration: none;
-    color: #333;
-}

@@ -1,119 +1,71 @@
-// frontend/src/components/RegisterForm.jsx
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import '../components/RegisterForm.css';
-import apiClient from '../api';
+import { Link, useNavigate } from 'react-router-dom';
+import './RegisterForm.css';
 
 const RegisterForm = () => {
-    // Estados para os campos do formulário
-    const [nome, setNome] = useState('');
-    const [email, setEmail] = useState('');
-    const [telefone, setTelefone] = useState('');
-    const [senha, setSenha] = useState('');
-
-    // Novos estados para feedback
-    const [message, setMessage] = useState('');
-    const [isError, setIsError] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-
+    const [formData, setFormData] = useState({
+        nome: '',
+        email: '',
+        telefone: '',
+        senha: ''
+    });
     const navigate = useNavigate();
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setMessage('');
-        setIsError(false);
-        setIsLoading(true); // Inicia o indicador de carregamento
-
-        if (!nome || !email || !senha) {
-            setMessage('Por favor, preencha todos os campos obrigatórios.');
-            setIsError(true);
-            setIsLoading(false);
-            return;
-        }
-
         try {
-            await apiClient.post('/auth/registrar', {
-                nome,
-                email,
-                telefone,
-                senha,
+            const response = await fetch('http://localhost:3000/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
             });
 
-            // Se deu certo
-            setIsLoading(false);
-            setMessage('Cadastro realizado com sucesso! Redirecionando para o login...');
-            setTimeout(() => {
-                navigate('/login');
-            }, 2000); // Espera 2 segundos antes de redirecionar
+            const data = await response.json();
 
-        } catch (err) {
-            // Se deu errado
-            setIsLoading(false);
-            const errorMessage = err.response?.data?.error || 'Erro ao realizar o cadastro. Tente novamente.';
-            setMessage(errorMessage);
-            setIsError(true);
-            console.error('Erro no cadastro:', err);
+            if (response.ok) {
+                alert('Cadastro realizado com sucesso! Faça login para continuar.');
+                navigate('/login');
+            } else {
+                alert(data.message || 'Erro ao cadastrar. Tente novamente.');
+            }
+        } catch (error) {
+            console.error('Erro de rede:', error);
+            alert('Não foi possível conectar ao servidor. Tente novamente mais tarde.');
         }
     };
 
     return (
         <div className="register-form-container">
-            <form onSubmit={handleSubmit} className="register-form">
-                <h2>Criar Conta</h2>
-
-                {/* --- Novo Bloco de Mensagens --- */}
-                {message && (
-                    <p className={isError ? 'feedback-message error' : 'feedback-message success'}>
-                        {message}
-                    </p>
-                )}
-
+            <h2 className="register-title">Registrar-se</h2>
+            <p className="register-subtitle">Por favor, preencha os campos abaixo.</p>
+            <form className="register-form" onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label htmlFor="nome">Nome Completo</label>
-                    <input
-                        type="text"
-                        id="nome"
-                        value={nome}
-                        onChange={(e) => setNome(e.target.value)}
-                        required
-                        disabled={isLoading} // Desabilita o campo durante o carregamento
-                    />
+                    <input type="text" id="nome" name="nome" placeholder="Seu nome" value={formData.nome} onChange={handleChange} required />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="email">E-mail</label>
-                    <input
-                        type="email"
-                        id="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                        disabled={isLoading}
-                    />
+                    <label htmlFor="email">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="Seu email" value={formData.email} onChange={handleChange} required />
                 </div>
                 <div className="form-group">
                     <label htmlFor="telefone">Telefone</label>
-                    <input
-                        type="tel"
-                        id="telefone"
-                        value={telefone}
-                        onChange={(e) => setTelefone(e.target.value)}
-                        disabled={isLoading}
-                    />
+                    <input type="tel" id="telefone" name="telefone" placeholder="Seu telefone" value={formData.telefone} onChange={handleChange} required />
                 </div>
                 <div className="form-group">
                     <label htmlFor="senha">Senha</label>
-                    <input
-                        type="password"
-                        id="senha"
-                        value={senha}
-                        onChange={(e) => setSenha(e.target.value)}
-                        required
-                        disabled={isLoading}
-                    />
+                    <input type="password" id="senha" name="senha" placeholder="Sua senha" value={formData.senha} onChange={handleChange} required />
                 </div>
-                <button type="submit" className="register-button" disabled={isLoading}>
-                    {isLoading ? 'Cadastrando...' : 'Cadastrar'}
-                </button>
+                <button type="submit" className="register-button">Cadastrar</button>
             </form>
         </div>
     );

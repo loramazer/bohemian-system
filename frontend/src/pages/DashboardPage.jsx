@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import Header from '../components/Header.jsx';
+import Footer from '../components/Footer.jsx';
 import KpiCards from '../components/Dashboard/KpiCards.jsx';
 import SalesChart from '../components/Dashboard/SalesChart.jsx';
 import BestSellers from '../components/Dashboard/BestSellers.jsx';
