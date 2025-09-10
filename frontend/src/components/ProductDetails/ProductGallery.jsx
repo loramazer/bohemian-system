@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import '../../styles/ProductDetails.css';
 
-
 const ProductGallery = ({ images }) => {
     // Usamos o useState para controlar qual imagem é a principal
     const [mainImage, setMainImage] = useState(images[0]);

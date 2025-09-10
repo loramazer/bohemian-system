@@ -11,10 +11,10 @@ const pool = mysql.createPool({
 pool.getConnection((err, connection) => {
   if (err) {
     console.error('Erro ao conectar com o banco de dados:', err);
-    throw err; // Lança o erro para parar a aplicação se não conseguir conectar
+    throw err;
   }
   console.log('MySQL conectado com sucesso!');
-  connection.release(); // Importante: devolve a conexão para o pool
+  connection.release();
 });
 
 module.exports = pool.promise();
