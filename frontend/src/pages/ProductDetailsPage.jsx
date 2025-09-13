@@ -1,41 +1,45 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import ContentWrapper from '../components/ContentWrapper.jsx';
 import ProductInfo from '../components/ProductDetails/ProductInfo.jsx';
 import ProductGallery from '../components/ProductDetails/ProductGallery.jsx';
 import ProductTabs from '../components/ProductDetails/ProductTabs.jsx';
 
-// Importe as imagens locais que você já tem na pasta assets
-import img1 from '../assets/1.png';
-import img2 from '../assets/2.png';
-import img3 from '../assets/3.png';
-import img4 from '../assets/4.png';
-
 import '../styles/ProductDetailsPage.css';
-
-// Dados do produto com imagens locais
-const productData = {
-    id: '1',
-    name: 'Bohemian Glass',
-    price: 'R$260',
-    oldPrice: 'R$320',
-    rating: 4,
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Magna in est adipiscing in phasellus non in justo.',
-    images: [img1, img2, img3, img4], // Use as imagens importadas
-    colors: ['#8e94f2', '#6a493b', '#a4d4c5']
-};
 
 const ProductDetailsPage = () => {
     const { productId } = useParams();
+    const [productData, setProductData] = useState(null);
+
+    useEffect(() => {
+        const fetchProduct = async () => {
+            try {
+                const response = await fetch(`http://localhost:3000/produtos/${productId}`);
+                if (!response.ok) {
+                    throw new Error('Erro ao buscar o produto');
+                }
+                const data = await response.json();
+                setProductData(data);
+            } catch (error) {
+                console.error('Erro ao buscar detalhes do produto:', error);
+            }
+        };
+
+        fetchProduct();
+    }, [productId]);
+
+    if (!productData) {
+        return <ContentWrapper><div>Carregando...</div></ContentWrapper>;
+    }
 
     return (
         <ContentWrapper>
             <main className="product-details-main">
                 <div className="product-breadcrumbs">
-                    <Link to="/">Home</Link> &gt; <Link to="/products">Comprar</Link> &gt; <span>{productData.name}</span>
+                    <Link to="/">Home</Link> &gt; <Link to="/products">Comprar</Link> &gt; <span>{productData.nome}</span>
                 </div>
                 <div className="product-details-layout">
-                    <ProductGallery images={productData.images} />
+                    <ProductGallery product={productData} />
                     <ProductInfo product={productData} />
                 </div>
                 <ProductTabs />

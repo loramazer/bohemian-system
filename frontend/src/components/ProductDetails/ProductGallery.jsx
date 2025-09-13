@@ -1,26 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import '../../styles/ProductDetails.css';
 
-const ProductGallery = ({ images }) => {
+
+const ProductGallery = ({ product }) => {
     // Usamos o useState para controlar qual imagem é a principal
-    const [mainImage, setMainImage] = useState(images[0]);
+    const mainImage = product.imagem_url;
 
     return (
         <div className="product-gallery">
-            <div className="thumbnails">
-                {images.map((img, index) => (
-                    <img
-                        key={index}
-                        src={img}
-                        alt="Thumbnail"
-                        className={`thumbnail ${mainImage === img ? 'active' : ''}`}
-                        // A função onClick atualiza a imagem principal
-                        onClick={() => setMainImage(img)}
-                    />
-                ))}
-            </div>
             <div className="main-image-container">
-                <img src={mainImage} alt="Produto em destaque" className="main-image" />
+                {mainImage ? (
+                    <img src={mainImage} alt={product.nome} className="main-image" />
+                ) : (
+                    <div className="main-image-placeholder">Imagem não disponível</div>
+                )}
             </div>
         </div>
     );

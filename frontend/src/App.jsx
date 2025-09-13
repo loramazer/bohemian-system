@@ -41,6 +41,9 @@ function App() {
          <Route path="/admin/orders" element={<AllOrdersPage />} />
          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
          <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+        <Route path="/products" element={<CatalogPage />} />
+        <Route path="/product/:productId" element={<ProductDetailsPage />} />
+        <Route path="/sobre-nos" element={<AboutPage />} />
       </Routes>
       <Footer />
     </div>
