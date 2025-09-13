@@ -1,10 +1,10 @@
 // frontend/src/components/CategoriesSection.jsx
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom'; // Importe o Link para navegação
 import { FaTshirt, FaMobileAlt, FaLaptop, FaBook, FaHome, FaQuestionCircle } from 'react-icons/fa';
 import '../styles/CategoriesSection.css';
-import apiClient from '../api'; // Importa nosso conector da API
+import apiClient from '../api';
 
-// Mapeamento de ícones (pode ser melhorado depois)
 const iconMap = {
     'Buquês': FaTshirt,
     'Arranjos': FaMobileAlt,
@@ -23,11 +23,20 @@ const CategoriesSection = () => {
         const fetchCategories = async () => {
             try {
                 const response = await apiClient.get('/categorias');
-                setCategories(response.data);
-                setLoading(false);
+
+                // 1. Verifica se a resposta da API é um array
+                if (Array.isArray(response.data)) {
+                    setCategories(response.data);
+                } else {
+                    // Se não for, evita o erro e informa no console
+                    console.error("A resposta da API de categorias não é um array:", response.data);
+                    setError('Erro ao carregar os dados das categorias.');
+                    setCategories([]);
+                }
             } catch (err) {
                 setError('Não foi possível carregar as categorias.');
                 console.error(err);
+            } finally {
                 setLoading(false);
             }
         };
@@ -47,15 +56,22 @@ const CategoriesSection = () => {
         <div className="categories-container">
             <h2>Categorias</h2>
             <div className="categories-grid">
-                {categories.map((category) => {
-                    const IconComponent = iconMap[category.nome] || iconMap['default'];
-                    return (
-                        <div key={category.categoria_id} className="category-card">
-                            <IconComponent className="category-icon" />
-                            <p>{category.nome}</p>
-                        </div>
-                    );
-                })}
+                {categories.length > 0 ? (
+                    categories.map((category) => {
+                        // 2. Use 'nome_categoria' para buscar o ícone
+                        const IconComponent = iconMap[category.nome_categoria] || iconMap['default'];
+                        return (
+                            // 3. O 'key' deve usar 'id_categoria' e o Link deve ser usado aqui
+                            <Link to={`/catalog?category=${category.nome_categoria}`} key={category.id_categoria} className="category-card">
+                                <IconComponent className="category-icon" />
+                                {/* 4. Exiba 'nome_categoria' */}
+                                <p>{category.nome_categoria}</p>
+                            </Link>
+                        );
+                    })
+                ) : (
+                    <p>Nenhuma categoria encontrada.</p>
+                )}
             </div>
         </div>
     );

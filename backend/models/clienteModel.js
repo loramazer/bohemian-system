@@ -2,7 +2,7 @@
 const db = require('../config/db');
 
 // Função para criar um novo cliente
-async function create(cliente) {
+async function criarCliente(cliente) {
   const { nome, email, telefone, senha } = cliente;
   const [result] = await db.execute(
     'INSERT INTO cliente (nome, email, telefone, senha) VALUES (?, ?, ?, ?)',
@@ -13,7 +13,7 @@ async function create(cliente) {
 }
 
 // Função para encontrar um cliente pelo e-mail
-async function findByEmail(email) {
+async function buscarClientePorEmail(email) {
   const [rows] = await db.execute(
     'SELECT id_cliente, nome, email, senha FROM cliente WHERE email = ?',
     [email]

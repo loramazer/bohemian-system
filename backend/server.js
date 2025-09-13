@@ -1,30 +1,40 @@
+// loramazer/bohemian-system/bohemian-system-front-back-carrinhos/backend/server.js
+
 const express = require('express');
 const cors = require('cors');
-const path = require('path'); // Importe o módulo 'path'
 require('dotenv').config();
 
+// 1. Importe todas as suas rotas
 const authRoutes = require('./routes/authRoutes');
 const carrinhoRoutes = require('./routes/carrinhoRoutes');
 const categoriaRoutes = require('./routes/categoriaRoutes');
 const produtoRoutes = require('./routes/produtoRoutes');
-const dashboardRoutes = require('./routes/dashboardRoutes'); // Importe a nova rota
+const dashboardRoutes = require('./routes/dashboardRoutes');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Adicione esta linha para servir arquivos estáticos da pasta 'public' do front-end
-app.use(express.static(path.join(__dirname, '../../public')));
+// 2. Crie um roteador principal para agrupar todas as rotas da API
+const apiRouter = express.Router();
 
-app.use('/auth', authRoutes);
-app.use('/categorias', categoriaRoutes);
-app.use('/produtos', produtoRoutes);
-app.use('/dashboard', dashboardRoutes); // Adicione a nova rota para o dashboard
-app.use('/carrinho', carrinhoRoutes);
+// 3. Use o roteador principal para definir suas rotas
+apiRouter.use('/auth', authRoutes);
+apiRouter.use('/categorias', categoriaRoutes);
+apiRouter.use('/produtos', produtoRoutes);
+apiRouter.use('/dashboard', dashboardRoutes);
+apiRouter.use('/carrinho', carrinhoRoutes);
 
-// Rota inicial (teste rápido no navegador)
+// 4. Use o prefixo /api para o roteador principal
+app.use('/api', apiRouter);
+
+
+// Rota inicial de teste
 app.get('/', (req, res) => {
-  res.send('API Bohemian está rodando!');
+    res.send('Servidor principal está rodando!');
 });
 
-app.use('/public', express.static('public'));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Servidor do backend rodando na porta ${PORT}`);
+});

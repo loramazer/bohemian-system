@@ -41,4 +41,4 @@ async function remove(id) {
 }
 
 // CORREÇÃO: Altere 'create' para 'criar' para corresponder ao nome da função
-module.exports = { getAll, getById, criar, update, remove };
+module.exports = { getAll, getById, create, update, remove };

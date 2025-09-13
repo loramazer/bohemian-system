@@ -20,17 +20,33 @@ const transporter = nodemailer.createTransport({
 });
 
 async function register(req, res) {
-  try {
-    const { nome, email, telefone, senha } = req.body;
-    const clienteExistente = await buscarClientePorEmail(email);
-    if (clienteExistente) return res.status(400).json({ message: 'E-mail já cadastrado' });
-    const senhaCriptografada = await bcrypt.hash(senha, saltRounds);
-    const id = await criarCliente(nome, email, telefone, senhaCriptografada);
-    res.status(201).json({ message: 'Cliente cadastrado com sucesso', id });
-  } catch (error) {
-    console.error("Erro ao registrar cliente:", error);
-    res.status(500).json({ message: "Erro interno do servidor" });
-  }
+    try {
+        const { nome, email, telefone, senha } = req.body;
+        const clienteExistente = await buscarClientePorEmail(email);
+        if (clienteExistente) {
+            return res.status(400).json({ message: 'E-mail já cadastrado' });
+        }
+
+        const senhaCriptografada = await bcrypt.hash(senha, saltRounds);
+
+        // --- CORREÇÃO AQUI ---
+        // 1. Crie um objeto com os dados do cliente
+        const dadosDoCliente = {
+            nome: nome,
+            email: email,
+            telefone: telefone,
+            senha: senhaCriptografada
+        };
+
+        // 2. Passe este objeto único para a função criarCliente
+        const id = await criarCliente(dadosDoCliente);
+        // ---------------------
+
+        res.status(201).json({ message: 'Cliente cadastrado com sucesso', id });
+    } catch (error) {
+        console.error("Erro ao registrar cliente:", error);
+        res.status(500).json({ message: "Erro interno do servidor" });
+    }
 }
 
 async function login(req, res) {
