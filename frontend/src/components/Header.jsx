@@ -1,59 +1,65 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useContext } from 'react'; // 1. Importe o useContext
 import { Link, useNavigate } from 'react-router-dom';
-import { FaUser, FaHeart, FaShoppingCart, FaSearch } from 'react-icons/fa';
+import { FaHeart, FaShoppingCart, FaSearch, FaChevronDown } from 'react-icons/fa';
 import './Header.css';
+import { AuthContext } from '../context/AuthContext'; // 2. Importe o seu AuthContext
 
 const Header = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [userName, setUserName] = useState('');
+    const [adminOpen, setAdminOpen] = useState(false);
+    const { user, logout } = useContext(AuthContext); // 3. Consuma os dados do contexto
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        const storedName = localStorage.getItem('userName');
-        if (token && storedName) {
-            setIsLoggedIn(true);
-            setUserName(storedName);
-        } else {
-            setIsLoggedIn(false);
-            setUserName('');
-        }
-    }, []);
-
     const handleLogout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('userName');
-        setIsLoggedIn(false);
-        setUserName('');
-        navigate('/');
-        window.location.reload();
+        logout();
+        navigate('/'); // Redireciona para a home após o logout
     };
 
     return (
         <header className="main-header">
+            {/* Top bar */}
             <div className="header-top">
                 <div className="contact-info">
                     <span>(42)999854-3532</span>
                     <span>bohemian@gmail.com</span>
                 </div>
                 <div className="user-actions">
-                    {isLoggedIn ? (
+                    {/* --- LÓGICA DE EXIBIÇÃO CORRIGIDA --- */}
+                    {user ? (
+                        // Se o usuário estiver logado
                         <>
-                            <span className="user-name">Olá, {userName}</span>
-                            <button onClick={handleLogout} className="user-link">Efetuar Logoff</button>
-                            <Link to="/wishlist" className="user-link icon-container"><FaHeart /></Link>
+                            <span className="welcome-message">Olá, {user.nome}</span>
+
+                            {/* CORREÇÃO AQUI: Use a mesma classe do link de Login */}
+                            <button onClick={handleLogout} className="user-link">Sair</button>
                         </>
                     ) : (
-                        <>
-                            <Link to="/login" className="user-link">Login</Link>
-                            <span> | </span>
-                            <Link to="/wishlist" className="user-link">Wishlist</Link>
-                            <Link to="/wishlist" className="icon-container"><FaHeart /></Link>
-                        </>
+                        // Se não houver usuário logado
+                        <Link to="/login" className="user-link">Login</Link>
                     )}
+                    {/* ------------------------------------ */}
+
+                    {/* Lógica para mostrar o menu de Admin */}
+                    {user && user.role === 'admin' && (
+                        <span className="admin-link" onClick={() => setAdminOpen(!adminOpen)}>
+                            Admin <FaChevronDown />
+                        </span>
+                    )}
+
+                    {user && user.role === 'admin' && adminOpen && (
+                        <div className="admin-dropdown">
+                            <Link to="/dashboard">Dashboard</Link>
+                            <Link to="/admin/products/add">Criar Produto</Link>
+                        </div>
+                    )}
+
+                    <span> | </span>
+                    <Link to="/wishlist" className="user-link">Wishlist</Link>
+                    <Link to="/wishlist" className="icon-container"><FaHeart /></Link>
                     <Link to="/cart" className="icon-container"><FaShoppingCart /></Link>
                 </div>
             </div>
+
+            {/* Bottom bar (sem alterações) */}
             <div className="header-bottom">
                 <div className="logo-container">
                     <Link to="/">
@@ -65,20 +71,8 @@ const Header = () => {
                         <li><Link to="/">Home</Link></li>
                         <li><Link to="/sobre-nos">Sobre Nós</Link></li>
                         <li><Link to="/products">Produtos</Link></li>
-                        <li><Link to="/cart">Comprar</Link></li>
+                        <li><Link to="/comprar">Comprar</Link></li>
                         <li><Link to="/contato">Contato</Link></li>
-                        
-                        {isLoggedIn && (
-                            <li className="admin-menu">
-                                <Link to="/dashboard" className="admin-link">Admin</Link>
-                                <ul className="admin-menu-dropdown">
-                                    <li><Link to="/dashboard">Painel</Link></li>
-                                    <li><Link to="/admin/products">Todos Produtos</Link></li>
-                                    <li><Link to="/admin/products/add">Adicionar Produtos</Link></li>
-                                    <li><Link to="/admin/orders">Pedidos</Link></li>
-                                </ul>
-                            </li>
-                        )}
                     </ul>
                 </nav>
                 <div className="search-container">
@@ -90,4 +84,4 @@ const Header = () => {
     );
 };
 
-export default Header;
+export default Header;  

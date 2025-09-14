@@ -1,60 +1,39 @@
-// backend/models/clienteModel.js
 const db = require('../config/db');
 
-// Função para criar um novo cliente
-async function criarCliente(cliente) {
-  const { nome, email, telefone, senha } = cliente;
-  const [result] = await db.execute(
-    'INSERT INTO cliente (nome, email, telefone, senha) VALUES (?, ?, ?, ?)',
-    // Se o telefone for uma string vazia, converte para null
-    [nome, email, telefone || null, senha]
-  );
-  return result.insertId;
-}
+const clienteModel = {
+    // Função para criar um novo cliente
+    criarCliente: async (clienteData) => {
+        const { nome, telefone, fk_id_usuario } = clienteData;
+        const sql = 'INSERT INTO cliente (nome, telefone, fk_id_usuario) VALUES (?, ?, ?)';
+        const [result] = await db.execute(sql, [nome, telefone || null, fk_id_usuario]);
+        return result.insertId;
+    },
 
-// Função para encontrar um cliente pelo e-mail
-async function buscarClientePorEmail(email) {
-  const [rows] = await db.execute(
-    'SELECT id_cliente, nome, email, senha FROM cliente WHERE email = ?',
-    [email]
-  );
-  return rows[0];
-}
+    // Função para encontrar um cliente pelo e-mail (usada no registro e recuperação de senha)
+    buscarClientePorEmail: async (email) => {
+        // Esta query precisa ser ajustada para o novo modelo de banco de dados
+        const sql = `
+            SELECT c.*, u.login as email, u.senha FROM cliente c
+            JOIN usuario u ON c.fk_id_usuario = u.id_usuario
+            WHERE u.login = ?
+        `;
+        const [rows] = await db.execute(sql, [email]);
+        return rows[0];
+    },
+    
+    // --- FUNÇÃO CORRIGIDA/ADICIONADA ---
+    // Busca os detalhes do perfil do cliente usando o ID do usuário
+    findDetailsByUsuarioId: async (usuarioId) => {
+        const sql = 'SELECT id_cliente, nome, telefone FROM cliente WHERE fk_id_usuario = ?';
+        const [rows] = await db.execute(sql, [usuarioId]);
+        return rows[0];
+    }
+};
 
-function salvarTokenRecuperacao(id_cliente, token, expires) {
-  return new Promise((resolve, reject) => {
-    const query = 'UPDATE cliente SET resetPasswordToken = ?, resetPasswordExpires = ? WHERE id_cliente = ?';
-    db.query(query, [token, expires, id_cliente], (error, results) => {
-      if (error) return reject(error);
-      resolve(results);
-    });
-  });
-}
-
-function buscarClientePorToken(token) {
-  return new Promise((resolve, reject) => {
-    const query = 'SELECT * FROM cliente WHERE resetPasswordToken = ? AND resetPasswordExpires > ?';
-    db.query(query, [token, Date.now()], (error, results) => {
-      if (error) return reject(error);
-      resolve(results[0]);
-    });
-  });
-}
-
-function atualizarSenhaCliente(id_cliente, novaSenhaCriptografada) {
-  return new Promise((resolve, reject) => {
-    const query = 'UPDATE cliente SET senha = ?, resetPasswordToken = NULL, resetPasswordExpires = NULL WHERE id_cliente = ?';
-    db.query(query, [novaSenhaCriptografada, id_cliente], (error, results) => {
-      if (error) return reject(error);
-      resolve(results);
-    });
-  });
-}
-
+// --- CORREÇÃO NO EXPORT ---
+// Exporte a nova função junto com as outras
 module.exports = {
-  criarCliente,
-  buscarClientePorEmail,
-  salvarTokenRecuperacao,
-  buscarClientePorToken,
-  atualizarSenhaCliente,
+    criarCliente: clienteModel.criarCliente,
+    buscarClientePorEmail: clienteModel.buscarClientePorEmail,
+    findDetailsByUsuarioId: clienteModel.findDetailsByUsuarioId // <-- Adicione esta linha
 };

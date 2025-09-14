@@ -49,13 +49,10 @@ const FeaturedProductsSection = () => {
         <section className="featured-products">
             <h2>Produtos em Destaque</h2>
             <div className="products-grid">
-                {products.length > 0 ? (
-                    products.map((product) => (
-                        <ProductCard key={product.produto_id} product={product} />
-                    ))
-                ) : (
-                    <p>Nenhum produto em destaque no momento.</p>
-                )}
+                {products.map((product) => (
+                    // Adicione a key aqui, usando o ID do produto que vem do banco
+                    <ProductCard key={product.id_produto} product={product} />
+                ))}
             </div>
         </section>
     );

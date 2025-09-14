@@ -1,67 +1,90 @@
-// backend/controllers/authController.js
+// loramazer/bohemian-system/bohemian-system-front-back-carrinhos/backend/controllers/authController.js
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { criarCliente, buscarClientePorEmail } = require('../models/clienteModel');
-const crypto = require('crypto');
-const db = require('../config/db');
-const nodemailer = require('nodemailer');
+const usuarioModel = require('../models/usuarioModel'); // O único model para autenticação
+const clienteModel = require('../models/clienteModel'); // Para criar o perfil do cliente
+const colaboradorModel = require('../models/colaboradorModel'); // Para buscar o nome do admin
 
 require('dotenv').config();
-
 const saltRounds = 10;
 
-// Configuração do Nodemailer para o Gmail
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-    },
-});
-
-async function register(req, res) {
+// Função de Login SIMPLIFICADA
+async function login(req, res) {
     try {
-        const { nome, email, telefone, senha } = req.body;
-        const clienteExistente = await buscarClientePorEmail(email);
-        if (clienteExistente) {
-            return res.status(400).json({ message: 'E-mail já cadastrado' });
+        const { email, senha } = req.body;
+
+        // 1. Busca o usuário na tabela centralizada 'usuario'
+        const usuario = await usuarioModel.findByEmail(email);
+        if (!usuario) {
+            return res.status(401).json({ message: 'E-mail ou senha inválidos' });
         }
 
-        const senhaCriptografada = await bcrypt.hash(senha, saltRounds);
+        // 2. Compara a senha
+        const senhaValida = await bcrypt.compare(senha, usuario.senha);
+        if (!senhaValida) {
+            return res.status(401).json({ message: 'E-mail ou senha inválidos' });
+        }
 
-        // --- CORREÇÃO AQUI ---
-        // 1. Crie um objeto com os dados do cliente
-        const dadosDoCliente = {
-            nome: nome,
-            email: email,
-            telefone: telefone,
-            senha: senhaCriptografada
-        };
+        // 3. Busca o nome no perfil correspondente (cliente ou colaborador)
+        let perfilNome = '';
+        if (usuario.role === 'admin') {
+            const colaborador = await colaboradorModel.findDetailsByUsuarioId(usuario.id_usuario);
+            perfilNome = colaborador ? colaborador.nome : 'Admin';
+        } else {
+            const cliente = await clienteModel.findDetailsByUsuarioId(usuario.id_usuario);
+            perfilNome = cliente ? cliente.nome : 'Cliente';
+        }
 
-        // 2. Passe este objeto único para a função criarCliente
-        const id = await criarCliente(dadosDoCliente);
-        // ---------------------
+        // 4. Cria o token com todos os dados necessários
+        const token = jwt.sign(
+            { 
+                id: usuario.id_usuario,
+                email: usuario.login, // O e-mail vem do campo 'login'
+                nome: perfilNome, // O nome vem do perfil
+                role: usuario.role 
+            }, 
+            process.env.JWT_SECRET, 
+            { expiresIn: '2h' }
+        );
 
-        res.status(201).json({ message: 'Cliente cadastrado com sucesso', id });
+        res.json({ message: 'Login realizado com sucesso', token });
     } catch (error) {
-        console.error("Erro ao registrar cliente:", error);
+        console.error("Erro ao fazer login:", error);
         res.status(500).json({ message: "Erro interno do servidor" });
     }
 }
 
-async function login(req, res) {
-  try {
-    const { email, senha } = req.body;
-    const cliente = await buscarClientePorEmail(email);
-    if (!cliente) return res.status(401).json({ message: 'E-mail ou senha inválidos' });
-    const senhaValida = await bcrypt.compare(senha, cliente.senha);
-    if (!senhaValida) return res.status(401).json({ message: 'E-mail ou senha inválidos' });
-    const token = jwt.sign({ id: cliente.id_cliente, email: cliente.email }, process.env.JWT_SECRET, { expiresIn: '2h' });
-    res.json({ message: 'Login realizado com sucesso', token });
-  } catch (error) {
-    console.error("Erro ao fazer login:", error);
-    res.status(500).json({ message: "Erro interno do servidor" });
-  }
+// Função de Registro ATUALIZADA
+async function register(req, res) {
+    try {
+        const { nome, email, telefone, senha } = req.body;
+
+        // Verifica se já existe um usuário com este e-mail
+        const usuarioExistente = await usuarioModel.findByEmail(email);
+        if (usuarioExistente) {
+            return res.status(400).json({ message: 'E-mail já cadastrado' });
+        }
+
+        // 1. Cria o registro na tabela 'usuario'
+        const senhaCriptografada = await bcrypt.hash(senha, saltRounds);
+        const novoUsuarioId = await usuarioModel.create({
+            email: email,
+            senha: senhaCriptografada,
+            role: 'cliente' // Todo registro novo é um cliente
+        });
+
+        // 2. Cria o perfil na tabela 'cliente' e o associa ao usuário
+        const idCliente = await clienteModel.criarCliente({
+            nome: nome,
+            telefone: telefone,
+            fk_id_usuario: novoUsuarioId
+        });
+
+        res.status(201).json({ message: 'Cliente cadastrado com sucesso', id: idCliente });
+    } catch (error) {
+        console.error("Erro ao registrar cliente:", error);
+        res.status(500).json({ message: "Erro interno do servidor" });
+    }
 }
 
 async function forgotPassword(req, res) {

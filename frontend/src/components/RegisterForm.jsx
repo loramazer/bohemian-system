@@ -1,49 +1,42 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import './RegisterForm.css';
+import { useNavigate } from 'react-router-dom';
+import apiClient from '../api'; // 1. Importe o apiClient
+import '../components/RegisterForm.css';
 
 const RegisterForm = () => {
     const [formData, setFormData] = useState({
         nome: '',
         email: '',
         telefone: '',
-        senha: ''
+        senha: '',
     });
+    const [error, setError] = useState('');
     const navigate = useNavigate();
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
+        setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError('');
         try {
-            const response = await fetch('http://localhost:3000/auth/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            });
+            // 2. Use o apiClient para fazer a requisição
+            const response = await apiClient.post('/auth/register', formData);
 
-            const data = await response.json();
-
-            if (response.ok) {
-                alert('Cadastro realizado com sucesso! Faça login para continuar.');
+            // Se o registro for bem-sucedido, redirecione para o login
+            if (response.status === 201) {
                 navigate('/login');
-            } else {
-                alert(data.message || 'Erro ao cadastrar. Tente novamente.');
             }
-        } catch (error) {
-            console.error('Erro de rede:', error);
-            alert('Não foi possível conectar ao servidor. Tente novamente mais tarde.');
+        } catch (err) {
+            // Pega a mensagem de erro do backend, se houver
+            const errorMessage = err.response?.data?.message || 'Erro ao registrar. Tente novamente.';
+            setError(errorMessage);
+            console.error('Erro de rede:', err);
         }
     };
 
+    // ... (seu JSX do formulário continua o mesmo)
     return (
         <div className="register-form-container">
             <h2 className="register-title">Registrar-se</h2>
@@ -65,6 +58,7 @@ const RegisterForm = () => {
                     <label htmlFor="senha">Senha</label>
                     <input type="password" id="senha" name="senha" placeholder="Sua senha" value={formData.senha} onChange={handleChange} required />
                 </div>
+                {error && <p className="error-message">{error}</p>}
                 <button type="submit" className="register-button">Cadastrar</button>
             </form>
         </div>
