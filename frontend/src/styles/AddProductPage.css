@@ -1,0 +1,33 @@
+.add-product-main {
+    padding: 40px 0;
+}
+
+.admin-breadcrumbs {
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    color: #888;
+}
+
+.admin-breadcrumbs a {
+    color: #888;
+    text-decoration: none;
+}
+
+.admin-page-title {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+
+.add-product-card-wrapper {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 40px; 
+    flex-wrap: wrap;
+}

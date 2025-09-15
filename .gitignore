@@ -1,8 +1,6 @@
 # Dependencies
 # Ignora a pasta de dependências na raiz do projeto
-/node_modules/
-backend/node_modules/
-
+**/node_modules
 
 # Environment variables
 # Ignora TODOS os arquivos .env em qualquer pasta do projeto.

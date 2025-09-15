@@ -1,5 +1,7 @@
 const db = require('../config/db');
 
+// Manteremos as suas funções com os nomes originais em português
+
 // Buscar todos os produtos
 async function getAll() {
   const [rows] = await db.execute(`
@@ -11,7 +13,7 @@ async function getAll() {
 
 // Buscar produto por ID
 async function getById(id) {
-  const [rows] = await db.execute('SELECT * FROM produto WHERE id_produto = ?', [id]);
+  const [rows] = await db.execute('SELECT * FROM produto WHERE produto_id = ?', [id]);
   return rows[0];
 }
 
@@ -33,10 +35,10 @@ async function update(id, { nome, preco_venda, descricao = null, status = 'ativo
   return { id_produto: id, nome, preco_venda, descricao, status, imagem_url };
 }
 
-// Deletar produto
+// Remover um produto
 async function remove(id) {
-  await db.execute('DELETE FROM produto WHERE id_produto = ?', [id]);
-  return { message: 'Produto removido com sucesso' };
+  await db.execute('DELETE FROM produto WHERE produto_id = ?', [id]);
 }
 
+// CORREÇÃO: Altere 'create' para 'criar' para corresponder ao nome da função
 module.exports = { getAll, getById, create, update, remove };
