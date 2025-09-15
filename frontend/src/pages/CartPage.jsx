@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import CartItems from '../components/CartItems.jsx';
-import CartSummary from '../components/CartSummary.jsx';
+import CartItems from '../components/CartItems.js';
+import CartSummary from '../components/CartSummary.js';
 
 
 import img1 from '../assets/1.png';
