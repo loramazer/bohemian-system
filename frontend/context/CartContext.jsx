@@ -2,7 +2,10 @@
 
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import apiClient from '../api';
-import { AuthContext } from '../../backend/context/AuthContext';
+// ✅ Correção: Importe o AuthContext de dentro do projeto frontend
+import { AuthContext } from '../src/context/AuthContext.jsx'; // ou o caminho correto, ex: '../context/AuthContext'
+
+// ... resto do seu código
 
 export const CartContext = createContext();
 

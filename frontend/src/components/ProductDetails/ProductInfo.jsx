@@ -2,7 +2,8 @@ import React, { useContext } from 'react';
 import '../../styles/ProductDetails.css';
 import { FaHeart, FaShareAlt, FaShoppingCart } from 'react-icons/fa';
 // Importe o CartContext para acessar a função addItem
-import { CartContext } from '../../context/CartContext.jsx'; 
+import { CartContext } from '../../../context/CartContext';
+import { Link } from 'react-router-dom'; 
 
 const ProductInfo = ({ product }) => {
     // Acesse a função addItem do CartContext

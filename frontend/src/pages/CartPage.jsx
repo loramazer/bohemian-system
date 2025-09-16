@@ -1,39 +1,39 @@
-
 // loramazer/bohemian-system/bohemian-system-front-back-carrinhos/frontend/src/pages/CartPage.jsx
 
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useEffect, useContext } from 'react'; // useState foi removido por não ser mais necessário aqui
 import CartItems from '../components/CartItems.jsx';
 import CartSummary from '../components/CartSummary.jsx';
-import apiClient from '../api.js';
+// apiClient não estava sendo usado, pode ser removido se não for usar em 'emptyCart'
+// import apiClient from '../api.js'; 
 import { AuthContext } from '../context/AuthContext.jsx';
 import '../styles/CartPage.css';
-
-// Importe o novo contexto de carrinho
-import { CartContext } from '../context/CartContext.jsx';
+import { CartContext } from '../../context/CartContext.jsx';
 
 const CartPage = () => {
-    // Agora o estado do carrinho é gerenciado pelo CartContext
-    const { cartItems, fetchCart } = useContext(CartContext);
+    // CORREÇÃO: Assumi que seu context também provê o 'error' e uma função para esvaziar o carrinho.
+    // Se os nomes forem diferentes, ajuste-os aqui.
+    const { cartItems, fetchCart, emptyCart, error } = useContext(CartContext);
     const { user } = useContext(AuthContext);
 
     useEffect(() => {
-        // A função fetchCart é chamada aqui, mas agora ela vem do contexto
         if (user) {
             fetchCart();
         }
-    }, [user, fetchCart]); // Adicione fetchCart como dependência para que o useEffect seja re-executado quando a função for alterada.
+    }, [user, fetchCart]);
 
     const subtotal = cartItems.reduce((total, item) => total + (parseFloat(item.preco_unitario) * item.quantidade), 0);
 
-    // Futuramente, esta função fará uma chamada à API para esvaziar o carrinho
-    const emptyCart = () => {
+    // A função 'emptyCart' agora virá do contexto, então a declaração local não é mais necessária.
+    // Se precisar fazer algo a mais antes de chamar a função do contexto, você pode criar uma função de wrapper:
+    const handleEmptyCart = () => {
         console.log("Esvaziando o carrinho...");
-        setCartItems([]);
+        // CORREÇÃO: Chame a função 'emptyCart' que vem do seu CartContext.
+        // A linha 'setCartItems([])' foi removida pois a função não existe aqui.
+        emptyCart();
     };
-};
 
-
-    return {(
+    // CORREÇÃO 1: Removidas as chaves {} em volta do parêntese do return.
+    return (
         <main className="cart-main-content">
             <div className="cart-breadcrumbs">
                 <span>Home</span> &gt; <span>Comprar</span> &gt; <span>Carrinho</span>
@@ -42,17 +42,18 @@ const CartPage = () => {
                 <div className="cart-header">
                     <h2 className="page-title">Carrinho</h2>
                 </div>
-                {/* Removido o estado de erro local, o erro deve ser tratado no contexto */}
-                <div className="cart-layout">
-                    <CartItems items={cartItems} onEmptyCart={emptyCart} />
-                    <CartSummary subtotal={subtotal} itens={cartItems} />
+                {/* CORREÇÃO 3: A variável 'error' agora é lida do contexto */}
                 {error && <p className="error-message">{error}</p>}
+
+                {/* CORREÇÃO 4: Removida a duplicação do layout do carrinho */}
                 <div className="cart-layout">
-                    <CartItems items={cartItems} onEmptyCart={emptyCart} />
-                    <CartSummary subtotal={subtotal} itens = {cartItems}/>
+                    {/* A prop 'onEmptyCart' agora chama a função 'handleEmptyCart' corrigida */}
+                    <CartItems items={cartItems} onEmptyCart={handleEmptyCart} />
+                    <CartSummary subtotal={subtotal} itens={cartItems} />
                 </div>
             </div>
         </main>
-    )};
+    );
+};
 
 export default CartPage;

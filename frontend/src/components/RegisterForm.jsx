@@ -1,10 +1,3 @@
-<<<<<<< HEAD
-import React from 'react';
-import './RegisterForm.css';
-
-
-const RegisterForm = () => {
-=======
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import apiClient from '../api'; // 1. Importe o apiClient
@@ -44,26 +37,10 @@ const RegisterForm = () => {
     };
 
     // ... (seu JSX do formulário continua o mesmo)
->>>>>>> origin/front-back-carrinhos
     return (
         <div className="register-form-container">
             <h2 className="register-title">Registrar-se</h2>
             <p className="register-subtitle">Por favor, preencha os campos abaixo.</p>
-<<<<<<< HEAD
-            <form className="register-form">
-                <div className="form-group">
-                    <label htmlFor="email">Email Address</label>
-                    <input type="email" id="email" name="email" placeholder="Seu email" required />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="password">Senha</label>
-                    <input type="password" id="password" name="password" placeholder="Sua senha" required />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="phone">Telefone</label>
-                    <input type="tel" id="phone" name="phone" placeholder="Seu telefone" required />
-                </div>
-=======
             <form className="register-form" onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label htmlFor="nome">Nome Completo</label>
@@ -82,7 +59,6 @@ const RegisterForm = () => {
                     <input type="password" id="senha" name="senha" placeholder="Sua senha" value={formData.senha} onChange={handleChange} required />
                 </div>
                 {error && <p className="error-message">{error}</p>}
->>>>>>> origin/front-back-carrinhos
                 <button type="submit" className="register-button">Cadastrar</button>
             </form>
         </div>
