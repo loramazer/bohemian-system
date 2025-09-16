@@ -1,3 +1,34 @@
+<<<<<<< HEAD
+import React, { useState } from 'react';
+import CartItems from '../components/CartItems.js';
+import CartSummary from '../components/CartSummary.js';
+
+
+import img1 from '../assets/1.png';
+import img2 from '../assets/2.png';
+import img3 from '../assets/3.png';
+import img4 from '../assets/4.png';
+import img5 from '../assets/5.png';
+
+import '../styles/CartPage.css';
+
+const IMAGES = [img1, img2, img3, img4, img5];
+
+const cartItemsData = [
+    { id: 1, name: 'Box com Flores Mistas', price: 219.00, quantity: 1, image: IMAGES[0] },
+    { id: 2, name: 'Box com Flores Mistas', price: 219.00, quantity: 1, image: IMAGES[1] },
+    { id: 3, name: 'Box com Flores Mistas', price: 219.00, quantity: 1, image: IMAGES[2] },
+    { id: 4, name: 'Box com Flores Mistas', price: 219.00, quantity: 1, image: IMAGES[3] },
+    { id: 5, name: 'Box com Flores Mistas', price: 219.00, quantity: 1, image: IMAGES[4] },
+];
+
+const CartPage = () => {
+    const [cartItems, setCartItems] = useState(cartItemsData);
+
+    const subtotal = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+    
+    const emptyCart = () => {
+=======
 // loramazer/bohemian-system/bohemian-system-front-back-carrinhos/frontend/src/pages/CartPage.jsx
 
 import React, { useState, useEffect, useContext } from 'react';
@@ -27,7 +58,12 @@ const CartPage = () => {
     // Futuramente, esta função fará uma chamada à API para esvaziar o carrinho
     const emptyCart = () => {
         console.log("Esvaziando o carrinho...");
+<<<<<<< HEAD
         setCartItems([]); // Esta linha precisará ser ajustada para interagir com a API
+=======
+>>>>>>> origin/front-back-carrinhos
+        setCartItems([]);
+>>>>>>> a0969b13e006f36122d1440b4e46bd774d973673
     };
 
     return (
@@ -39,10 +75,23 @@ const CartPage = () => {
                 <div className="cart-header">
                     <h2 className="page-title">Carrinho</h2>
                 </div>
+<<<<<<< HEAD
                 {/* Removido o estado de erro local, o erro deve ser tratado no contexto */}
                 <div className="cart-layout">
                     <CartItems items={cartItems} onEmptyCart={emptyCart} />
                     <CartSummary subtotal={subtotal} itens={cartItems} />
+=======
+<<<<<<< HEAD
+                <div className="cart-layout">
+                    <CartItems items={cartItems} onEmptyCart={emptyCart} />
+                    <CartSummary subtotal={subtotal} />
+=======
+                {error && <p className="error-message">{error}</p>}
+                <div className="cart-layout">
+                    <CartItems items={cartItems} onEmptyCart={emptyCart} />
+                    <CartSummary subtotal={subtotal} itens = {cartItems}/>
+>>>>>>> origin/front-back-carrinhos
+>>>>>>> a0969b13e006f36122d1440b4e46bd774d973673
                 </div>
             </div>
         </main>
