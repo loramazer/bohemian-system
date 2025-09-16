@@ -1,8 +1,6 @@
-// src/context/CartContext.jsx
-
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import apiClient from '../api';
-import { AuthContext } from '../../backend/context/AuthContext';
+import { AuthContext } from "./AuthContext.jsx";
 
 export const CartContext = createContext();
 
@@ -34,7 +32,7 @@ export const CartProvider = ({ children }) => {
                 quantidade: 1, 
                 preco_unitario: produto.preco_venda
             });
-            setCartItems(response.data);
+            fetchCart();
             alert('Produto adicionado ao carrinho!'); 
         } catch (err) {
             console.error("Erro ao adicionar item:", err);
@@ -42,7 +40,27 @@ export const CartProvider = ({ children }) => {
         }
     };
 
-    const value = { cartItems, fetchCart, addItem };
+    const esvaziarCarrinho = async () => {
+      if (!user) {
+        return;
+      }
+      try {
+        await apiClient.delete('/carrinho');
+        setCartItems([]);
+        alert('Carrinho esvaziado!');
+      } catch (err) {
+        console.error("Erro ao esvaziar carrinho:", err);
+        alert('Erro ao esvaziar carrinho. Tente novamente.');
+      }
+    };
+
+    const value = { cartItems, fetchCart, addItem, esvaziarCarrinho };
+
+    useEffect(() => {
+      if (user) {
+        fetchCart();
+      }
+    }, [user, fetchCart]);
 
     return (
         <CartContext.Provider value={value}>

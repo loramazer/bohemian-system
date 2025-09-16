@@ -1,12 +1,22 @@
-const express = require('express');
-const router = express.Router();
-const categoriaController = require('../controllers/categoriaController');
+// loramazer/bohemian-system/bohemian-system-front-back-carrinhos/backend/routes/carrinhoRoutes.js
 
-// CRUD de categorias
-router.get('/', categoriaController.getAll);
-router.get('/:id', categoriaController.getById);
-router.post('/', categoriaController.create);
-router.put('/:id', categoriaController.update);
-router.delete('/:id', categoriaController.remove);
+const express = require("express");
+const router = express.Router();
+const {
+  iniciarCarrinho,
+  adicionarItem,
+  verCarrinho,
+  criarPreferenciaPagamento,
+  esvaziarCarrinho // Adicione a nova função aqui
+} = require("../controllers/carrinhoController");
+const authMiddleware = require("../middlewares/authMiddleware");
+
+router.post("/iniciar", authMiddleware, iniciarCarrinho);
+router.post("/adicionar", authMiddleware, adicionarItem);
+router.get("/", authMiddleware, verCarrinho);
+router.post("/pagamento/criar-preferencia", authMiddleware, criarPreferenciaPagamento);
+
+// NOVA ROTA para esvaziar o carrinho
+router.delete("/", authMiddleware, esvaziarCarrinho);
 
 module.exports = router;
