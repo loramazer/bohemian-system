@@ -1,18 +1,3 @@
-<<<<<<< HEAD
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
-import App from './App.js';
-import './index.css';
-
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </React.StrictMode>
-);
-=======
 // loramazer/bohemian-system/bohemian-system-front-back-carrinhos/frontend/src/main.jsx
 
 import React from 'react';
@@ -31,4 +16,3 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </Router>
   </React.StrictMode>,
 )
->>>>>>> origin/front-back-carrinhos

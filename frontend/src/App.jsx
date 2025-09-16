@@ -19,7 +19,6 @@ import AllOrdersPage from './pages/AllOrdersPage.jsx';
 import ForgotPasswordPage from './pages/ForgotPasswordPage.jsx';
 import ResetPasswordPage from './pages/ResetPasswordPage.jsx';
 import './styles/App.css';
-import { CartProvider } from './context/CartContext';
 // ...
 <AuthProvider>
     <CartProvider>
