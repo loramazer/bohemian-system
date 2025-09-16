@@ -1,3 +1,5 @@
+// src/components/ProductDetails/ProductTabs.jsx
+
 import React, { useState } from 'react';
 import '../../styles/ProductDetails.css';
 

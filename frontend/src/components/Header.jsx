@@ -1,17 +1,17 @@
-import React, { useState, useContext } from 'react'; // 1. Importe o useContext
+import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaHeart, FaShoppingCart, FaSearch, FaChevronDown } from 'react-icons/fa';
+import { FaHeart, FaShoppingCart, FaSearch, FaChevronDown, FaSignOutAlt } from 'react-icons/fa';
 import './Header.css';
-import { AuthContext } from '../context/AuthContext'; // 2. Importe o seu AuthContext
+import { AuthContext } from '../context/AuthContext';
 
 const Header = () => {
     const [adminOpen, setAdminOpen] = useState(false);
-    const { user, logout } = useContext(AuthContext); // 3. Consuma os dados do contexto
+    const { user, logout } = useContext(AuthContext);
     const navigate = useNavigate();
 
     const handleLogout = () => {
         logout();
-        navigate('/'); // Redireciona para a home após o logout
+        navigate('/');
     };
 
     return (
@@ -28,9 +28,9 @@ const Header = () => {
                         // Se o usuário estiver logado
                         <>
                             <span className="welcome-message">Olá, {user.nome}</span>
-
-                            {/* CORREÇÃO AQUI: Use a mesma classe do link de Login */}
-                            <button onClick={handleLogout} className="user-link">Sair</button>
+                            <button onClick={handleLogout} className="user-link icon-container">
+                                Sair <FaSignOutAlt />
+                            </button>
                         </>
                     ) : (
                         // Se não houver usuário logado
@@ -53,7 +53,7 @@ const Header = () => {
                     )}
 
                     <span> | </span>
-                    <Link to="/wishlist" className="user-link">Wishlist</Link>
+                    {/* Apenas o ícone do coração é exibido agora */}
                     <Link to="/wishlist" className="icon-container"><FaHeart /></Link>
                     <Link to="/cart" className="icon-container"><FaShoppingCart /></Link>
                 </div>
@@ -84,4 +84,4 @@ const Header = () => {
     );
 };
 
-export default Header;  
+export default Header;

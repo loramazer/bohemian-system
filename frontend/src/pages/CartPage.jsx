@@ -3,41 +3,31 @@
 import React, { useState, useEffect, useContext } from 'react';
 import CartItems from '../components/CartItems.jsx';
 import CartSummary from '../components/CartSummary.jsx';
-import apiClient from '../api.js'; // Nosso conector da API
-import { AuthContext } from '../context/AuthContext.jsx'; // Para saber se o usuário está logado
+import apiClient from '../api.js';
+import { AuthContext } from '../context/AuthContext.jsx';
 import '../styles/CartPage.css';
 
+// Importe o novo contexto de carrinho
+import { CartContext } from '../context/CartContext.jsx';
+
 const CartPage = () => {
-    const [cartItems, setCartItems] = useState([]);
-    const [error, setError] = useState('');
-    const { user } = useContext(AuthContext); // Pega o usuário do contexto
+    // Agora o estado do carrinho é gerenciado pelo CartContext
+    const { cartItems, fetchCart } = useContext(CartContext);
+    const { user } = useContext(AuthContext);
 
     useEffect(() => {
-        // A função só deve buscar o carrinho se o usuário estiver logado
+        // A função fetchCart é chamada aqui, mas agora ela vem do contexto
         if (user) {
-            const fetchCart = async () => {
-                try {
-                    // Usa o endpoint "verCarrinho" do seu controller
-                    const response = await apiClient.get('/carrinho');
-                    // A API retorna um objeto { carrinho, itens }
-                    setCartItems(response.data.itens || []);
-                } catch (err) {
-                    console.error("Erro ao buscar carrinho:", err);
-                    setError("Não foi possível carregar os itens do carrinho.");
-                }
-            };
-
             fetchCart();
         }
-    }, [user]); // O useEffect será executado sempre que o 'user' mudar
+    }, [user, fetchCart]); // Adicione fetchCart como dependência para que o useEffect seja re-executado quando a função for alterada.
 
-    // A lógica do subtotal precisa usar os nomes dos campos que vêm do backend
     const subtotal = cartItems.reduce((total, item) => total + (parseFloat(item.preco_unitario) * item.quantidade), 0);
 
     // Futuramente, esta função fará uma chamada à API para esvaziar o carrinho
     const emptyCart = () => {
         console.log("Esvaziando o carrinho...");
-        setCartItems([]);
+        setCartItems([]); // Esta linha precisará ser ajustada para interagir com a API
     };
 
     return (
@@ -49,10 +39,10 @@ const CartPage = () => {
                 <div className="cart-header">
                     <h2 className="page-title">Carrinho</h2>
                 </div>
-                {error && <p className="error-message">{error}</p>}
+                {/* Removido o estado de erro local, o erro deve ser tratado no contexto */}
                 <div className="cart-layout">
                     <CartItems items={cartItems} onEmptyCart={emptyCart} />
-                    <CartSummary subtotal={subtotal} itens = {cartItems}/>
+                    <CartSummary subtotal={subtotal} itens={cartItems} />
                 </div>
             </div>
         </main>

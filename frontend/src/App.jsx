@@ -18,8 +18,16 @@ import OrderDetailPage from './pages/OrderDetailPage.jsx';
 import AllOrdersPage from './pages/AllOrdersPage.jsx';
 import ForgotPasswordPage from './pages/ForgotPasswordPage.jsx';
 import ResetPasswordPage from './pages/ResetPasswordPage.jsx';
-
 import './styles/App.css';
+import { CartProvider } from './context/CartContext';
+// ...
+<AuthProvider>
+    <CartProvider>
+        <BrowserRouter>
+            {/* Rotas */}
+        </BrowserRouter>
+    </CartProvider>
+</AuthProvider>
 
 function App() {
   return (

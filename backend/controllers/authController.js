@@ -1,9 +1,9 @@
 // loramazer/bohemian-system/bohemian-system-front-back-carrinhos/backend/controllers/authController.js
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const usuarioModel = require('../models/usuarioModel'); // O único model para autenticação
-const clienteModel = require('../models/clienteModel'); // Para criar o perfil do cliente
-const colaboradorModel = require('../models/colaboradorModel'); // Para buscar o nome do admin
+const usuarioModel = require('../models/usuarioModel');
+const clienteModel = require('../models/clienteModel');
+const colaboradorModel = require('../models/colaboradorModel');
 
 require('dotenv').config();
 const saltRounds = 10;
@@ -13,19 +13,16 @@ async function login(req, res) {
     try {
         const { email, senha } = req.body;
 
-        // 1. Busca o usuário na tabela centralizada 'usuario'
         const usuario = await usuarioModel.findByEmail(email);
         if (!usuario) {
             return res.status(401).json({ message: 'E-mail ou senha inválidos' });
         }
 
-        // 2. Compara a senha
         const senhaValida = await bcrypt.compare(senha, usuario.senha);
         if (!senhaValida) {
             return res.status(401).json({ message: 'E-mail ou senha inválidos' });
         }
 
-        // 3. Busca o nome no perfil correspondente (cliente ou colaborador)
         let perfilNome = '';
         if (usuario.role === 'admin') {
             const colaborador = await colaboradorModel.findDetailsByUsuarioId(usuario.id_usuario);
@@ -35,12 +32,11 @@ async function login(req, res) {
             perfilNome = cliente ? cliente.nome : 'Cliente';
         }
 
-        // 4. Cria o token com todos os dados necessários
         const token = jwt.sign(
             { 
                 id: usuario.id_usuario,
-                email: usuario.login, // O e-mail vem do campo 'login'
-                nome: perfilNome, // O nome vem do perfil
+                email: usuario.login,
+                nome: perfilNome,
                 role: usuario.role 
             }, 
             process.env.JWT_SECRET, 
@@ -59,23 +55,21 @@ async function register(req, res) {
     try {
         const { nome, email, telefone, senha } = req.body;
 
-        // Verifica se já existe um usuário com este e-mail
         const usuarioExistente = await usuarioModel.findByEmail(email);
         if (usuarioExistente) {
             return res.status(400).json({ message: 'E-mail já cadastrado' });
         }
 
-        // 1. Cria o registro na tabela 'usuario'
         const senhaCriptografada = await bcrypt.hash(senha, saltRounds);
         const novoUsuarioId = await usuarioModel.create({
             email: email,
             senha: senhaCriptografada,
-            role: 'cliente' // Todo registro novo é um cliente
+            role: 'cliente'
         });
 
-        // 2. Cria o perfil na tabela 'cliente' e o associa ao usuário
         const idCliente = await clienteModel.criarCliente({
             nome: nome,
+            email: email,
             telefone: telefone,
             fk_id_usuario: novoUsuarioId
         });
@@ -96,7 +90,7 @@ async function forgotPassword(req, res) {
     }
 
     const token = crypto.randomBytes(32).toString('hex');
-    const expiresAt = new Date(Date.now() + 3600000); // 1 hora de validade
+    const expiresAt = new Date(Date.now() + 3600000);
 
     await db.execute('INSERT INTO password_resets (fk_cliente_id, token, expires_at) VALUES (?, ?, ?)', [cliente.id_cliente, token, expiresAt]);
 
@@ -129,8 +123,8 @@ async function forgotPassword(req, res) {
   attachments: [
     {
       filename: 'bohemian-logo.png',
-      path: __dirname + '/../public/bohemian-logo.png', // caminho no backend
-      cid: 'bohemianLogo' // mesmo id usado no src do HTML
+      path: __dirname + '/../public/bohemian-logo.png',
+      cid: 'bohemianLogo'
     }
   ]
 };

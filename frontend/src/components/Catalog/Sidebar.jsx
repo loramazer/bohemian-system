@@ -1,3 +1,5 @@
+// src/components/Catalog/Sidebar.jsx
+
 import React, { useState, useEffect } from 'react';
 import '../../styles/Sidebar.css';
 
@@ -7,7 +9,8 @@ const Sidebar = () => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await fetch('http://localhost:3000/categorias');
+                // CORRIGIDO: Adicionando o prefixo /api
+                const response = await fetch('http://localhost:3000/api/categorias');
                 if (!response.ok) {
                     throw new Error('Erro ao buscar categorias');
                 }

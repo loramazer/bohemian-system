@@ -1,3 +1,5 @@
+// src/pages/ProductDetailsPage.jsx
+
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import ContentWrapper from '../components/ContentWrapper.jsx';
@@ -14,7 +16,9 @@ const ProductDetailsPage = () => {
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const response = await fetch(`http://localhost:3000/produtos/${productId}`);
+                // CORRIGIDO: Adicionando o prefixo /api
+                const response = await fetch(`http://localhost:3000/api/produtos/${productId}`);
+                
                 if (!response.ok) {
                     throw new Error('Erro ao buscar o produto');
                 }

@@ -1,9 +1,10 @@
+// src/components/ProductDetails/ProductGallery.jsx
+
 import React from 'react';
 import '../../styles/ProductDetails.css';
 
-
 const ProductGallery = ({ product }) => {
-    // Usamos o useState para controlar qual imagem é a principal
+    // Verifica se existe a URL da imagem antes de tentar renderizá-la
     const mainImage = product.imagem_url;
 
     return (

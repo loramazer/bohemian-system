@@ -1,3 +1,5 @@
+// src/pages/CatalogPage.jsx
+
 import React, { useState, useEffect } from 'react';
 import ContentWrapper from '../components/ContentWrapper.jsx';
 import Sidebar from '../components/Catalog/Sidebar.jsx';
@@ -14,7 +16,8 @@ const CatalogPage = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await fetch('http://localhost:3000/produtos');
+                // CORRIGIDO: Adicionando o prefixo /api
+                const response = await fetch('http://localhost:3000/api/produtos');
                 if (!response.ok) {
                     throw new Error('Erro ao buscar produtos');
                 }
