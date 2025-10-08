@@ -1,14 +1,10 @@
 # Dependencies
-# Ignora a pasta de dependências na raiz do projeto
 **/node_modules
 
 # Environment variables
-# Ignora TODOS os arquivos .env em qualquer pasta do projeto.
-# É mais seguro que especificar apenas "backend/.env".
 **/.env
 
 # Logs
-# Ignora logs gerados pela aplicação ou pelo npm/yarn
 logs
 *.log
 npm-debug.log*
@@ -16,12 +12,13 @@ yarn-debug.log*
 yarn-error.log*
 
 # IDE / Editor specific files
-# Ignora arquivos de configuração de editores de código
 .vscode/
 .idea/
 .DS_Store
 
 # Build output
-# Ignora pastas de "build" que contêm o código transpilado/final
 /dist
 /build
+
+# Application specific generated files
+backend/uploads/ # NOVO: Ignora a pasta de uploads de arquivos

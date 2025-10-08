@@ -1,33 +1,54 @@
-.add-product-main {
-    padding: 40px 0;
+.add-product-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.admin-breadcrumbs {
-    margin-bottom: 20px;
-    font-size: 0.9rem;
-    color: #888;
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.admin-breadcrumbs a {
-    color: #888;
-    text-decoration: none;
+/* Layout lado a lado para ProductForm e Upload */
+.form-main {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  align-items: flex-start;
 }
 
-.admin-page-title {
-    font-size: 2rem;
-    color: #333;
-    margin-bottom: 30px;
-    text-align: center;
+.form-main > * {
+  flex: 1;
+  min-width: 300px;
 }
 
+/* Container da imagem + botões */
+.upload-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
 
-.add-product-card-wrapper {
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    padding: 30px;
-    display: flex;
-    justify-content: center;
-    gap: 40px; 
-    flex-wrap: wrap;
+/* Botões Salvar e Cancelar juntos */
+.upload-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  width: 100%;
+  justify-content: center; /* centraliza os dois botões */
+}
+
+.upload-buttons .save-btn,
+.upload-buttons .cancel-btn {
+  flex: 1;
+  max-width: 120px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .form-main {
+    flex-direction: column;
+  }
 }
