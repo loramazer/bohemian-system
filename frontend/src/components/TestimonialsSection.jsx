@@ -1,5 +1,5 @@
 import React from 'react';
-import TestimonialCard from './TestimonialCard.jsx';
+import TestimonialCard from './Shared/TestimonialCard.jsx';
 import placeholderImage from '../assets/placeholder-person.png'; // Use o caminho da sua imagem
 
 const testimonialsData = [
