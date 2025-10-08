@@ -91,25 +91,43 @@ exports.esvaziarCarrinho = async (req, res) => {
 
 exports.criarPreferenciaPagamento = async (req, res) => {
     try {
-        const { itens } = req.body;
+        if (!req.user || !req.user.cliente_id) {
+            return res.status(401).json({ error: "Usuário não autenticado." });
+        }
+        const clienteId = req.user.cliente_id;
+        const carrinho = await carrinhoModel.buscarCarrinhoAtivo(clienteId);
+
+        if (!carrinho) {
+            return res.status(404).json({ error: "Carrinho não encontrado para este usuário." });
+        }
+
+        // CORREÇÃO: Busca os itens diretamente do model
+        const itens = await itemModel.listarItens(carrinho.carrinho_id);
+        
+        if (!itens || itens.length === 0) {
+            return res.status(400).json({ error: "O carrinho está vazio." });
+        }
 
         const body = {
             items: itens.map(item => ({
                 title: item.nome_produto,
                 quantity: item.quantidade,
-                unit_price: item.preco_unitario,
+                unit_price: parseFloat(item.preco_unitario), // Garante que é um número
                 currency_id: 'BRL',
             })),
+            // CORREÇÃO: URLs de retorno usando uma variável de ambiente para o frontend
             back_urls: {
-                success: 'http://localhost:3000/pagamento/sucesso', // substitua por sua URL de sucesso
-                failure: 'http://localhost:3000/pagamento/falha',   // substitua por sua URL de falha
-                pending: 'http://localhost:3000/pagamento/pendente', // substitua por sua URL pendente
+                success: `${process.env.FRONTEND_URL}/order-confirmed?status=success`, 
+                failure: `${process.env.FRONTEND_URL}/order-confirmed?status=failure`,
+                pending: `${process.env.FRONTEND_URL}/order-confirmed?status=pending`,
             },
             auto_return: 'approved',
+            // Opcional: Notificações para o backend (Webhook)
+            // notification_url: `${process.env.BACKEND_URL}/api/pagamento/webhook`,
         };
 
         const preferenceResult = await preference.create({ body });
-        res.json({ id: preferenceResult.id });
+        res.json({ id: preferenceResult.id, init_point: preferenceResult.init_point }); // Retorna init_point
     } catch (error) {
         console.error("Erro ao criar preferência de pagamento:", error);
         res.status(500).json({ error: "Erro interno do servidor." });

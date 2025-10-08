@@ -7,6 +7,7 @@ import RecentOrdersTable from '../components/Dashboard/RecentOrdersTable.jsx';
 import OrderDetailsModal from '../components/Dashboard/OrderDetailsModal.jsx';
 import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler } from 'chart.js';
+import apiClient from '../api.js'; // NOVO: Importação do apiClient
 
 import '../styles/Dashboard.css';
 
@@ -33,8 +34,9 @@ const DashboardPage = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const kpisResponse = await fetch('http://localhost:3000/dashboard/kpis');
-                const kpisData = await kpisResponse.json();
+                // CORRIGIDO: Usando apiClient
+                const kpisResponse = await apiClient.get('/dashboard/kpis');
+                const kpisData = kpisResponse.data;
                 setKpis([
                     { title: 'Total Pedidos', value: kpisData.totalPedidos },
                     { title: 'Pedidos Ativos', value: kpisData.pedidosAtivos },
@@ -42,12 +44,13 @@ const DashboardPage = () => {
                     { title: 'Pedidos Previstos', value: kpisData.pedidosPrevistos },
                 ]);
 
-                const bestSellersResponse = await fetch('http://localhost:3000/dashboard/best-sellers');
-                const bestSellersData = await bestSellersResponse.json();
-                setBestSellers(bestSellersData);
+                // CORRIGIDO: Usando apiClient
+                const bestSellersResponse = await apiClient.get('/dashboard/best-sellers');
+                setBestSellers(bestSellersResponse.data);
 
-                const recentOrdersResponse = await fetch('http://localhost:3000/dashboard/recent-orders');
-                const recentOrdersData = await recentOrdersResponse.json();
+                // CORRIGIDO: Usando apiClient
+                const recentOrdersResponse = await apiClient.get('/dashboard/recent-orders');
+                const recentOrdersData = recentOrdersResponse.data;
                 setRecentOrders(recentOrdersData.map(order => ({
                     ...order,
                     valor_total_pedido: parseFloat(order.valor_total_pedido),
@@ -62,9 +65,9 @@ const DashboardPage = () => {
     useEffect(() => {
         const fetchChartData = async () => {
             try {
-                const chartResponse = await fetch(`http://localhost:3000/dashboard/monthly-revenue?period=${chartPeriod}`);
-                const chartData = await chartResponse.json();
-                setMonthlyRevenue(chartData);
+                // CORRIGIDO: Usando apiClient
+                const chartResponse = await apiClient.get(`/dashboard/monthly-revenue?period=${chartPeriod}`);
+                setMonthlyRevenue(chartResponse.data);
             } catch (error) {
                 console.error('Erro ao buscar dados do gráfico:', error);
             }
@@ -74,9 +77,9 @@ const DashboardPage = () => {
 
     const fetchOrderDetails = async (orderId) => {
         try {
-            const response = await fetch(`http://localhost:3000/dashboard/orders/${orderId}`);
-            const data = await response.json();
-            setSelectedOrder(data);
+            // CORRIGIDO: Usando apiClient
+            const response = await apiClient.get(`/dashboard/orders/${orderId}`);
+            setSelectedOrder(response.data);
         } catch (error) {
             console.error('Erro ao buscar detalhes do pedido:', error);
             setSelectedOrder(null);

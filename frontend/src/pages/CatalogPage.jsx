@@ -1,51 +1,48 @@
-// src/pages/CatalogPage.jsx
+// loramazer/bohemian-system/bohemian-system-refatorar-organizacao/frontend/src/components/Catalog/Sidebar.jsx
 
 import React, { useState, useEffect } from 'react';
-import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
-import Sidebar from '../components/Catalog/Sidebar.jsx';
-import ProductGrid from '../components/Catalog/ProductGrid.jsx';
-
-import '../styles/CatalogPage.css';
 import '../styles/Sidebar.css';
-import '../styles/ProductGrid.css';
-import '../styles/ProductCard.css';
+import apiClient from '../api.js'; // NOVO: Importa o cliente Axios
 
-const CatalogPage = () => {
-    const [products, setProducts] = useState([]);
+const Sidebar = () => {
+    const [categories, setCategories] = useState([]);
 
     useEffect(() => {
-        const fetchProducts = async () => {
+        const fetchCategories = async () => {
             try {
-                // CORRIGIDO: Adicionando o prefixo /api
-                const response = await fetch('http://localhost:3000/api/produtos');
-                if (!response.ok) {
-                    throw new Error('Erro ao buscar produtos');
+                // CORRIGIDO: Usando apiClient (Axios)
+                const response = await apiClient.get('/categorias');
+                
+                // Axios retorna o corpo em response.data
+                const data = response.data; 
+                
+                if (!Array.isArray(data)) {
+                    throw new Error('Formato de dados inesperado');
                 }
-                const data = await response.json();
-                setProducts(data);
+                setCategories(data);
             } catch (error) {
-                console.error('Erro ao buscar produtos:', error);
+                console.error('Erro ao buscar categorias:', error);
             }
         };
-        fetchProducts();
+        fetchCategories();
     }, []);
 
     return (
-        <ContentWrapper>
-            <main className="catalog-main">
-                <div className="page-header">
-                    <h2>Comprar Produtos Bohemian</h2>
-                    <div className="filter-sort-controls">
-                        {/* Controles de filtro e ordenação aqui */}
-                    </div>
-                </div>
-                <div className="catalog-layout">
-                    <Sidebar />
-                    <ProductGrid products={products} />
-                </div>
-            </main>
-        </ContentWrapper>
+        <aside className="catalog-sidebar">
+            <div className="filter-group">
+                <h4>Categorias</h4>
+                <ul>
+                    {categories.map((category) => (
+                        <li key={category.id_categoria}>
+                            <input type="checkbox" id={`cat-${category.id_categoria}`} />
+                            <label htmlFor={`cat-${category.id_categoria}`}>{category.nome}</label>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+            {/* Outros grupos de filtro aqui */}
+        </aside>
     );
 };
 
-export default CatalogPage;
+export default Sidebar;

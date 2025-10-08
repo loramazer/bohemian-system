@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import ProductForm from '../components/Catalog/ProductForm.jsx';
+import ProductForm from '../components/Admin/ProductForm.jsx'; 
 import ImageUpload from '../components/Shared/ImageUpload.jsx';
 import '../styles/AddProductPage.css';
 import ContentWrapper from '../components/Shared/ContentWrapper.jsx';

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
+import apiClient from '../api.js'; // NOVO: Importação do apiClient
 import '../styles/ForgotPasswordPage.css';
 
 const ForgotPasswordPage = () => {
@@ -11,20 +12,22 @@ const ForgotPasswordPage = () => {
         e.preventDefault();
         setMessage('Enviando solicitação...');
         try {
-            const response = await fetch('http://localhost:3000/auth/forgot-password', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email }),
-            });
-            const data = await response.json();
-            if (response.ok) {
+            // CORRIGIDO: Usando apiClient.post
+            const response = await apiClient.post('/auth/forgot-password', { email });
+            const data = response.data;
+            
+            // O backend retorna status 200 com uma mensagem genérica por segurança
+            if (response.status === 200) {
                 setMessage('Se as informações estiverem corretas, você receberá um e-mail com as instruções para redefinir sua senha.');
             } else {
+                 // Tratamento de erro via corpo da resposta (se for status 2xx)
                 setMessage(data.message || 'Ocorreu um erro. Por favor, tente novamente.');
             }
         } catch (error) {
+            // Tratamento de erro específico para Axios (captura a mensagem do backend)
+            const errorMessage = error.response?.data?.message || 'Ocorreu um erro de rede. Por favor, verifique sua conexão.';
             console.error('Erro ao solicitar redefinição de senha:', error);
-            setMessage('Ocorreu um erro de rede. Por favor, verifique sua conexão.');
+            setMessage(errorMessage);
         }
     };
 
