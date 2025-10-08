@@ -1,5 +1,5 @@
 import React from 'react';
-import './ProductForm.css';
+import '../../styles/ProductForm.css';
 
 const ProductForm = ({ categories = [], formData = {}, onFormChange, onColorChange }) => {
     return (

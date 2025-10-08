@@ -1,9 +1,9 @@
 import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaHeart, FaShoppingCart, FaSearch, FaChevronDown, FaSignOutAlt } from 'react-icons/fa';
-import './Header.css';
-import { AuthContext } from "../context/AuthContext.jsx";
-import { CartContext } from "../context/CartContext.jsx";
+import '../../styles/Header.css';
+import { AuthContext } from "../../context/AuthContext.jsx";
+import { CartContext } from "../../context/CartContext.jsx";
 
 const Header = () => {
     const [adminOpen, setAdminOpen] = useState(false);

@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import './ImageUpload.css';
+import '../../styles/ImageUpload.css';
 import { FaImage, FaCheckCircle, FaTrashAlt } from 'react-icons/fa';
 
 const ImageUpload = ({ uploadedFiles, onFileChange, onSubmit }) => {

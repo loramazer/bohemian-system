@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import ContentWrapper from '../components/ContentWrapper.jsx';
+import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
 import ProductInfo from '../components/ProductDetails/ProductInfo.jsx';
 import ProductGallery from '../components/ProductDetails/ProductGallery.jsx';
 import ProductTabs from '../components/ProductDetails/ProductTabs.jsx';

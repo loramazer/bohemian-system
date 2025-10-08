@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import ContentWrapper from '../components/ContentWrapper.jsx';
+import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
 import sobreNosImage from '../assets/sobre-nos.png';
 
 import '../styles/AboutPage.css';

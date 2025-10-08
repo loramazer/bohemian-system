@@ -1,5 +1,5 @@
 import React from 'react';
-import ContentWrapper from '../components/ContentWrapper.jsx';
+import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
 
 const AllProductsPage = () => {
     return (

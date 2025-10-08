@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import ProductCard from './ProductCard.jsx';
+import ProductCard from '../Shared/ProductCard.jsx';
 import '../../styles/ProductGrid.css';
 
 const ProductGrid = ({ products }) => {

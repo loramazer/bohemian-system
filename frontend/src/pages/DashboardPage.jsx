@@ -5,7 +5,7 @@ import SalesChart from '../components/Dashboard/SalesChart.jsx';
 import BestSellers from '../components/Dashboard/BestSellers.jsx';
 import RecentOrdersTable from '../components/Dashboard/RecentOrdersTable.jsx';
 import OrderDetailsModal from '../components/Dashboard/OrderDetailsModal.jsx';
-import ContentWrapper from '../components/ContentWrapper.jsx';
+import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler } from 'chart.js';
 
 import '../styles/Dashboard.css';

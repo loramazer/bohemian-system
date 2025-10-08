@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import ProductForm from '../components/Catalog/ProductForm.jsx';
-import ImageUpload from '../components/Catalog/ImageUpload.jsx';
-import './AddProductPage.css';
-import ContentWrapper from '../components/ContentWrapper.jsx';
+import ImageUpload from '../components/Shared/ImageUpload.jsx';
+import '../styles/AddProductPage.css';
+import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
 
 const AddProductPage = () => {
   const [categories, setCategories] = useState([]);

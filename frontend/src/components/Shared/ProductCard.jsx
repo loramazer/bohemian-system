@@ -1,7 +1,7 @@
 import React from 'react';
 import { FaShoppingCart, FaRegHeart } from 'react-icons/fa';
-import '../styles/ProductCard.css';
-import placeholderImage from '../assets/5.png'; // Imagem padrão
+import '../../styles/ProductCard.css';
+import placeholderImage from '../../assets/5.png';
 
 const ProductCard = ({ product }) => {
     // Se não houver produto, não renderiza nada para evitar erros.

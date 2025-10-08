@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import ContentWrapper from '../components/ContentWrapper.jsx';
+import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
 import '../styles/ForgotPasswordPage.css';
 
 const ForgotPasswordPage = () => {

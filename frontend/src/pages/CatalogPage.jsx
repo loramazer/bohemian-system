@@ -1,7 +1,7 @@
 // src/pages/CatalogPage.jsx
 
 import React, { useState, useEffect } from 'react';
-import ContentWrapper from '../components/ContentWrapper.jsx';
+import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
 import Sidebar from '../components/Catalog/Sidebar.jsx';
 import ProductGrid from '../components/Catalog/ProductGrid.jsx';
 

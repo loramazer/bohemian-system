@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import ProductCard from './ProductCard';
+import ProductCard from './Shared/ProductCard';
 import '../styles/FeaturedProductsSection.css';
 import apiClient from '../api';
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import './HeroSection.css'; 
+import '../styles/HeroSection.css'; 
 import mainImage from '../assets/bohemian-floral.png'; 
 
 const HeroSection = () => {
