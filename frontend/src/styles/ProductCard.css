@@ -1,54 +1,68 @@
 .product-card {
-    border: 1px solid #f0f0f0;
-    border-radius: 8px;
+    border: 1px solid #e0e0e0; /* Borda mais suave */
+    border-radius: 12px; /* Cantos mais arredondados */
     padding: 15px;
     background-color: #fff;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); /* Sombra mais destacada */
+    transition: all 0.3s ease;
     position: relative;
     text-align: center;
+    overflow: hidden; /* Garante que elementos internos não vazem */
 }
 
 .product-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-5px) scale(1.02); /* Efeito de elevação sutil */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
+/* --- TAG (NOVIDADE/PROMOÇÃO) --- */
 .product-tag {
     position: absolute;
-    top: 10px;
-    left: 10px;
-    background-color: #e0d4c5;
-    color: #4a4a4a;
-    padding: 5px 10px;
-    border-radius: 5px;
+    top: 0;
+    left: 0;
+    background-color: #5d7a7b; /* Cor primária do tema */
+    color: #ffffff;
+    padding: 5px 15px;
+    border-radius: 12px 0 12px 0; /* Formato de tag moderno */
     font-size: 0.8rem;
     font-weight: bold;
+    z-index: 10;
 }
 
+/* --- IMAGEM --- */
 .product-image-container {
     width: 100%;
-    height: 200px;
+    height: 220px; /* Aumenta a área da imagem */
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
     margin-bottom: 15px;
+    border-radius: 8px; /* Arredonda a borda do container da imagem */
+    background-color: #f8f8f8; /* Fundo leve para imagens com transparência */
 }
 
 .product-image {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
+    transition: transform 0.5s ease;
 }
 
+.product-card:hover .product-image {
+    transform: scale(1.05); /* Efeito de zoom no hover */
+}
+
+/* --- INFORMAÇÕES E PREÇOS --- */
 .product-name {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     color: #333;
-    margin: 0;
+    margin: 5px 0;
+    font-weight: 600;
 }
 
 .product-code {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: #888;
     margin-bottom: 10px;
 }
@@ -56,20 +70,70 @@
 .product-prices {
     display: flex;
     justify-content: center;
-    gap: 10px;
     align-items: baseline;
+    margin-top: 10px;
+    gap: 15px; /* Aumenta o espaço entre os preços */
 }
 
 .old-price {
     text-decoration: line-through;
     color: #a4a4a4;
+    font-size: 0.9rem;
 }
 
 .current-price {
     font-weight: bold;
-    color: #5d7a7b;
-    font-size: 1.1rem;
+    color: #5d7a7b; /* Cor de destaque para o preço atual */
+    font-size: 1.3rem; /* Preço maior e mais visível */
 }
+
+/* --- AÇÕES (Adicionar ao Carrinho/Coração) --- */
+.product-actions {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.product-card:hover .product-actions {
+    opacity: 1;
+}
+
+.add-to-cart-btn {
+    background-color: #5d7a7b;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.add-to-cart-btn:hover {
+    background-color: #4a6263;
+}
+
+.wishlist-btn {
+    background-color: #fff;
+    color: #5d7a7b;
+    border: 1px solid #5d7a7b;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.wishlist-btn:hover {
+    background-color: #f0f8ff;
+}
+
 .product-link-card {
     text-decoration: none;
     color: inherit;

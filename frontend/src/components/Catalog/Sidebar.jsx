@@ -2,19 +2,25 @@
 
 import React, { useState, useEffect } from 'react';
 import '../../styles/Sidebar.css';
+import apiClient from '../../api.js'; // Usando apiClient para consistência
 
 const Sidebar = () => {
     const [categories, setCategories] = useState([]);
+    // Adicione estado para simular os filtros
+    const [priceRange, setPriceRange] = useState(100); 
 
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                // CORRIGIDO: Adicionando o prefixo /api
-                const response = await fetch('http://localhost:3000/api/categorias');
-                if (!response.ok) {
-                    throw new Error('Erro ao buscar categorias');
+                // CORRIGIDO: Usando apiClient
+                const response = await apiClient.get('/categorias');
+                
+                // Axios retorna o corpo em response.data
+                const data = response.data; 
+                
+                if (!Array.isArray(data)) {
+                    throw new Error('Formato de dados inesperado');
                 }
-                const data = await response.json();
                 setCategories(data);
             } catch (error) {
                 console.error('Erro ao buscar categorias:', error);
@@ -30,13 +36,29 @@ const Sidebar = () => {
                 <ul>
                     {categories.map((category) => (
                         <li key={category.id_categoria}>
+                            {/* Ajustado o label para usar nome_categoria para consistência com FeaturedProductsSection */}
                             <input type="checkbox" id={`cat-${category.id_categoria}`} />
-                            <label htmlFor={`cat-${category.id_categoria}`}>{category.nome}</label>
+                            <label htmlFor={`cat-${category.id_categoria}`}>{category.nome_categoria || category.nome}</label> 
                         </li>
                     ))}
                 </ul>
             </div>
-            {/* Outros grupos de filtro aqui */}
+            
+            {/* NOVO: Filtro de Preço (Range Slider) */}
+            <div className="filter-group price-filter">
+                <h4>Filtrar por Preço</h4>
+                <input 
+                    type="range" 
+                    min="0" 
+                    max="500" 
+                    value={priceRange} 
+                    onChange={(e) => setPriceRange(e.target.value)} 
+                />
+                <p>Preço Máximo: R${priceRange},00</p>
+                <button className="apply-filter-btn">Aplicar</button>
+            </div>
+            
+            {/* Outros grupos de filtro aqui, se necessário */}
         </aside>
     );
 };

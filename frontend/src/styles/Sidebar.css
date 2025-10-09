@@ -1,9 +1,38 @@
 .catalog-sidebar {
+    /* Define uma largura de base, mas garante que não ocupe espaço demais */
+    width: 250px; 
+    min-width: 200px; /* Impede que ele fique muito pequeno */
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); 
+    height: fit-content; 
+    flex-shrink: 0; /* IMPEDE QUE A SIDEBAR ENCOLHA */
+}
+
+.catalog-sidebar {
+    width: 250px;
+    min-width: 200px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    height: fit-content;
+    flex-shrink: 0; 
+    
+    /* NOVO: Propriedades para fixar a barra lateral na rolagem */
+    position: sticky;
+    top: 20px; /* Distância do topo da tela */
+    align-self: flex-start; /* Impede que ele estique verticalmente */
+}
+
+.catalog-sidebar {
     width: 250px;
     padding: 20px;
     background-color: #fff;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); /* Sombra mais limpa */
+    height: fit-content; /* Ajusta a altura ao conteúdo */
 }
 
 .filter-group {
@@ -11,9 +40,11 @@
 }
 
 .filter-group h4 {
-    font-size: 1.2rem;
+    font-size: 1.4rem; /* Título maior */
     margin-bottom: 15px;
-    color: #333;
+    color: #5d7a7b; /* Cor principal */
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 10px;
 }
 
 .filter-group ul {
@@ -22,22 +53,27 @@
 }
 
 .filter-group ul li {
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     display: flex;
     align-items: center;
     font-size: 1rem;
     color: #555;
     cursor: pointer;
+    transition: color 0.2s ease;
 }
 
-/* Estilo para os checkboxes personalizados */
+.filter-group ul li:hover {
+    color: #4a6263; /* Efeito hover na lista */
+}
+
+/* Estilo para os checkboxes personalizados (mantido e aprimorado) */
 .filter-group input[type="checkbox"] {
-    display: none; /* Esconde o checkbox padrão */
+    display: none; 
 }
 
 .filter-group input[type="checkbox"] + label {
     position: relative;
-    padding-left: 25px; /* Espaço para o checkbox customizado */
+    padding-left: 30px; 
     cursor: pointer;
 }
 
@@ -47,18 +83,18 @@
     position: absolute;
     left: 0;
     top: 2px;
-    width: 16px;
-    height: 16px;
-    border: 1px solid #ccc;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #ccc; /* Borda mais grossa */
     background-color: #f0f0f0;
-    border-radius: 3px;
+    border-radius: 4px;
     transition: all 0.2s ease-in-out;
 }
 
 /* Cor de fundo e borda quando o checkbox está marcado */
 .filter-group input[type="checkbox"]:checked + label::before {
-    background-color: #603EFF;
-    border-color: #603EFF;
+    background-color: #5d7a7b;
+    border-color: #5d7a7b;
 }
 
 /* O ícone de checkmark quando o checkbox está marcado */
@@ -66,7 +102,16 @@
     content: '✔';
     font-size: 12px;
     position: absolute;
-    top: 2px;
-    left: 3px;
+    top: 3px;
+    left: 4px;
     color: #fff;
+}
+
+/* Responsividade da Sidebar */
+@media (max-width: 768px) {
+    .catalog-sidebar {
+        width: 100%; /* Ocupa a largura total em telas pequenas */
+        margin-bottom: 30px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Sombra mais sutil em mobile */
+    }
 }

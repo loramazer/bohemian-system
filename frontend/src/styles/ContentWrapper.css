@@ -1,6 +1,8 @@
 .content-wrapper {
-    width: 100%;
-    max-width: 1500px;
+    /* Aumenta a largura máxima de 1500px para 1800px ou remove o limite */
+    /* Para maximizar a largura, vamos aumentar significativamente: */
+    max-width: 1800px; /* Aumentado para 1800px (ou use 100% dependendo do design) */
+    width: 90%; /* Garante que haja margem nas laterais */
     margin: 0 auto;
     padding: 20px;
 }

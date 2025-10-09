@@ -1,5 +1,6 @@
 .catalog-main {
     padding: 40px 0;
+    position: relative; /* Define o contexto para a Sidebar sticky */
 }
 
 .page-header {
@@ -11,5 +12,7 @@
 
 .catalog-layout {
     display: flex;
-    gap: 30px;
+    gap: 40px;
+    /* Adiciona uma margem inferior para dar espaço após a rolagem */
+    margin-bottom: 50px; 
 }

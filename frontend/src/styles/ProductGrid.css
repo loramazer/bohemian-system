@@ -1,9 +1,24 @@
 .product-grid-container {
-    flex: 1;
+    flex: 1; /* PERMITE QUE A GRADE OCUPE TODO O ESPAÇO RESTANTE */
 }
 
 .product-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 30px;
+    /* Aumentamos a largura mínima do cartão para que ele use mais espaço */
+    /* Isso permitirá mais colunas na tela, mas com cartões maiores. */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+    gap: 30px; 
+}
+
+/* Responsividade ajustada para telas menores */
+@media (max-width: 1200px) {
+    .product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+}
+@media (max-width: 768px) {
+    .product-grid-container {
+        width: 100%;
+        min-width: unset;
+    }
 }
