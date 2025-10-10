@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import apiClient from '../api'; // 1. Importe o apiClient
-import '../components/RegisterForm.css';
+import '../styles/RegisterForm.css';
 
 const RegisterForm = () => {
     const [formData, setFormData] = useState({

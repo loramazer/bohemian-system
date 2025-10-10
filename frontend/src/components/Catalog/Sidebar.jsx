@@ -1,21 +1,19 @@
-// src/components/Catalog/Sidebar.jsx
+// NOVO CÓDIGO SUGERIDO para frontend/src/components/Catalog/Sidebar.jsx
 
 import React, { useState, useEffect } from 'react';
 import '../../styles/Sidebar.css';
-import apiClient from '../../api.js'; // Usando apiClient para consistência
+import apiClient from '../../api.js'; // Importa o cliente Axios
 
 const Sidebar = () => {
     const [categories, setCategories] = useState([]);
-    // Adicione estado para simular os filtros
     const [priceRange, setPriceRange] = useState(100); 
 
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                // CORRIGIDO: Usando apiClient
+                // CORRIGIDO: Usando apiClient (Axios) para buscar categorias
                 const response = await apiClient.get('/categorias');
                 
-                // Axios retorna o corpo em response.data
                 const data = response.data; 
                 
                 if (!Array.isArray(data)) {
@@ -36,15 +34,14 @@ const Sidebar = () => {
                 <ul>
                     {categories.map((category) => (
                         <li key={category.id_categoria}>
-                            {/* Ajustado o label para usar nome_categoria para consistência com FeaturedProductsSection */}
                             <input type="checkbox" id={`cat-${category.id_categoria}`} />
-                            <label htmlFor={`cat-${category.id_categoria}`}>{category.nome_categoria || category.nome}</label> 
+                            <label htmlFor={`cat-${category.id_categoria}`}>{category.nome}</label>
                         </li>
                     ))}
                 </ul>
             </div>
             
-            {/* NOVO: Filtro de Preço (Range Slider) */}
+            {/* Filtro de Preço (Range Slider) */}
             <div className="filter-group price-filter">
                 <h4>Filtrar por Preço</h4>
                 <input 
@@ -58,7 +55,6 @@ const Sidebar = () => {
                 <button className="apply-filter-btn">Aplicar</button>
             </div>
             
-            {/* Outros grupos de filtro aqui, se necessário */}
         </aside>
     );
 };

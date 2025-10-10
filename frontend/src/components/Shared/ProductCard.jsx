@@ -3,7 +3,8 @@ import { FaShoppingCart, FaRegHeart } from 'react-icons/fa';
 import '../../styles/ProductCard.css';
 import placeholderImage from '../../assets/5.png'; // Caminho para imagem placeholder
 
-const ProductCard = ({ product }) => {
+// NOVO: Adicione 'onAddToCart' nas props
+const ProductCard = ({ product, onAddToCart }) => {
     // Se não houver produto, não renderiza nada para evitar erros.
     // Isso garante que o código não falhe se o objeto 'product' não for passado.
     if (!product) {
@@ -26,6 +27,7 @@ const ProductCard = ({ product }) => {
     }).format(product.preco_venda) : null;
     
     // Determina a tag se houver promoção
+    // Mantendo a lógica de tag que você havia definido
     const tagText = product.preco_promocao ? 'PROMOÇÃO' : (product.tag || null);
 
 
@@ -42,7 +44,8 @@ const ProductCard = ({ product }) => {
                 />
                 
                 <div className="product-actions">
-                    <button className="add-to-cart-btn">
+                    {/* NOVO: Aplica a função onAddToCart no clique do botão */}
+                    <button className="add-to-cart-btn" onClick={onAddToCart}>
                         <FaShoppingCart /> Adicionar ao Carrinho
                     </button>
                     <button className="wishlist-btn">
@@ -56,6 +59,7 @@ const ProductCard = ({ product }) => {
                 {/* <p className="product-code">{product.codigo_produto}</p> */}
                 
                 <div className="product-prices">
+                    {/* Exibe o preço antigo se houver promoção */}
                     {oldPrice && <span className="old-price">{oldPrice}</span>}
                     <span className="current-price">{formattedPrice}</span>
                 </div>

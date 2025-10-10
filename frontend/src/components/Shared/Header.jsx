@@ -4,11 +4,18 @@ import { FaHeart, FaShoppingCart, FaSearch, FaChevronDown, FaSignOutAlt } from '
 import '../../styles/Header.css';
 import { AuthContext } from "../../context/AuthContext.jsx";
 import { CartContext } from "../../context/CartContext.jsx";
+// Importar o logo (assumindo que está em assets/bohemian-logo.png)
+import logoImage from '../../assets/bohemian-logo.png'; 
 
 const Header = () => {
     const [adminOpen, setAdminOpen] = useState(false);
     const { user, logout } = useContext(AuthContext);
+    // RECEBE o estado do carrinho
+    const { cartItems } = useContext(CartContext); 
     const navigate = useNavigate();
+
+    // Calcula o total de itens para o badge
+    const cartCount = cartItems.reduce((total, item) => total + item.quantidade, 0);
 
     const handleLogout = () => {
         logout();
@@ -17,56 +24,57 @@ const Header = () => {
 
     return (
         <header className="main-header">
-            {/* Top bar */}
             <div className="header-top">
                 <div className="contact-info">
                     <span>(42)999854-3532</span>
                     <span>bohemian@gmail.com</span>
                 </div>
-                <div className="user-actions">
-                    {/* --- LÓGICA DE EXIBIÇÃO CORRIGIDA --- */}
+                
+                <div className="user-actions-group">
                     {user ? (
-                        // Se o usuário estiver logado
                         <>
                             <span className="welcome-message">Olá, {user.nome}</span>
-                            <button onClick={handleLogout} className="user-link icon-container">
-                                Sair <FaSignOutAlt />
+                            
+                            {user.role === 'admin' && (
+                                <div className="admin-menu-toggle">
+                                    <span className="admin-link" onClick={() => setAdminOpen(!adminOpen)}>
+                                        Admin <FaChevronDown size={10} />
+                                    </span>
+                                    {adminOpen && (
+                                        <div className="admin-dropdown">
+                                            <Link to="/dashboard">Dashboard</Link>
+                                            <Link to="/admin/products/add">Criar Produto</Link>
+                                            <Link to="/admin/orders">Ver Pedidos</Link>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            <button onClick={handleLogout} className="logout-btn">
+                                Sair <FaSignOutAlt size={14} />
                             </button>
                         </>
                     ) : (
-                        // Se não houver usuário logado
-                        <Link to="/login" className="user-link">Login</Link>
+                        <Link to="/login" className="login-btn">Login</Link>
                     )}
-                    {/* ------------------------------------ */}
-
-                    {/* Lógica para mostrar o menu de Admin */}
-                    {user && user.role === 'admin' && (
-                        <span className="admin-link" onClick={() => setAdminOpen(!adminOpen)}>
-                            Admin <FaChevronDown />
-                        </span>
-                    )}
-
-                    {user && user.role === 'admin' && adminOpen && (
-                        <div className="admin-dropdown">
-                            <Link to="/dashboard">Dashboard</Link>
-                            <Link to="/admin/products/add">Criar Produto</Link>
-                        </div>
-                    )}
-
-                    <span> | </span>
-                    {/* Apenas o ícone do coração é exibido agora */}
-                    <Link to="/wishlist" className="icon-container"><FaHeart /></Link>
-                    <Link to="/cart" className="icon-container"><FaShoppingCart /></Link>
+                    
+                    <Link to="/wishlist" className="icon-link"><FaHeart /></Link>
+                    
+                    {/* Componente do carrinho com badge */}
+                    <Link to="/cart" className="icon-link cart-icon-container">
+                        <FaShoppingCart size={20} />
+                        {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
+                    </Link>
                 </div>
             </div>
 
-            {/* Bottom bar (sem alterações) */}
             <div className="header-bottom">
                 <div className="logo-container">
                     <Link to="/">
-                        <img src="/bohemian-logo.png" alt="Bohemian Home Floral Decor Logo" className="logo" />
+                        <img src={logoImage} alt="Bohemian Home Floral Decor Logo" className="logo" />
                     </Link>
                 </div>
+                
                 <nav className="main-nav">
                     <ul>
                         <li><Link to="/">Home</Link></li>
@@ -76,9 +84,10 @@ const Header = () => {
                         <li><Link to="/contato">Contato</Link></li>
                     </ul>
                 </nav>
+                
                 <div className="search-container">
-                    <input type="text" placeholder="Pesquisar..." />
-                    <button className="search-button"><FaSearch /></button>
+                    <input type="text" placeholder="Pesquisar..." className="search-input" />
+                    <button className="search-button"><FaSearch size={16} /></button>
                 </div>
             </div>
         </header>
