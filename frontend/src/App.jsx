@@ -19,6 +19,7 @@ import AllOrdersPage from './pages/AllOrdersPage.jsx';
 import ForgotPasswordPage from './pages/ForgotPasswordPage.jsx';
 import ResetPasswordPage from './pages/ResetPasswordPage.jsx';
 import './styles/App.css';
+import RequireLoginPage from './pages/RequireLoginPage.jsx'; // NOVO IMPORT
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
         <Route path="/cart" element={<CartPage />} /> 
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/products" element={<CatalogPage />} />
+        <Route path="/require-login" element={<RequireLoginPage />} />
         <Route path="/product/:productId" element={<ProductDetailsPage />} />
         <Route path="/sobre-nos" element={<AboutPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />

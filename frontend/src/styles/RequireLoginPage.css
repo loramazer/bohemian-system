@@ -1,0 +1,77 @@
+/* frontend/src/styles/RequireLoginPage.css */
+
+.require-login-main-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 80px 20px;
+    min-height: 70vh; /* Garante que ocupe a maior parte da tela */
+    background-color: #f8f7fa;
+}
+
+.login-message-box {
+    background-color: #fff;
+    padding: 50px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    max-width: 500px;
+}
+
+.lock-icon {
+    font-size: 3rem;
+    color: #5d7a7b;
+    margin-bottom: 20px;
+}
+
+.message-title {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.message-subtitle {
+    color: #666;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.login-btn, .register-btn {
+    padding: 12px 25px;
+    border-radius: 5px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.login-btn {
+    background-color: #5d7a7b;
+    color: #fff;
+}
+
+.login-btn:hover {
+    background-color: #4a6263;
+}
+
+.register-btn {
+    background-color: #e0e0e0;
+    color: #333;
+    border: 1px solid #ccc;
+}
+
+.register-btn:hover {
+    background-color: #d0d0d0;
+}
+
+.continue-shopping {
+    color: #5d7a7b;
+    text-decoration: underline;
+    font-size: 0.9rem;
+}
