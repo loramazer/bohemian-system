@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
 
+
 import '../styles/RegisterPage.css';
 
 const RegisterPage = () => {

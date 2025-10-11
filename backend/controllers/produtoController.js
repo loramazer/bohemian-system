@@ -3,17 +3,14 @@ const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
 const fs = require('fs');
 
-// Configurar o Cloudinary com suas credenciais do .env
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-// Configuração do multer para salvar a imagem temporariamente
 const upload = multer({ dest: 'uploads/' });
 
-// Função para converter preço "R$ 120,00" em número decimal 120.00
 function formatarPreco(preco) {
     if (!preco) return 0;
     const valor = preco.replace(/\s/g, '').replace('R$', '').replace(',', '.');
@@ -22,9 +19,8 @@ function formatarPreco(preco) {
 
 async function create(req, res) {
     try {
-        let { nome, preco_venda, descricao, status } = req.body;
+        let { nome, preco_venda, descricao, ativo } = req.body;
 
-        // Converte o preço para decimal
         preco_venda = formatarPreco(preco_venda);
 
         let imagem_url = null;
@@ -34,7 +30,7 @@ async function create(req, res) {
             fs.unlinkSync(req.file.path); // remove arquivo temporário
         }
 
-        const novoProduto = await produtoModel.create({ nome, preco_venda, descricao, status, imagem_url });
+        const novoProduto = await produtoModel.create({ nome, preco_venda, descricao, ativo, imagem_url });
         res.status(201).json({ message: 'Produto criado com sucesso', produto: novoProduto });
     } catch (error) {
         console.error('Erro ao criar produto:', error);
@@ -65,7 +61,7 @@ async function getById(req, res) {
 
 async function update(req, res) {
     try {
-        let { nome, preco_venda, descricao, status } = req.body;
+        let { nome, preco_venda, descricao, ativo } = req.body;
 
         // Converte o preço para decimal
         preco_venda = formatarPreco(preco_venda);
@@ -81,7 +77,7 @@ async function update(req, res) {
             fs.unlinkSync(req.file.path);
         }
 
-        const produtoAtualizado = await produtoModel.update(req.params.id, { nome, preco_venda, descricao, status, imagem_url });
+        const produtoAtualizado = await produtoModel.update(req.params.id, { nome, preco_venda, descricao, ativo, imagem_url });
         res.json({ message: 'Produto atualizado com sucesso', produto: produtoAtualizado });
     } catch (error) {
         console.error('Erro ao atualizar produto:', error);
