@@ -19,7 +19,6 @@
     margin-bottom: 60px;
 }
 
-/* Estilos para a galeria, informações e abas */
 .product-gallery {
     display: flex;
     gap: 20px;
@@ -105,4 +104,100 @@
 .tab-button.active {
     color: #5d7a7b;
     border-bottom-color: #5d7a7b;
+}
+
+/* Adicione estas novas classes ao seu ProductDetails.css */
+
+.product-actions {
+    display: flex;
+    gap: 15px;
+    /* Espaço entre os botões */
+    margin: 30px 0;
+    /* Espaçamento vertical */
+}
+
+.add-to-cart-btn,
+.add-to-wishlist-btn {
+    display: inline-flex;
+    /* Alinha o ícone e o texto */
+    align-items: center;
+    gap: 8px;
+    /* Espaço entre o ícone e o texto */
+    padding: 12px 24px;
+    border-radius: 5px;
+    border: 1px solid #5d7a7b;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: all 0.2s ease;
+}
+
+/* Estilo do botão principal (Carrinho) */
+.add-to-cart-btn {
+    background-color: #5d7a7b;
+    color: white;
+}
+
+/* Faz o ícone do carrinho herdar a cor branca do botão */
+.add-to-cart-btn svg {
+    fill: white;
+}
+
+.add-to-cart-btn:hover {
+    background-color: #4a6162;
+    border-color: #4a6162;
+}
+
+/* Estilo do botão secundário (Lista de Desejos) */
+.add-to-wishlist-btn {
+    background-color: transparent;
+    color: #5d7a7b;
+    padding: 12px;
+    /* Deixa o botão quadrado, já que só tem ícone */
+}
+
+/* Mantém a cor do ícone da lista de desejos */
+.add-to-wishlist-btn svg {
+    fill: #5d7a7b;
+}
+
+.add-to-wishlist-btn:hover {
+    background-color: #f0f0f0;
+}
+
+.share-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #666;
+}
+
+.share-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    /* Deixa o fundo circular */
+    transition: all 0.2s ease;
+}
+
+.share-btn svg {
+    fill: #666;
+    /* Cor inicial do ícone */
+    font-size: 1.5rem;
+    /* Tamanho do ícone */
+}
+
+/* Efeito visual ao passar o mouse */
+.share-btn:hover {
+    background-color: #f0f0f0;
+}
+
+.share-btn:hover svg {
+    fill: #333;
+    /* Escurece o ícone ao passar o mouse */
 }

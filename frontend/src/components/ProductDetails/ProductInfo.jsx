@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
 import '../../styles/ProductDetails.css';
 import { FaHeart, FaShareAlt, FaShoppingCart } from 'react-icons/fa';
-// Importe o CartContext para acessar a função addItem
 import { CartContext } from '../../context/CartContext.jsx'; 
 
 const ProductInfo = ({ product }) => {
@@ -38,7 +37,7 @@ const ProductInfo = ({ product }) => {
             </div>
             <p className="product-description">{product.descricao}</p>
             <div className="color-options">
-                <span>Cores:</span>
+                {/*<span>Cores:</span>*/}
                 {/* Aqui você pode mapear as cores se tiver no banco */}
             </div>
             <div className="product-actions">

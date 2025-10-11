@@ -16,7 +16,6 @@ const ProductDetailsPage = () => {
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                // CORRIGIDO: Adicionando o prefixo /api
                 const response = await fetch(`http://localhost:3000/api/produtos/${productId}`);
                 
                 if (!response.ok) {
