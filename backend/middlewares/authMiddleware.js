@@ -22,18 +22,18 @@ const authMiddleware = (req, res, next) => {
     return res.status(401).json({ error: 'Token mal formatado.' });
   }
 
-  // 3. Verifica se o token é válido
-  try {
-    // Substitua 'SEU_SEGREDO_JWT' pela mesma chave que você usa ao criar o token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'sua_chave_secreta');
+try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'sua_chave_secreta');
 
-    // Adiciona o ID do cliente ao objeto 'req' para ser usado nos controllers
-    req.user = { cliente_id: decoded.id }; // Supondo que o ID está no payload do token como 'id'
-
-    return next();
-  } catch (err) {
-    return res.status(401).json({ error: 'Token inválido.' });
-  }
+    // CORREÇÃO: Injeta o ID do perfil (que agora é o ID do cliente/colaborador)
+    // Os controllers do carrinho só precisam de cliente_id, que é o que injetamos aqui.
+    // Se for admin, este campo será o id_colaborador, mas isso só afeta rotas de admin.
+    req.user = { cliente_id: decoded.id }; // <--- CORREÇÃO: Usa 'decoded.id'
+    
+    return next();
+  } catch (err) {
+    return res.status(401).json({ error: 'Token inválido.' });
+  }
 };
 
 module.exports = authMiddleware;

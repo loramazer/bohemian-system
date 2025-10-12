@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import apiClient from '../api'; // 1. Importe o apiClient
+import apiClient from '../api';
+import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 import '../styles/RegisterForm.css';
 
 const RegisterForm = () => {
@@ -10,6 +11,8 @@ const RegisterForm = () => {
         telefone: '',
         senha: '',
     });
+    const [confirmarSenha, setConfirmarSenha] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
@@ -17,9 +20,17 @@ const RegisterForm = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+        if (formData.senha !== confirmarSenha) {
+            setError('As senhas não coincidem!');
+            return; // Impede o envio do formulário
+        }
         try {
             // 2. Use o apiClient para fazer a requisição
             const response = await apiClient.post('/auth/register', formData);
@@ -36,7 +47,6 @@ const RegisterForm = () => {
         }
     };
 
-    // ... (seu JSX do formulário continua o mesmo)
     return (
         <div className="register-form-container">
             <h2 className="register-title">Registrar-se</h2>
@@ -56,7 +66,36 @@ const RegisterForm = () => {
                 </div>
                 <div className="form-group">
                     <label htmlFor="senha">Senha</label>
-                    <input type="password" id="senha" name="senha" placeholder="Sua senha" value={formData.senha} onChange={handleChange} required />
+                    <div className="password-wrapper">
+                        <input
+                            //input dinamico
+                            type={showPassword ? 'text' : 'password'}
+                            id="senha"
+                            name="senha"
+                            placeholder="Sua senha"
+                            value={formData.senha}
+                            onChange={handleChange}
+                            required
+                        />
+                        <button type="button" onClick={togglePasswordVisibility} className="password-toggle-btn"
+                            title={showPassword ? 'Ocultar senha' : 'Mostrar senha'}>
+                            {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+                        </button>
+                    </div>
+                </div>
+                {/* --- NOVO CAMPO ADICIONADO --- */}
+                <div className="form-group">
+                    <label htmlFor="confirmarSenha">Confirmar Senha</label>
+                    <input
+                        // O tipo também é dinâmico para ser consistente
+                        type={showPassword ? 'text' : 'password'}
+                        id="confirmarSenha"
+                        name="confirmarSenha"
+                        placeholder="Confirme sua senha"
+                        value={confirmarSenha}
+                        onChange={(e) => setConfirmarSenha(e.target.value)}
+                        required
+                    />
                 </div>
                 {error && <p className="error-message">{error}</p>}
                 <button type="submit" className="register-button">Cadastrar</button>
