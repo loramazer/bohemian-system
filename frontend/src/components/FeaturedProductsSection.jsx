@@ -13,8 +13,7 @@ const FeaturedProductsSection = () => {
             try {
                 const response = await apiClient.get('/produtos');
 
-                // --- CORREÇÃO AQUI ---
-                // Verifique se a resposta da API é de fato um array antes de usá-la.
+                // Verifica se a resposta da API é um array antes de usá-la.
                 if (Array.isArray(response.data)) {
                     setProducts(response.data.slice(0, 8)); // Pega apenas os 8 primeiros
                 } else {
@@ -23,7 +22,6 @@ const FeaturedProductsSection = () => {
                     setError('Formato de dados inesperado recebido do servidor.');
                     setProducts([]);
                 }
-                // ---------------------
 
             } catch (err) {
                 setError('Não foi possível carregar os produtos.');
@@ -49,7 +47,6 @@ const FeaturedProductsSection = () => {
             <h2>Produtos em Destaque</h2>
             <div className="products-grid">
                 {products.map((product) => (
-                    // Adicione a key aqui, usando o ID do produto que vem do banco
                     <ProductCard key={product.id_produto} product={product} />
                 ))}
             </div>

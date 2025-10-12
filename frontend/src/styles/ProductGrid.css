@@ -1,11 +1,9 @@
 .product-grid-container {
-    flex: 1; /* PERMITE QUE A GRADE OCUPE TODO O ESPAÇO RESTANTE */
+    flex: 1;
 }
 
 .product-grid {
     display: grid;
-    /* Aumentamos a largura mínima do cartão para que ele use mais espaço */
-    /* Isso permitirá mais colunas na tela, mas com cartões maiores. */
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
     gap: 30px; 
 }
