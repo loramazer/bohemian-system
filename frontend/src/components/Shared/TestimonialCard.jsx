@@ -1,5 +1,8 @@
+// frontend/src/components/Shared/TestimonialCard.jsx
+
 import React from 'react';
 import { FaFeatherAlt } from 'react-icons/fa';
+import '../../styles/TestimonialCard.css'; // Garantir que o CSS está linkado
 
 const TestimonialCard = ({ imageSrc, name, text, tag }) => {
     return (
@@ -13,9 +16,7 @@ const TestimonialCard = ({ imageSrc, name, text, tag }) => {
                 </p>
                 <h3 className="testimonial-name">{name}</h3>
                 <p className="testimonial-text">{text}</p>
-                <a href="#" className="read-more-link">
-                    Ler Mais
-                </a>
+                {/* O link 'Ler Mais' FOI REMOVIDO daqui */}
             </div>
         </div>
     );

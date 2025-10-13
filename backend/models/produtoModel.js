@@ -4,11 +4,19 @@ const db = require('../config/db');
 
 // Buscar todos os produtos
 async function getAll() {
-  // CORRIGIDO: Removendo o whitespace e nova linha antes do SELECT
-  const [rows] = await db.execute(`SELECT id_produto, nome, preco_venda, descricao, ativo, imagem_url FROM produto`);
-  return rows;
+  const [rows] = await db.execute(`
+    SELECT 
+      id_produto, 
+      nome, 
+      preco_venda, 
+      descricao, 
+      -- CORREÇÃO: Altera 'ativo' para 'status'
+      status, 
+      imagem_url 
+    FROM produto
+  `);
+  return rows;
 }
-
 // Buscar produto por ID
 async function getById(id) {
   // CORRIGIDO: A coluna `produto_id` foi alterada para `id_produto`
