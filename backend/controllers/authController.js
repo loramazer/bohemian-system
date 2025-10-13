@@ -35,18 +35,22 @@ async function login(req, res) {
             return res.status(401).json({ message: 'E-mail ou senha inválidos' });
         }
 
+        let perfilId = null; // Inicializa perfilId
         let perfilNome = '';
         if (usuario.admin) {
             const colaborador = await colaboradorModel.findDetailsByUsuarioId(usuario.id_usuario);
             perfilNome = colaborador ? colaborador.nome : 'Admin';
+            perfilId = colaborador ? colaborador.id_colaborador : null; 
         } else {
             const cliente = await clienteModel.findDetailsByUsuarioId(usuario.id_usuario);
             perfilNome = cliente ? cliente.nome : 'Cliente';
+            perfilId = cliente ? cliente.id_cliente : null; // <--- CORREÇÃO CRÍTICA AQUI
         }
 
         const token = jwt.sign(
             { 
-                id: usuario.id_usuario,
+                // ID agora representa o ID do perfil (cliente_id ou colaborador_id)
+                id: perfilId, // <--- ID do Cliente ou Colaborador
                 email: usuario.login,
                 nome: perfilNome,
                 admin: usuario.admin 

@@ -1,42 +1,55 @@
-.categories-section {
-    padding: 60px 20px;
+/* frontend/src/styles/CategoriesSection.css */
+
+.categories-container {
+    padding: 60px 5vw; /* Aumenta o padding lateral */
     background-color: #f8f7fa;
-    text-align: center; /* Centraliza o título */
+    text-align: center;
 }
 
-.categories-tabs {
-    display: flex;
-    justify-content: center; /* Centraliza os botões de categoria */
-    gap: 20px;
-    margin-top: 30px;
+.categories-container h2 {
+    font-size: 2rem;
     margin-bottom: 40px;
+    color: #333;
 }
 
-.tab-button {
-    background-color: transparent;
-    border: none;
-    color: #888;
-    font-size: 1.1rem;
-    cursor: pointer;
-    padding: 10px 15px;
-    border-bottom: 2px solid transparent;
-    transition: all 0.3s ease;
-}
-
-.tab-button.active {
-    color: #5d7a7b;
-    border-bottom: 2px solid #5d7a7b;
-    font-weight: bold;
-}
-
-.categories-section .products-grid {
+.categories-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    /* NOVO: Força a grade a ter 5 colunas (ou o máximo possível) com um mínimo de 150px */
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
     gap: 20px;
-    margin-top: 30px;
-    justify-content: center;
-    align-items: center;
     max-width: 1200px;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 0 auto;
+}
+
+/* NOVO: Estilização do card de categoria (o link) */
+.category-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 10px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+    color: #333;
+    transition: transform 0.2s, box-shadow 0.2s;
+    min-height: 150px; /* Garante altura mínima para cada card */
+}
+
+.category-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.category-icon {
+    font-size: 2.5rem;
+    color: #5d7a7b; /* Cor principal do tema */
+    margin-bottom: 10px;
+}
+
+.category-card p {
+    font-weight: bold;
+    font-size: 1rem;
+    margin: 0;
 }

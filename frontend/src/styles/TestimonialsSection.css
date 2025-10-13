@@ -1,6 +1,9 @@
+/* frontend/src/styles/TestimonialsSection.css */
+
 .testimonials-section {
     padding: 60px 20px;
     text-align: center;
+    background-color: #f8f7fa; 
 }
 
 .section-title {
@@ -9,9 +12,95 @@
     margin-bottom: 50px;
 }
 
+/* O wrapper principal do carrossel (Centraliza o conjunto: Botões + Janela) */
+.testimonials-display-wrapper {
+    display: flex;
+    align-items: center; 
+    justify-content: center;
+    max-width: 1200px; 
+    margin: 0 auto;
+    position: relative;
+    /* CRÍTICO: Espaço nas laterais para que os botões fiquem visíveis ao lado da janela */
+    padding: 0 60px; 
+}
+
+/* 1. JANELA DE VISUALIZAÇÃO */
+/* CRÍTICO: Limita a área visível a 100% da largura disponível */
+.carousel-window {
+    width: 100%;
+    overflow: hidden; /* CRÍTICO: Esconde o conteúdo que está fora da janela */
+}
+
+/* 2. GRADE DE CARDS (O Elemento MÓVEL) */
 .testimonials-grid {
+    display: flex; /* CRÍTICO: Usa FLEX para alinhar todos os cards em uma linha */
+    gap: 30px; 
+    transition: transform 0.5s ease-in-out; 
+    
+    /* Define a largura total para acomodar todos os cards em uma única linha. 
+       Se você tem 4 cards, a largura deve ser 4x a largura de 1 card + os gaps. */
+    width: 400%; 
+}
+
+/* 3. Estilo do card individual (CRÍTICO: Define a largura exata do slot) */
+.testimonial-card {
+    flex-shrink: 0; /* Impede que os cards encolham */
+    box-sizing: border-box;
+    /* CRÍTICO: Calcula a largura do card para que ele ocupe 1/4 da largura total 
+       (já que o grid tem 400% e queremos 3 visíveis) */
+    /* (100% / 4 cards) - ajuste de gap. O gap principal é tratado pelo grid. */
+    width: calc(25% - 22.5px); 
+    max-width: 400px;
+    white-space: normal; /* Garante que o texto se quebre dentro do card */
+    
+    /* Sugestão para correção visual */
+    min-height: 350px; 
+}
+
+/* Controles de navegação (setas laterais) */
+.control-btn.side-btn {
+    /* CRÍTICO: Posiciona os botões lateralmente, fora da janela de visualização */
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    
+    background-color: #5d7a7b;
+    color: #fff;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     display: flex;
     justify-content: center;
-    gap: 30px;
-    flex-wrap: wrap;
+    align-items: center;
+    padding: 0;
+}
+
+.control-btn.prev-btn {
+    left: 0; /* Alinha o botão esquerdo na borda */
+}
+
+.control-btn.next-btn {
+    right: 0; /* Alinha o botão direito na borda */
+}
+
+/* REMOVIDO: O indicador de página não é mais necessário para o carrossel infinito */
+.page-indicator-bottom {
+    display: none; 
+}
+
+/* Responsividade */
+@media (max-width: 900px) {
+    .testimonial-card {
+        width: calc(50% - 15px); /* 2 cards em tablets */
+    }
+}
+@media (max-width: 600px) {
+    .testimonials-display-wrapper {
+        padding: 0 40px; /* Adiciona espaço para os botões */
+    }
+    .testimonial-card {
+        width: 100%; /* 1 card em mobile */
+    }
 }
