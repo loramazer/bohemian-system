@@ -24,10 +24,10 @@ const usuarioModel = {
      * @returns {Promise<number>} O ID do usuário criado.
      */
     create: async (userData) => {
-        const { email, senha, role } = userData;
-        const sql = 'INSERT INTO usuario (login, senha, role) VALUES (?, ?, ?)';
+        const { email, senha, admin } = userData;
+        const sql = 'INSERT INTO usuario (login, senha, admin) VALUES (?, ?, ?)';
         try {
-            const [result] = await db.query(sql, [email, senha, role]);
+            const [result] = await db.query(sql, [email, senha, admin]);
             return result.insertId;
         } catch (error) {
             console.error("Erro ao criar usuário:", error);

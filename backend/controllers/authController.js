@@ -36,11 +36,10 @@ async function login(req, res) {
         }
 
         let perfilNome = '';
-        if (usuario.role === 'admin') {
+        if (usuario.admin) {
             const colaborador = await colaboradorModel.findDetailsByUsuarioId(usuario.id_usuario);
             perfilNome = colaborador ? colaborador.nome : 'Admin';
         } else {
-            // Utilizando findDetailsByUsuarioId para clientes também
             const cliente = await clienteModel.findDetailsByUsuarioId(usuario.id_usuario);
             perfilNome = cliente ? cliente.nome : 'Cliente';
         }
@@ -50,7 +49,7 @@ async function login(req, res) {
                 id: usuario.id_usuario,
                 email: usuario.login,
                 nome: perfilNome,
-                role: usuario.role 
+                admin: usuario.admin 
             }, 
             process.env.JWT_SECRET, 
             { expiresIn: '2h' }
@@ -77,7 +76,7 @@ async function register(req, res) {
         const novoUsuarioId = await usuarioModel.create({
             email: email,
             senha: senhaCriptografada,
-            role: 'cliente'
+            admin: 0
         });
 
         const idCliente = await clienteModel.criarCliente({
