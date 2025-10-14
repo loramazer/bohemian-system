@@ -38,13 +38,9 @@ async function login(req, res) {
         let perfilId = null; // Inicializa perfilId
         let perfilNome = '';
         if (usuario.admin) {
-            const colaborador = await colaboradorModel.findDetailsByUsuarioId(usuario.id_usuario);
-            perfilNome = colaborador ? colaborador.nome : 'Admin';
-            perfilId = colaborador ? colaborador.id_colaborador : null; 
+             
         } else {
-            const cliente = await clienteModel.findDetailsByUsuarioId(usuario.id_usuario);
-            perfilNome = cliente ? cliente.nome : 'Cliente';
-            perfilId = cliente ? cliente.id_cliente : null; // <--- CORREÇÃO CRÍTICA AQUI
+            
         }
 
         const token = jwt.sign(
@@ -83,26 +79,13 @@ async function register(req, res) {
             admin: 0
         });
 
-        const idCliente = await clienteModel.criarCliente({
-            nome: nome,
-            email: email,
-            telefone: telefone,
-            fk_id_usuario: novoUsuarioId
-        });
-
-        res.status(201).json({ message: 'Cliente cadastrado com sucesso', id: idCliente });
-    } catch (error) {
-        console.error("Erro ao registrar cliente:", error);
-        res.status(500).json({ message: "Erro interno do servidor" });
-    }
-}
 
 async function forgotPassword(req, res) {
   const { email } = req.body;
   try {
     // CORRIGIDO: Usando buscarClientePorEmail do model
-    const cliente = await clienteModel.buscarClientePorEmail(email); 
-    if (!cliente) {
+    const usuario= await usuarioModel.findByEmail(email);
+    if (!usuario){
         return res.status(200).json({ message: 'Se as informações estiverem corretas, você receberá um e-mail com as instruções para redefinir sua senha.' });
     }
 
@@ -110,14 +93,14 @@ async function forgotPassword(req, res) {
     const expiresAt = new Date(Date.now() + 3600000);
 
     // db.execute agora está disponível
-    await db.execute('INSERT INTO password_resets (fk_cliente_id, token, expires_at) VALUES (?, ?, ?)', [cliente.id_cliente, token, expiresAt]);
+    await db.execute('INSERT INTO password_resets (fk_usuario_id, token, expires_at) VALUES (?, ?, ?)', [usuario.id_usuario, token, expiresAt]);
 
     // CORRIGIDO: Adicionado / antes de reset-password
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${token}`;
 
    const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: cliente.email,
+      to: usuario.login,
       subject: 'Redefinição de Senha - Bohemian Floral',
       html: `
         <div style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
@@ -167,14 +150,6 @@ async function resetPassword(req, res) {
 
     if (!resetToken) {
         return res.status(400).json({ message: 'Token inválido ou expirado.' });
-    }
-    
-    // 2. Encontrar o usuário (tabela 'usuario') através do cliente (tabela 'cliente')
-    const [clienteRows] = await db.execute('SELECT fk_usuario_id_usuario FROM cliente WHERE id_cliente = ?', [resetToken.fk_cliente_id]);
-    const usuarioId = clienteRows[0].fk_usuario_id_usuario;
-
-    if (!usuarioId) {
-        return res.status(500).json({ message: 'Erro: Usuário principal não encontrado.' });
     }
 
     const newPasswordHash = await bcrypt.hash(newPassword, saltRounds);

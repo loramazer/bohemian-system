@@ -4,7 +4,6 @@ import { FaHeart, FaShoppingCart, FaSearch, FaChevronDown, FaSignOutAlt } from '
 import '../../styles/Header.css';
 import { AuthContext } from "../../context/AuthContext.jsx";
 import { CartContext } from "../../context/CartContext.jsx";
-// Importar o logo (assumindo que está em assets/bohemian-logo.png)
 import logoImage from '../../assets/bohemian-logo.png'; 
 
 const Header = () => {
