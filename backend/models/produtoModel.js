@@ -10,8 +10,7 @@ async function getAll() {
       nome, 
       preco_venda, 
       descricao, 
-      -- CORREÇÃO: Altera 'ativo' para 'status'
-      status, 
+      ativo, 
       imagem_url 
     FROM produto
   `);

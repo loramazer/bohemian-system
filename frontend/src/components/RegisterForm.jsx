@@ -65,25 +65,23 @@ const RegisterForm = () => {
                     <input type="tel" id="telefone" name="telefone" placeholder="Seu telefone" value={formData.telefone} onChange={handleChange} required />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="senha">Senha</label>
-                    <div className="password-wrapper">
-                        <input
-                            //input dinamico
-                            type={showPassword ? 'text' : 'password'}
-                            id="senha"
-                            name="senha"
-                            placeholder="Sua senha"
-                            value={formData.senha}
-                            onChange={handleChange}
-                            required
-                        />
+                    <div className="label-wrapper"> {/* Novo div para alinhar label e ícone */}
+                        <label htmlFor="senha">Senha</label>
                         <button type="button" onClick={togglePasswordVisibility} className="password-toggle-btn"
                             title={showPassword ? 'Ocultar senha' : 'Mostrar senha'}>
                             {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
                         </button>
                     </div>
+                    <input
+                        type={showPassword ? 'text' : 'password'}
+                        id="senha"
+                        name="senha"
+                        placeholder="Sua senha"
+                        value={formData.senha}
+                        onChange={handleChange}
+                        required
+                    />
                 </div>
-                {/* --- NOVO CAMPO ADICIONADO --- */}
                 <div className="form-group">
                     <label htmlFor="confirmarSenha">Confirmar Senha</label>
                     <input
