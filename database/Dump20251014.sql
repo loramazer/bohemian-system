@@ -16,6 +16,25 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `carrinho`
+--
+
+DROP TABLE IF EXISTS `carrinho`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `carrinho` (
+  `id_carrinho` int NOT NULL AUTO_INCREMENT,
+  `id_usuario` int NOT NULL,
+  `criado_em` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `atualizado_em` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `status` enum('ativo','convertido','abandonado') DEFAULT 'ativo',
+  PRIMARY KEY (`id_carrinho`),
+  KEY `fk_carrinho_usuario` (`id_usuario`),
+  CONSTRAINT `fk_carrinho_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `categoria`
 --
 
@@ -122,7 +141,7 @@ CREATE TABLE `item_carrinho` (
   CONSTRAINT `fk_itemcarrinho_carrinho` FOREIGN KEY (`id_carrinho`) REFERENCES `carrinho` (`id_carrinho`),
   CONSTRAINT `fk_itemcarrinho_produto` FOREIGN KEY (`id_produto`) REFERENCES `produto` (`id_produto`),
   CONSTRAINT `item_carrinho_chk_1` CHECK ((`quantidade` > 0))
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -277,7 +296,7 @@ CREATE TABLE `usuario` (
   UNIQUE KEY `login` (`login`),
   KEY `fk_usuario_endereco` (`fk_id_endereco`),
   CONSTRAINT `fk_usuario_endereco` FOREIGN KEY (`fk_id_endereco`) REFERENCES `endereco` (`id_endereco`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -374,4 +393,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-10-13 22:07:37
+-- Dump completed on 2025-10-14 21:19:47

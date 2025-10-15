@@ -14,18 +14,19 @@ const ProductGrid = ({ products }) => {
 
     // NOVO: Função para lidar com o clique no botão "Adicionar ao Carrinho"
     const handleAddToCartClick = (e, product) => {
-        // Impede a navegação para a página de detalhes
         e.preventDefault(); 
         e.stopPropagation();
 
         if (!user) {
-            // Se o usuário não estiver logado, redireciona para a página de aviso
             navigate('/require-login'); 
             return;
         }
+        try { addItem(product); 
+        } catch (error) {
+            alert('Falha ao adicionar o produto. Tente novamente.');
+            console.error('Erro ao adicionar ao carrinho:', error);
+        }
         
-        // Se estiver logado, adiciona o item
-        addItem(product);
     };
 
     return (

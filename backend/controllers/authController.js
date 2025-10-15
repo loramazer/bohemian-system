@@ -1,26 +1,23 @@
 // loramazer/bohemian-system/bohemian-system-front-back-carrinhos/backend/controllers/authController.js
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const crypto = require('crypto'); // NOVO: Módulo para gerar tokens de reset
-const nodemailer = require('nodemailer'); // NOVO: Módulo para envio de e-mail
-const db = require('../config/db'); // NOVO: Módulo para interagir com 'password_resets'
+const crypto = require('crypto'); 
+const nodemailer = require('nodemailer'); 
+const db = require('../config/db'); 
 const usuarioModel = require('../models/usuarioModel');
-const clienteModel = require('../models/clienteModel');
-const colaboradorModel = require('../models/colaboradorModel');
+const carrinhoModel = require('../models/carrinhoModel');
 
 require('dotenv').config();
 const saltRounds = 10;
 
-// NOVO: Configuração do nodemailer (necessário para forgotPassword)
 const transporter = nodemailer.createTransport({
-    service: 'gmail', // Defina o seu provedor (e.g., 'gmail')
+    service: 'gmail', 
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
     }
 });
 
-// Função de Login SIMPLIFICADA
 async function login(req, res) {
     try {
         const { email, senha } = req.body;
@@ -35,8 +32,12 @@ async function login(req, res) {
             return res.status(401).json({ message: 'E-mail ou senha inválidos' });
         }
 
-        let perfilId = null; // Inicializa perfilId
-        let perfilNome = '';
+        const carrinho = await carrinhoModel.buscarCarrinhoAtivo(usuario.id_usuario);
+        if (!carrinho) {
+            await carrinhoModel.criarCarrinho(usuario.id_usuario);
+            console.log(`Carrinho criado para o usuário ${usuario.id_usuario} durante o login.`);
+        }
+
         if (usuario.admin) {
              
         } else {
@@ -45,10 +46,9 @@ async function login(req, res) {
 
         const token = jwt.sign(
             { 
-                // ID agora representa o ID do perfil (cliente_id ou colaborador_id)
-                id: perfilId, // <--- ID do Cliente ou Colaborador
+                id: usuario.id_usuario, 
                 email: usuario.login,
-                nome: perfilNome,
+                nome: usuario.nome,
                 admin: usuario.admin 
             }, 
             process.env.JWT_SECRET, 
@@ -62,10 +62,9 @@ async function login(req, res) {
     }
 }
 
-// Função de Registro ATUALIZADA
 async function register(req, res) {
     try {
-        const { nome, email, telefone, senha } = req.body;
+        const { nome, telefone, email, senha } = req.body;
 
         const usuarioExistente = await usuarioModel.findByEmail(email);
         if (usuarioExistente) {
@@ -74,16 +73,25 @@ async function register(req, res) {
 
         const senhaCriptografada = await bcrypt.hash(senha, saltRounds);
         const novoUsuarioId = await usuarioModel.create({
+            nome: nome,
+            telefone: telefone,
             email: email,
             senha: senhaCriptografada,
             admin: 0
         });
+        if (novoUsuarioId) {
+            await carrinhoModel.criarCarrinho(novoUsuarioId);
+        }
+        res.status(201).json({ message: 'Usuário registrado com sucesso!' });
+      }catch (error) {
+        res.status(500).json({ message: 'Erro interno do servidor ao registrar usuário.' });
+  }
+}
 
 
 async function forgotPassword(req, res) {
   const { email } = req.body;
   try {
-    // CORRIGIDO: Usando buscarClientePorEmail do model
     const usuario= await usuarioModel.findByEmail(email);
     if (!usuario){
         return res.status(200).json({ message: 'Se as informações estiverem corretas, você receberá um e-mail com as instruções para redefinir sua senha.' });

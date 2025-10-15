@@ -5,26 +5,22 @@ import placeholderImage from '../../assets/5.png';
 import { Link, useNavigate } from 'react-router-dom';
 
 const ProductCard = ({ product, onAddToCart }) => {
-    // Se não houver produto, não renderiza nada.
     if (!product) {
         return null;
     }
 
     const priceToFormat = product.preco_promocao || product.preco_venda;
     
-    // Formata o preço para o padrão brasileiro
     const formattedPrice = new Intl.NumberFormat('pt-BR', {
         style: 'currency',
         currency: 'BRL',
     }).format(priceToFormat);
 
-    // Determina o preço antigo (riscado) se houver promoção
     const oldPrice = product.preco_promocao ? new Intl.NumberFormat('pt-BR', {
         style: 'currency',
         currency: 'BRL',
     }).format(product.preco_venda) : null;
     
-    // Determina a tag se houver promoção
     const tagText = product.preco_promocao ? 'PROMOÇÃO' : (product.tag || null);
 
 

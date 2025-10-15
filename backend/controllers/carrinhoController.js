@@ -8,15 +8,15 @@ const preference = new Preference(client);
 
 exports.iniciarCarrinho = async (req, res) => {
     try {
-        if (!req.user || !req.user.cliente_id) {
+        if (!req.user || !req.user.id) {
             return res.status(401).json({ error: "Usuário não autenticado." });
         }
-        const clienteId = req.user.cliente_id;
-        let carrinho = await carrinhoModel.buscarCarrinhoAtivo(clienteId);
+        const usuarioId = req.user.id;
+        let carrinho = await carrinhoModel.buscarCarrinhoAtivo(usuarioId);
 
         if (!carrinho) {
-            const novoCarrinhoId = await carrinhoModel.criarCarrinho(clienteId);
-            carrinho = { carrinho_id: novoCarrinhoId, cliente_id: clienteId, status: "ATIVO" };
+            const novoCarrinhoId = await carrinhoModel.criarCarrinho(usuarioId);
+            carrinho = { id_carrinho: novoCarrinhoId, usuario_id: usuarioId, status: "ATIVO" };
         }
 
         res.json(carrinho);
@@ -28,19 +28,19 @@ exports.iniciarCarrinho = async (req, res) => {
 
 exports.adicionarItem = async (req, res) => {
     try {
-        if (!req.user || !req.user.cliente_id) {
+        if (!req.user || !req.user.id) {
             return res.status(401).json({ error: "Usuário não autenticado." });
         }
         const { produto_id, quantidade, preco_unitario } = req.body;
-        const clienteId = req.user.cliente_id;
-        const carrinho = await carrinhoModel.buscarCarrinhoAtivo(clienteId);
+        const usuarioId = req.user.id;
+        const carrinho = await carrinhoModel.buscarCarrinhoAtivo(usuarioId);
 
         if (!carrinho) {
             return res.status(404).json({ error: "Carrinho não encontrado para este usuário." });
         }
 
-        await itemModel.adicionarItem(carrinho.carrinho_id, produto_id, quantidade, preco_unitario);
-        const itensDoCarrinho = await itemModel.listarItens(carrinho.carrinho_id);
+        await itemModel.adicionarItem(carrinho.id_carrinho, produto_id, quantidade, preco_unitario);
+        const itensDoCarrinho = await itemModel.listarItens(carrinho.id_carrinho);
 
         res.json({ message: "Item adicionado ao carrinho", itens: itensDoCarrinho });
     } catch (error) {
@@ -51,17 +51,17 @@ exports.adicionarItem = async (req, res) => {
 
 exports.verCarrinho = async (req, res) => {
     try {
-        if (!req.user || !req.user.cliente_id) {
+        if (!req.user || !req.user.id) {
             return res.status(401).json({ error: "Usuário não autenticado." });
         }
-        const clienteId = req.user.cliente_id;
-        const carrinho = await carrinhoModel.buscarCarrinhoAtivo(clienteId);
+        const usuarioId = req.user.id;
+        const carrinho = await carrinhoModel.buscarCarrinhoAtivo(usuarioId);
 
         if (!carrinho) {
             return res.json({ itens: [] });
         }
 
-        const itensDoCarrinho = await itemModel.listarItens(carrinho.carrinho_id);
+        const itensDoCarrinho = await itemModel.listarItens(carrinho.id_carrinho);
         res.json({ itens: itensDoCarrinho });
     } catch (error) {
         console.error("Erro ao ver carrinho:", error);
@@ -71,17 +71,17 @@ exports.verCarrinho = async (req, res) => {
 
 exports.esvaziarCarrinho = async (req, res) => {
   try {
-    if (!req.user || !req.user.cliente_id) {
+    if (!req.user || !req.user.id) {
       return res.status(401).json({ error: "Usuário não autenticado." });
     }
-    const clienteId = req.user.cliente_id;
-    const carrinho = await carrinhoModel.buscarCarrinhoAtivo(clienteId);
+    const usuarioId = req.user.id;
+    const carrinho = await carrinhoModel.buscarCarrinhoAtivo(usuarioId);
 
     if (!carrinho) {
       return res.status(404).json({ error: 'Carrinho não encontrado' });
     }
     
-    await itemModel.esvaziar(carrinho.carrinho_id);
+    await itemModel.esvaziar(carrinho.id_carrinho);
     res.json({ message: 'Carrinho esvaziado com sucesso.' });
   } catch (error) {
     console.error("Erro ao esvaziar carrinho:", error);
@@ -91,18 +91,18 @@ exports.esvaziarCarrinho = async (req, res) => {
 
 exports.criarPreferenciaPagamento = async (req, res) => {
     try {
-        if (!req.user || !req.user.cliente_id) {
+        if (!req.user || !req.user.id) {
             return res.status(401).json({ error: "Usuário não autenticado." });
         }
-        const clienteId = req.user.cliente_id;
-        const carrinho = await carrinhoModel.buscarCarrinhoAtivo(clienteId);
+        const usuarioId = req.user.id;
+        const carrinho = await carrinhoModel.buscarCarrinhoAtivo(usuarioId);
 
         if (!carrinho) {
             return res.status(404).json({ error: "Carrinho não encontrado para este usuário." });
         }
 
         // CORREÇÃO: Busca os itens diretamente do model
-        const itens = await itemModel.listarItens(carrinho.carrinho_id);
+        const itens = await itemModel.listarItens(carrinho.id_carrinho);
         
         if (!itens || itens.length === 0) {
             return res.status(400).json({ error: "O carrinho está vazio." });

@@ -1,17 +1,17 @@
 const db = require("../config/db");
 
-exports.criarCarrinho = async (clienteId) => {
+exports.criarCarrinho = async (usuarioId) => {
   const [result] = await db.query(
-    "INSERT INTO carrinho (id_cliente) VALUES (?)",
-    [clienteId]
+    "INSERT INTO carrinho (id_usuario) VALUES (?)",
+    [usuarioId]
   );
   return result.insertId;
 };
 
-exports.buscarCarrinhoAtivo = async (clienteId) => {
+exports.buscarCarrinhoAtivo = async (usuarioId) => {
   const [rows] = await db.query(
-    "SELECT * FROM carrinho WHERE id_cliente = ? AND status = 'ATIVO' LIMIT 1",
-    [clienteId]
+    "SELECT * FROM carrinho WHERE id_usuario = ? AND status = 'ATIVO' LIMIT 1",
+    [usuarioId]
   );
   return rows[0];
 };

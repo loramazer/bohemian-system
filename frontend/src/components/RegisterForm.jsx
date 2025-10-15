@@ -7,8 +7,8 @@ import '../styles/RegisterForm.css';
 const RegisterForm = () => {
     const [formData, setFormData] = useState({
         nome: '',
-        email: '',
         telefone: '',
+        email: '',
         senha: '',
     });
     const [confirmarSenha, setConfirmarSenha] = useState('');
@@ -29,18 +29,15 @@ const RegisterForm = () => {
         setError('');
         if (formData.senha !== confirmarSenha) {
             setError('As senhas não coincidem!');
-            return; // Impede o envio do formulário
+            return;
         }
         try {
-            // 2. Use o apiClient para fazer a requisição
             const response = await apiClient.post('/auth/register', formData);
 
-            // Se o registro for bem-sucedido, redirecione para o login
             if (response.status === 201) {
                 navigate('/login');
             }
         } catch (err) {
-            // Pega a mensagem de erro do backend, se houver
             const errorMessage = err.response?.data?.message || 'Erro ao registrar. Tente novamente.';
             setError(errorMessage);
             console.error('Erro de rede:', err);
@@ -57,8 +54,8 @@ const RegisterForm = () => {
                     <input type="text" id="nome" name="nome" placeholder="Seu nome" value={formData.nome} onChange={handleChange} required />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="email">Email Address</label>
-                    <input type="email" id="email" name="email" placeholder="Seu email" value={formData.email} onChange={handleChange} required />
+                    <label htmlFor="login">Email Address</label>
+                    <input type="email" id="login" name="email" placeholder="Seu email" value={formData.email} onChange={handleChange} required />
                 </div>
                 <div className="form-group">
                     <label htmlFor="telefone">Telefone</label>
