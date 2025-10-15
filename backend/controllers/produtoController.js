@@ -40,7 +40,10 @@ async function create(req, res) {
 
 async function getAll(req, res) {
     try {
-        const produtos = await produtoModel.getAll();
+        const categoriaNomeCSV = req.query.categoria; 
+        const searchTerm = req.query.search;
+        const produtos = await produtoModel.getAll(categoriaNomeCSV, searchTerm); 
+        
         res.json(produtos);
     } catch (error) {
         console.error('Erro ao listar produtos:', error);

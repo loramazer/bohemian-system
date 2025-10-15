@@ -18,7 +18,11 @@ const HomePage = () => {
 
     return (
         <main>
-            <HeroSection />
+            {/* NOVO: Envolve HeroSection dentro de ContentWrapper */}
+            <ContentWrapper> 
+                <HeroSection />
+            </ContentWrapper>
+            
             <ContentWrapper>
                 {userName && (
                     <div style={{ padding: '20px 0', fontSize: '1.5rem', fontWeight: 'bold' }}>

@@ -1,14 +1,17 @@
 .catalog-main {
     padding: 40px 0;
     position: relative; /* Define o contexto para a Sidebar sticky */
+     color: #5d7a7b;
 }
 
 .page-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
+    margin-bottom: 30px; 
+    color: #5d7a7b;
 }
+
 
 .catalog-layout {
     display: flex;

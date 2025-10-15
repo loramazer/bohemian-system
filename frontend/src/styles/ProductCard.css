@@ -144,3 +144,12 @@
     text-decoration: none;
     color: inherit;
 }
+
+/* Adicione ou modifique a regra abaixo no final de ProductCard.css */
+
+.add-to-cart-btn svg {
+    /* Aumenta o tamanho do ícone do carrinho */
+    font-size: 1.2rem; 
+    /* Garante que o ícone dentro do botão vermelho/azul também fique branco */
+    fill: white; 
+}

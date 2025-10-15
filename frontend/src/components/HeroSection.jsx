@@ -8,8 +8,6 @@ import mainImage from '../assets/bohemian-floral.png';
 const HeroSection = () => {
     return (
         <section className="hero-section">
-            {/* O círculo de fundo foi removido daqui */}
-            
             <div className="hero-content">
                 <h1>Flores Frescas & Decoração Bohemian</h1>
                 <p>

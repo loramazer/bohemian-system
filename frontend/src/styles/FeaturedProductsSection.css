@@ -4,6 +4,13 @@
     background-color: #fff;
 }
 
+/* NOVO: Ajusta o título h2 para corresponder ao estilo do título de categorias */
+.featured-products h2 {
+    font-size: 2rem; /* Define o tamanho da fonte */
+    margin-bottom: 40px; /* Adiciona margem inferior consistente */
+    color: #333; /* Define a cor do texto consistente */
+}
+
 .products-grid {
     display: grid;
     /* Define as colunas do grid: no mínimo 250px, com preenchimento automático */
