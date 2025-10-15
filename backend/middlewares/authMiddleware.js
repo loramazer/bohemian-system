@@ -24,11 +24,7 @@ const authMiddleware = (req, res, next) => {
 
 try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'sua_chave_secreta');
-
-    // CORREÇÃO: Injeta o ID do perfil (que agora é o ID do cliente/colaborador)
-    // Os controllers do carrinho só precisam de cliente_id, que é o que injetamos aqui.
-    // Se for admin, este campo será o id_colaborador, mas isso só afeta rotas de admin.
-    req.user = { cliente_id: decoded.id }; // <--- CORREÇÃO: Usa 'decoded.id'
+    req.user = decoded; 
     
     return next();
   } catch (err) {

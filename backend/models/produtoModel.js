@@ -3,6 +3,7 @@ const db = require('../config/db');
 // Manteremos as suas funções com os nomes originais em português
 
 // Buscar todos os produtos
+<<<<<<< HEAD
 async function getAll(categoriaNomeCSV, searchTerm) {
 let sql = `
         SELECT 
@@ -55,6 +56,20 @@ let sql = `
 
     const [rows] = await db.execute(sql, params);
     return rows;
+=======
+async function getAll() {
+  const [rows] = await db.execute(`
+    SELECT 
+      id_produto, 
+      nome, 
+      preco_venda, 
+      descricao, 
+      ativo, 
+      imagem_url 
+    FROM produto
+  `);
+  return rows;
+>>>>>>> fda0d70ea891ee4cff41b90d21b6ac3ff2f0e959
 }
 // Buscar produto por ID
 async function getById(id) {

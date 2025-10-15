@@ -13,19 +13,16 @@ const ProductCard = ({ product, onAddToCart, onAddToWishlist }) => {
 
     const priceToFormat = product.preco_promocao || product.preco_venda;
     
-    // Formata o preço para o padrão brasileiro
     const formattedPrice = new Intl.NumberFormat('pt-BR', {
         style: 'currency',
         currency: 'BRL',
     }).format(priceToFormat);
 
-    // Determina o preço antigo (riscado) se houver promoção
     const oldPrice = product.preco_promocao ? new Intl.NumberFormat('pt-BR', {
         style: 'currency',
         currency: 'BRL',
     }).format(product.preco_venda) : null;
     
-    // Determina a tag se houver promoção
     const tagText = product.preco_promocao ? 'PROMOÇÃO' : (product.tag || null);
 
 

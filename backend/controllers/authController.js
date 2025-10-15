@@ -1,26 +1,23 @@
 // loramazer/bohemian-system/bohemian-system-front-back-carrinhos/backend/controllers/authController.js
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const crypto = require('crypto'); // NOVO: Módulo para gerar tokens de reset
-const nodemailer = require('nodemailer'); // NOVO: Módulo para envio de e-mail
-const db = require('../config/db'); // NOVO: Módulo para interagir com 'password_resets'
+const crypto = require('crypto'); 
+const nodemailer = require('nodemailer'); 
+const db = require('../config/db'); 
 const usuarioModel = require('../models/usuarioModel');
-const clienteModel = require('../models/clienteModel');
-const colaboradorModel = require('../models/colaboradorModel');
+const carrinhoModel = require('../models/carrinhoModel');
 
 require('dotenv').config();
 const saltRounds = 10;
 
-// NOVO: Configuração do nodemailer (necessário para forgotPassword)
 const transporter = nodemailer.createTransport({
-    service: 'gmail', // Defina o seu provedor (e.g., 'gmail')
+    service: 'gmail', 
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
     }
 });
 
-// Função de Login SIMPLIFICADA
 async function login(req, res) {
     try {
         const { email, senha } = req.body;
@@ -35,27 +32,24 @@ async function login(req, res) {
             return res.status(401).json({ message: 'E-mail ou senha inválidos' });
         }
 
-        let perfilId = null; // Inicializa perfilId
-        let perfilNome = '';
+        const carrinho = await carrinhoModel.buscarCarrinhoAtivo(usuario.id_usuario);
+        if (!carrinho) {
+            await carrinhoModel.criarCarrinho(usuario.id_usuario);
+            console.log(`Carrinho criado para o usuário ${usuario.id_usuario} durante o login.`);
+        }
 
-        if (usuario.role === 'admin') {
-            const colaborador = await colaboradorModel.findDetailsByUsuarioId(usuario.id_usuario);
-            perfilNome = colaborador ? colaborador.nome : 'Admin';
-            perfilId = colaborador ? colaborador.id_colaborador : null; 
+        if (usuario.admin) {
+             
         } else {
-            // Se for CLIENTE, busca o ID do cliente
-            const cliente = await clienteModel.findDetailsByUsuarioId(usuario.id_usuario);
-            perfilNome = cliente ? cliente.nome : 'Cliente';
-            perfilId = cliente ? cliente.id_cliente : null; // <--- CORREÇÃO CRÍTICA AQUI
+            
         }
 
         const token = jwt.sign(
             { 
-                // ID agora representa o ID do perfil (cliente_id ou colaborador_id)
-                id: perfilId, // <--- ID do Cliente ou Colaborador
+                id: usuario.id_usuario, 
                 email: usuario.login,
-                nome: perfilNome,
-                role: usuario.role 
+                nome: usuario.nome,
+                admin: usuario.admin 
             }, 
             process.env.JWT_SECRET, 
             { expiresIn: '2h' }
@@ -68,10 +62,9 @@ async function login(req, res) {
     }
 }
 
-// Função de Registro ATUALIZADA
 async function register(req, res) {
     try {
-        const { nome, email, telefone, senha } = req.body;
+        const { nome, telefone, email, senha } = req.body;
 
         const usuarioExistente = await usuarioModel.findByEmail(email);
         if (usuarioExistente) {
@@ -80,31 +73,27 @@ async function register(req, res) {
 
         const senhaCriptografada = await bcrypt.hash(senha, saltRounds);
         const novoUsuarioId = await usuarioModel.create({
+            nome: nome,
+            telefone: telefone,
             email: email,
             senha: senhaCriptografada,
-            role: 'cliente'
+            admin: 0
         });
-
-        const idCliente = await clienteModel.criarCliente({
-            nome: nome,
-            email: email,
-            telefone: telefone,
-            fk_id_usuario: novoUsuarioId
-        });
-
-        res.status(201).json({ message: 'Cliente cadastrado com sucesso', id: idCliente });
-    } catch (error) {
-        console.error("Erro ao registrar cliente:", error);
-        res.status(500).json({ message: "Erro interno do servidor" });
-    }
+        if (novoUsuarioId) {
+            await carrinhoModel.criarCarrinho(novoUsuarioId);
+        }
+        res.status(201).json({ message: 'Usuário registrado com sucesso!' });
+      }catch (error) {
+        res.status(500).json({ message: 'Erro interno do servidor ao registrar usuário.' });
+  }
 }
+
 
 async function forgotPassword(req, res) {
   const { email } = req.body;
   try {
-    // CORRIGIDO: Usando buscarClientePorEmail do model
-    const cliente = await clienteModel.buscarClientePorEmail(email); 
-    if (!cliente) {
+    const usuario= await usuarioModel.findByEmail(email);
+    if (!usuario){
         return res.status(200).json({ message: 'Se as informações estiverem corretas, você receberá um e-mail com as instruções para redefinir sua senha.' });
     }
 
@@ -112,14 +101,14 @@ async function forgotPassword(req, res) {
     const expiresAt = new Date(Date.now() + 3600000);
 
     // db.execute agora está disponível
-    await db.execute('INSERT INTO password_resets (fk_cliente_id, token, expires_at) VALUES (?, ?, ?)', [cliente.id_cliente, token, expiresAt]);
+    await db.execute('INSERT INTO password_resets (fk_usuario_id, token, expires_at) VALUES (?, ?, ?)', [usuario.id_usuario, token, expiresAt]);
 
     // CORRIGIDO: Adicionado / antes de reset-password
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${token}`;
 
    const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: cliente.email,
+      to: usuario.login,
       subject: 'Redefinição de Senha - Bohemian Floral',
       html: `
         <div style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
@@ -169,14 +158,6 @@ async function resetPassword(req, res) {
 
     if (!resetToken) {
         return res.status(400).json({ message: 'Token inválido ou expirado.' });
-    }
-    
-    // 2. Encontrar o usuário (tabela 'usuario') através do cliente (tabela 'cliente')
-    const [clienteRows] = await db.execute('SELECT fk_usuario_id_usuario FROM cliente WHERE id_cliente = ?', [resetToken.fk_cliente_id]);
-    const usuarioId = clienteRows[0].fk_usuario_id_usuario;
-
-    if (!usuarioId) {
-        return res.status(500).json({ message: 'Erro: Usuário principal não encontrado.' });
     }
 
     const newPasswordHash = await bcrypt.hash(newPassword, saltRounds);
