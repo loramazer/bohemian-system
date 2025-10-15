@@ -38,3 +38,14 @@ exports.esvaziar = async (id_carrinho) => {
   const sql = 'DELETE FROM item_carrinho WHERE id_carrinho = ?';
   await db.execute(sql, [id_carrinho]);
 };
+
+exports.atualizarQuantidade = async (id_item_carrinho, novaQuantidade) => {
+  const sql = 'UPDATE item_carrinho SET quantidade = ? WHERE id_item_carrinho = ?';
+  await db.execute(sql, [novaQuantidade, id_item_carrinho]);
+};
+
+
+exports.removerItem = async (id_item_carrinho) => {
+  const sql = 'DELETE FROM item_carrinho WHERE id_item_carrinho = ?';
+  await db.execute(sql, [id_item_carrinho]);
+};

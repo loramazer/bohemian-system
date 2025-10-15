@@ -34,17 +34,11 @@ const ProductGrid = ({ products }) => {
             <div className="product-grid">
                 {products && products.length > 0 ? (
                     products.map(product => (
-                        <Link 
-                            to={`/product/${product.id_produto}`} 
-                            key={product.id_produto} 
-                            style={{ textDecoration: 'none' }}
-                        >
                             <ProductCard 
                                 product={product} 
                                 // NOVO: Passa a função de clique para o ProductCard
                                 onAddToCart={(e) => handleAddToCartClick(e, product)}
                             />
-                        </Link>
                     ))
                 ) : (
                     <p>Nenhum produto encontrado.</p>

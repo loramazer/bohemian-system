@@ -3,9 +3,9 @@
 import React from 'react';
 import '../styles/CartItems.css';
 import { Link } from 'react-router-dom';
+import { FaTrash } from 'react-icons/fa';
 
-const CartItems = ({ items, onEmptyCart }) => {
-    // Se o array de itens estiver vazio, mostre uma mensagem amigável
+const CartItems = ({ items, onEmptyCart, onUpdateQuantity, onRemoveItem }) => {
     if (!items || items.length === 0) {
         return (
             <div className="cart-items-container">
@@ -24,10 +24,11 @@ const CartItems = ({ items, onEmptyCart }) => {
                 <span>Preço</span>
                 <span>Quantidade</span>
                 <span>Total</span>
+                <span></span>
             </div>
             {items.map(item => (
                 // Use o ID do item que vem do banco de dados como chave
-                <div key={item.item_id} className="cart-item">
+                <div key={item.id_item_carrinho} className="cart-item">
                     <div className="cart-item-product">
                         {/* Imagem e nome do produto precisarão vir do backend no futuro */}
                         {/* <img src={item.imagem_url} alt={item.nome_produto} className="cart-item-image" /> */}
@@ -37,17 +38,24 @@ const CartItems = ({ items, onEmptyCart }) => {
                             <p>Tamanho: P</p>
                         </div>
                     </div>
-                    <span className="cart-item-price">R${parseFloat(item.preco_unitario).toFixed(2)}</span>
-                    <input
-                        type="number"
+                    <select
                         value={item.quantidade}
-                        min="1"
                         className="cart-item-quantity"
-                        readOnly // A edição de quantidade será um próximo passo
-                    />
+                        onChange={(e) => onUpdateQuantity(item.id_item_carrinho, parseInt(e.target.value))}
+                    >
+                        {[...Array(10).keys()].map(x => (
+                            <option key={x + 1} value={x + 1}>{x + 1}</option>
+                        ))}
+                    </select>
                     <span className="cart-item-total">
                         R${(parseFloat(item.preco_unitario) * item.quantidade).toFixed(2)}
                     </span>
+                    <button 
+                        className="cart-item-remove-btn" 
+                        onClick={() => onRemoveItem(item.id_item_carrinho)}
+                    >
+                        <FaTrash /> {/* Usando o ícone */}
+                    </button>
                 </div>
             ))}
             <div className="cart-actions">

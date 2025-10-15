@@ -16,7 +16,6 @@ export const CartProvider = ({ children }) => {
             return;
         }
         try {
-            // CORRIGIDO: O endpoint /carrinho/ está configurado para buscar o carrinho
             const response = await apiClient.get('/carrinho');
             setCartItems(response.data.itens || []);
         } catch (err) {
@@ -24,11 +23,9 @@ export const CartProvider = ({ children }) => {
         }
     }, [user]);
 
-    // NOVO: Função auxiliar para garantir que um carrinho ATIVO exista
     const ensureCartExists = async () => {
         if (!user) return false;
         try {
-            // Esta rota irá buscar ou criar um carrinho ativo para o usuário
             await apiClient.post('/carrinho/iniciar'); 
             return true;
         } catch (error) {
@@ -68,13 +65,46 @@ export const CartProvider = ({ children }) => {
         }
     };
     
-    // ... (restante do código: esvaziarCarrinho, value)
-
     const esvaziarCarrinho = async () => {
-        // ... (código existente)
+        if (!user) return;
+        try {
+            await apiClient.delete('/carrinho/esvaziar');
+            setCartItems([]); // Limpa o estado local
+        } catch (error) {
+            console.error("Erro ao esvaziar o carrinho:", error);
+        }
     };
 
-    const value = { cartItems, fetchCart, addItem, esvaziarCarrinho };
+    const removerItemCarrinho = async (itemId) => {
+        try {
+                        await apiClient.delete(`/carrinho/item/${itemId}`);
+
+                  setCartItems(currentItems =>
+                currentItems.filter(item => item.id_item_carrinho !== itemId)
+            );
+        } catch (error) {
+            console.error("Erro ao remover item do carrinho:", error);
+            
+        }
+    };
+
+    const atualizarQuantidadeItem = async (itemId, newQuantity) => {
+        try {
+            await apiClient.put(`/carrinho/item/${itemId}`, { quantidade: newQuantity });
+
+            setCartItems(currentItems =>
+                currentItems.map(item =>
+                    item.id_item_carrinho === itemId
+                        ? { ...item, quantidade: newQuantity }
+                        : item
+                )
+            );
+        } catch (error) {
+            console.error("Erro ao atualizar quantidade do item:", error);
+        }
+    };
+
+    const value = { cartItems, fetchCart, addItem, esvaziarCarrinho, removerItemCarrinho, atualizarQuantidadeItem };
 
     useEffect(() => {
         if (user) {
@@ -88,3 +118,4 @@ export const CartProvider = ({ children }) => {
         </CartContext.Provider>
     );
 };
+

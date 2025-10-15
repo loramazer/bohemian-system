@@ -133,3 +133,35 @@ exports.criarPreferenciaPagamento = async (req, res) => {
         res.status(500).json({ error: "Erro interno do servidor." });
     }
 };
+
+exports.atualizarItem = async (req, res) => {
+    try {
+        const { itemId } = req.params; 
+        const { quantidade } = req.body; 
+
+        if (quantidade === undefined || quantidade < 1) {
+            return res.status(400).json({ message: 'Quantidade inválida.' });
+        }
+
+        await itemModel.atualizarQuantidade(itemId, quantidade);
+
+        res.status(200).json({ message: 'Quantidade atualizada com sucesso.' });
+    } catch (error) {
+        console.error('Erro no controller ao atualizar item:', error);
+        res.status(500).json({ message: 'Erro interno do servidor.' });
+    }
+};
+
+exports.removerItem = async (req, res) => {
+    try {
+        const { itemId } = req.params; 
+
+        
+        await itemModel.removerItem(itemId);
+
+        res.status(200).json({ message: 'Item removido com sucesso.' });
+    } catch (error) {
+        console.error('Erro no controller ao remover item:', error);
+        res.status(500).json({ message: 'Erro interno do servidor.' });
+    }
+};

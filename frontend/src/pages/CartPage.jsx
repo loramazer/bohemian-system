@@ -7,7 +7,7 @@ import { CartContext } from "../context/CartContext.jsx";
 import '../styles/CartPage.css';
 
 const CartPage = () => {
-    const { cartItems, esvaziarCarrinho } = useContext(CartContext);
+    const { cartItems, esvaziarCarrinho, atualizarQuantidadeItem, removerItemCarrinho } = useContext(CartContext);
     const { user } = useContext(AuthContext);
     const navigate = useNavigate();
 
@@ -32,7 +32,8 @@ const CartPage = () => {
                 </div>
                 {cartItems && cartItems.length > 0 ? (
                     <div className="cart-layout">
-                        <CartItems items={cartItems} onEmptyCart={handleEsvaziar} />
+                        <CartItems items={cartItems} onEmptyCart={esvaziarCarrinho} onUpdateQuantity={atualizarQuantidadeItem}
+                            onRemoveItem={removerItemCarrinho} />
                         <CartSummary subtotal={subtotal} itens={cartItems} />
                     </div>
                 ) : (
