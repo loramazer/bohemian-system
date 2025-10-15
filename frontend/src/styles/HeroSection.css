@@ -4,13 +4,15 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 80px 5vw; /* Aumenta o padding vertical */
-    background-color: #f8f7fa; /* Fundo limpo */
+    /* Reduz o padding para que o ContentWrapper possa gerenciá-lo */
+    padding: 40px 0; 
+    
+    background-color: #f8f7fa; /* Fundo limpo (ou use #fff se quiser branco total) */
     position: relative; 
     overflow: hidden; 
     text-align: left; 
-    gap: 80px; /* Espaço maior entre os blocos */
-    max-width: 1400px; /* Limita a largura para melhor leitura */
+    gap: 80px; 
+    /* REMOVIDO: max-width: 1400px; - Agora controlado pelo ContentWrapper */
     margin: 0 auto;
 }
 
@@ -26,7 +28,7 @@
 }
 
 .hero-content h1 {
-    font-size: 3.5rem; /* Título maior */
+    font-size: 3.5rem; 
     color: #333;
     margin-bottom: 20px;
     line-height: 1.1;
@@ -56,9 +58,9 @@
 .hero-image-container {
     position: relative;
     z-index: 2; 
-    max-width: 400px; /* Limita o tamanho da imagem */
+    max-width: 400px; 
     flex-shrink: 0;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* Sombra para destacar */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); 
     border-radius: 8px;
 }
 
@@ -87,6 +89,7 @@
         flex-direction: column;
         text-align: center;
         gap: 40px;
+        padding: 40px 0; 
     }
     .hero-content {
         order: 2;

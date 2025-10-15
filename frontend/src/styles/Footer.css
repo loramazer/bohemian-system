@@ -1,23 +1,32 @@
+/* loramazer/bohemian-system/bohemian-system-refatorar-organizacao/frontend/src/styles/Footer.css */
+
 .main-footer {
-  background-color: #EEEFFB;
-  color: #515577;
-  padding: 40px 20px 20px;
+  /* Fundo muito claro da imagem */
+  background-color: #F8F7FA; 
+  color: #333; 
+  padding: 40px 5vw 20px;
 }
 
 .footer-content {
-  display: flex;
-  justify-content: space-around;
-  flex-wrap: wrap;
+  display: grid;
+  /* Garante 4 colunas com a proporção de 1.5 para a primeira */
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 40px; 
+  max-width: 1200px; 
+  margin: 0 auto;
+  padding-bottom: 20px;
 }
 
 .footer-section {
-  flex-basis: 20%;
-  margin-bottom: 20px;
+  text-align: left;
 }
 
+/* Títulos das seções: mais escuros e em negrito para corresponder à referência */
 .footer-section h4 {
-  font-size: 18px;
-  margin-bottom: 15px;
+  font-size: 1.1rem; 
+  font-weight: 700; 
+  margin-bottom: 25px; 
+  color: #333; 
 }
 
 .footer-section ul {
@@ -25,42 +34,113 @@
   padding: 0;
 }
 
-.footer-section ul li a {
+.footer-section ul li {
+    margin-bottom: 8px; 
+}
+
+/* Estilo do Link */
+.footer-section ul li a, .footer-section ul li a:visited { 
   text-decoration: none;
-  color: #515577;
-  line-height: 1.8;
+  color: #515577; /* Cor do texto dos links */
+  line-height: 1.5;
+  transition: color 0.2s; 
+  font-size: 0.95rem; 
+  font-weight: 500; 
 }
 
+.footer-section ul li a:hover {
+  color: #5d7a7b; /* Cor de destaque */
+}
+
+/* 1. SEÇÃO PRINCIPAL (Logo, Endereço, Newsletter) */
 .footer-logo {
-  height: 150px; 
-  margin-bottom: 15px;
+  /* Tamanho ajustado para que o logo de texto fique visível e legível */
+  height: 25px; 
+  width: auto;
+  margin-bottom: 30px; 
+  display: block; 
 }
 
+.address-info {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #515577;
+    margin-bottom: 10px; 
+}
+
+.address-info p {
+    margin: 0;
+    line-height: 1.4; /* Espaçamento menor para o endereço */
+}
+
+/* Título Endereço: em negrito e ligeiramente maior */
+.address-title {
+    margin-bottom: 5px !important; 
+    color: #333;
+    font-weight: 700; 
+}
+
+/* Seção de Newsletter/Login */
 .newsletter {
-  margin-top: 15px;
   display: flex;
+  margin-top: 15px;
 }
 
 .newsletter input {
-  padding: 8px;
-  border: 1px solid #989dc2;
+  padding: 10px; 
+  border: 1px solid #d0d5d9; 
+  border-right: none;
   border-radius: 5px 0 0 5px;
   outline: none;
+  flex-grow: 1;
+  background-color: #fff;
+  font-size: 0.9rem;
 }
 
 .newsletter .login-button {
-  background-color: #516A6A;
+  background-color: #5d7a7b; /* Cor de destaque consistente */
   color: #fff;
-  border: 1px solid #555;
-  padding: 8px 15px;
+  border: none; 
+  padding: 10px 20px;
   border-radius: 0 5px 5px 0;
   cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+  height: 41px; 
+  line-height: 21px;
 }
 
+.newsletter .login-button:hover {
+    background-color: #4a6263;
+}
+
+/* 2. SEÇÃO DE COPYRIGHT */
 .footer-bottom {
-  border-top: 1px solid #555;
-  padding-top: 10px;
-  margin-top: 20px;
+  border-top: 1px solid #d0d5d9; 
+  padding-top: 15px;
+  margin-top: 30px;
   text-align: center;
-  font-size: 12px;
+  font-size: 0.8rem;
+  color: #515577;
+}
+
+/* --- RESPONSIVIDADE --- */
+@media (max-width: 992px) {
+    .footer-content {
+        grid-template-columns: 1fr 1fr; 
+        gap: 30px;
+    }
+    .footer-section.main-section {
+        grid-column: span 2; 
+    }
+}
+
+@media (max-width: 576px) {
+    .footer-content {
+        grid-template-columns: 1fr; 
+        gap: 20px;
+    }
+    .footer-section.main-section {
+        grid-column: span 1; 
+    }
 }

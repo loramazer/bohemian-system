@@ -13,33 +13,53 @@ const CatalogPage = () => {
     const [error, setError] = useState(null);
     const location = useLocation();
     const query = new URLSearchParams(location.search);
-    // Recupera o parâmetro 'category' da URL (usado para destaque visual ou filtro)
-    const categoryFilter = query.get('category'); 
+    const categoryFilterCSV = query.get('categoria'); 
+    const categoryFilter = categoryFilterCSV ? categoryFilterCSV.split(',') : [];
+    const searchFilter = query.get('search'); 
 
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                // Busca todos os produtos. Em um sistema real, este endpoint
-                // aceitaria um parâmetro de filtro de categoria (ex: /produtos?category=buques)
-                const url = '/produtos';
-                const response = await apiClient.get(url);
-                
-                if (Array.isArray(response.data)) {
-                    setProducts(response.data);
-                } else {
-                    setError('Formato de dados inesperado.');
-                    setProducts([]);
-                }
-            } catch (err) {
-                setError('Não foi possível carregar os produtos do catálogo.');
-                console.error('Erro ao carregar catálogo:', err);
-            } finally {
-                setLoading(false);
-            }
-        };
+    useEffect(() => {
+        const fetchProducts = async (categoriesArray, searchFilter) => { 
+            setLoading(true); 
+            setError(null);
+            try { // INÍCIO DO TRY
+                let url = '/produtos';
+                const params = new URLSearchParams();
+                let hasFilter = false;
 
-        fetchProducts();
-    }, [categoryFilter]); // Rebusca se o filtro de categoria mudar na URL
+                if (categoriesArray.length > 0) {
+                    params.append('categoria', categoriesArray.join(','));
+                    hasFilter = true;
+                }
+                
+                if (searchFilter) {
+                    params.append('search', searchFilter);
+                    hasFilter = true;
+                }
+                
+                if (hasFilter) {
+                    url = `/produtos?${params.toString()}`;
+                }
+                
+
+                const response = await apiClient.get(url);
+                
+                // CÓDIGO CORRIGIDO: Este bloco deve estar DENTRO do try
+                if (Array.isArray(response.data)) {
+                    setProducts(response.data);
+                } else {
+                    setError('Formato de dados inesperado.');
+                    setProducts([]);
+                }
+            } catch (err) { // FIM DO TRY, INÍCIO DO CATCH
+                setError('Não foi possível carregar os produtos do catálogo.');
+                console.error('Erro ao carregar catálogo:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+       fetchProducts(categoryFilter, searchFilter); 
+    }, [categoryFilterCSV, searchFilter]);
 
 
     if (loading) {
@@ -59,7 +79,7 @@ const CatalogPage = () => {
                 </div>
                 {/* O layout divide a tela entre a Sidebar e a Grade de Produtos */}
                 <div className="catalog-layout">
-                    <Sidebar />
+                   <Sidebar activeCategories={categoryFilter} /> 
                     <ProductGrid products={products} />
                 </div>
             </main>

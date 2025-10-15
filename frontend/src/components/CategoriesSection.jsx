@@ -80,7 +80,7 @@ const CategoriesSection = () => {
                         return (
                             // O Link aponta para o catálogo (/products) e passa o nome como filtro
                             <Link 
-                                to={`/products?category=${category.nome}`} 
+                                to={`/products?categoria=${encodeURIComponent(category.nome)}`} // Use 'categoria'
                                 key={category.id_categoria} 
                                 className="category-card"
                             >

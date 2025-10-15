@@ -4,7 +4,8 @@ import '../../styles/ProductCard.css';
 import placeholderImage from '../../assets/5.png';
 import { Link, useNavigate } from 'react-router-dom';
 
-const ProductCard = ({ product, onAddToCart }) => {
+// NOVO: Adiciona onAddToWishlist às props
+const ProductCard = ({ product, onAddToCart, onAddToWishlist }) => { 
     // Se não houver produto, não renderiza nada.
     if (!product) {
         return null;
@@ -29,6 +30,7 @@ const ProductCard = ({ product, onAddToCart }) => {
 
 
     return (
+        // O <Link> principal continua permitindo a navegação para os detalhes do produto ao clicar no card, exceto nos botões.
         <Link
             to={`/product/${product.id_produto}`}
             key={product.id_produto}
@@ -38,7 +40,6 @@ const ProductCard = ({ product, onAddToCart }) => {
                 {tagText && <span className="product-tag">{tagText}</span>}
                 
                 <div className="product-image-container">
-                    {/* Usamos a imagem do produto se existir, senão, a imagem placeholder */}
                     <img 
                         src={product.imagem_url || placeholderImage} 
                         alt={product.nome} 
@@ -46,11 +47,19 @@ const ProductCard = ({ product, onAddToCart }) => {
                     />
                     
                     <div className="product-actions">
-                        {/* NOVO: Aplica a função onAddToCart no clique do botão */}
-                        <button className="add-to-cart-btn" onClick={onAddToCart}>
+                        {/* Botão Adicionar ao Carrinho: Chama a prop onAddToCart */}
+                        <button 
+                            className="add-to-cart-btn" 
+                            onClick={onAddToCart}
+                        >
                             <FaShoppingCart /> Adicionar ao Carrinho
                         </button>
-                        <button className="wishlist-btn">
+                        
+                        {/* CRÍTICO: Botão Favoritos: Chama a nova prop onAddToWishlist */}
+                        <button 
+                            className="wishlist-btn"
+                            onClick={onAddToWishlist} 
+                        >
                             <FaRegHeart />
                         </button>
                     </div>
@@ -58,7 +67,6 @@ const ProductCard = ({ product, onAddToCart }) => {
                 
                 <div className="product-info">
                     <h3 className="product-name">{product.nome}</h3>
-                    {/* <p className="product-code">{product.codigo_produto}</p> */}
                     
                     <div className="product-prices">
                         {/* Exibe o preço antigo se houver promoção */}

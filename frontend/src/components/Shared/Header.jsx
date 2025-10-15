@@ -53,18 +53,19 @@ const Header = () => {
                             <button onClick={handleLogout} className="logout-btn">
                                 Sair <FaSignOutAlt size={14} />
                             </button>
+                            
+                            {/* CRÍTICO: Ícones de Carrinho e Favoritos (corretamente visíveis APENAS quando logado) */}
+                            <Link to="/wishlist" className="icon-link"><FaHeart /></Link>
+                            <Link to="/cart" className="icon-link cart-icon-container">
+                                <FaShoppingCart size={20} />
+                                {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
+                            </Link>
                         </>
                     ) : (
-                        <Link to="/login" className="login-btn">Login</Link>
+                        // CRÍTICO: Apenas o botão de login é exibido aqui
+                        <Link to="/login" className="login-btn-final-style">Login</Link>
                     )}
                     
-                    <Link to="/wishlist" className="icon-link"><FaHeart /></Link>
-                    
-                    {/* Componente do carrinho com badge */}
-                    <Link to="/cart" className="icon-link cart-icon-container">
-                        <FaShoppingCart size={20} />
-                        {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
-                    </Link>
                 </div>
             </div>
 
@@ -80,7 +81,6 @@ const Header = () => {
                         <li><Link to="/">Home</Link></li>
                         <li><Link to="/sobre-nos">Sobre Nós</Link></li>
                         <li><Link to="/products">Produtos</Link></li>
-                        <li><Link to="/comprar">Comprar</Link></li>
                         <li><Link to="/contato">Contato</Link></li>
                     </ul>
                 </nav>
