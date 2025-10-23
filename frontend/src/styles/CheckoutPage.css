@@ -1,0 +1,146 @@
+/* src/styles/CheckoutPage.css */
+
+/* Reutilizando as variáveis de cor (se não estiverem globais) */
+:root {
+    --primary-color: #516A6A;
+    --primary-light: #b1bbbb83;
+    --text-color: #333;
+    --border-color: #ddd;
+}
+
+.checkout-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1rem;
+}
+
+.checkout-container h2 {
+    text-align: center;
+    font-weight: 400;
+    color: var(--text-color);
+    margin-bottom: 2rem;
+}
+
+/* --- Seletores de Opção --- */
+.delivery-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.delivery-options button {
+    padding: 1.25rem;
+    font-size: 1.1rem;
+    font-weight: 500;
+    border: 2px solid var(--border-color);
+    background-color: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.delivery-options button:hover {
+    background-color: #f9f9f9;
+    border-color: #bbb;
+}
+
+.delivery-options button.active {
+    border-color: var(--primary-color);
+    background-color: var(--primary-light);
+    color: var(--primary-color);
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* --- Conteúdo das Opções --- */
+.delivery-content {
+    border: 1px solid #f0f0f0;
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 2rem;
+    min-height: 250px;
+}
+
+.pickup-info h3,
+.delivery-info h3 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    color: var(--text-color);
+}
+
+.pickup-info p {
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* --- Lista de Endereços --- */
+.address-list {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.address-card {
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.address-card:hover {
+    border-color: #aaa;
+}
+
+.address-card.selected {
+    border-color: var(--primary-color);
+    background-color: var(--primary-light);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.address-card strong {
+    font-size: 1.1rem;
+    color: var(--text-color);
+}
+
+.address-card p {
+    margin: 0.5rem 0 0;
+    color: #555;
+}
+
+/* --- Avisos e Botões --- */
+.address-notice {
+    text-align: center;
+    padding: 2rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    color: #777;
+}
+
+.add-address-btn {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #555;
+    background-color: #fff;
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.add-address-btn:hover {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    background-color: var(--primary-light);
+}
+
+.shipping-cost {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #eee;
+    font-size: 1.1rem;
+    color: var(--text-color);
+}

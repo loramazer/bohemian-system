@@ -1,35 +1,33 @@
 // loramazer/bohemian-system/bohemian-system-front-back-carrinhos/frontend/src/components/CartSummary.jsx
 
-import React, { useState } from 'react';
-import apiClient from '../api';
+import React, { useContext } from 'react'; // 1. Removemos useState e apiClient
+import { useNavigate } from 'react-router-dom'; // 2. Importamos useNavigate
+import { AuthContext } from '../context/AuthContext'; // 3. Importamos o AuthContext
 import '../styles/CartSummary.css';
 
 const CartSummary = ({ subtotal, items }) => {
     const total = subtotal;
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
 
-    const handleCheckout = async () => {
-        // --- ALTERAÇÃO AQUI ---
-        // Se o carrinho estiver vazio, exiba um pop-up de alerta.
-        if (!items || items.length === 0) {
-            window.alert('Seu carrinho está vazio! Adicione itens antes de continuar.');
-            return; // Interrompe a execução da função
+    // 4. Hooks para navegação e autenticação
+    const navigate = useNavigate();
+    const { user } = useContext(AuthContext);
+
+    // 5. Removemos os useState de loading e error
+
+    const handleCheckout = () => {
+
+        // --- LÓGICA DE REDIRECIONAMENTO ---
+        // 6. Verificamos se o usuário está logado
+        if (!user) {
+            // Se não estiver logado, redireciona para o login
+            // Passamos a rota '/checkout' no state para que a página de login
+            // saiba para onde redirecionar o usuário após o sucesso.
+            navigate('/login', { state: { from: '/checkout' } });
+        } else {
+            // Se estiver logado, vai direto para a página de checkout
+            navigate('/checkout');
         }
-        // --------------------
-
-        setLoading(true);
-        setError('');
-
-        try {
-            const response = await apiClient.post('/carrinho/pagamento/criar-preferencia');
-            const { init_point } = response.data;
-            window.location.href = init_point;
-        } catch (err) {
-            console.error('Erro no checkout:', err);
-            setError('Não foi possível iniciar o pagamento. Tente novamente.');
-            setLoading(false);
-        }
+        // 7. Toda a lógica antiga de try/catch e apiClient.post() foi removida daqui.
     };
 
     return (
@@ -45,21 +43,25 @@ const CartSummary = ({ subtotal, items }) => {
                     <span>R${total.toFixed(2)}</span>
                 </div>
 
-                {error && <p className="error-message">{error}</p>}
+                {/* 8. O <p> de erro foi removido */}
 
                 <button
                     className="checkout-btn"
                     onClick={handleCheckout}
-                    disabled={loading} // A validação de carrinho vazio agora é feita no clique
+                // 9. Removemos o 'disabled' e o texto de 'loading'
                 >
-                    {loading ? 'Processando...' : 'Concluir pedido'}
+                    Concluir pedido
                 </button>
             </div>
             <div className="shipping-calculator">
                 <h3 className="shipping-title">Calcular Frete</h3>
+
                 <div className="shipping-input-group">
+
                     <input type="text" placeholder="CEP" className="cep-input" />
+
                     <button className="calculate-btn">Calcular Frete</button>
+
                 </div>
             </div>
         </div>

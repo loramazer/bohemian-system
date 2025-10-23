@@ -1,0 +1,113 @@
+/* src/styles/AddressForm.css */
+
+/* Define as cores da sua marca para consistência */
+:root {
+    --primary-color: #516A6A;
+    /* Um roxo para a 'bohemian-system' */
+    --primary-light: #f3e5f5;
+    --text-color: #333;
+    --border-color: #ddd;
+    --error-color: #d32f2f;
+}
+
+.address-form-container {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem 2rem;
+    margin-top: 1.5rem;
+    background-color: #fafafa;
+}
+
+.address-form-container h4 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    font-size: 1.25rem;
+    color: var(--text-color);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.form-group input[type="text"] {
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input[type="text"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px var(--primary-light);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    padding-top: 1.5rem;
+}
+
+.form-actions button {
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    border: none;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.form-actions .btn-save {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.form-actions .btn-save:hover {
+    background-color: #555;
+    /* Tom mais escuro */
+}
+
+.form-actions .btn-cancel {
+    background-color: #f1f1f1;
+    color: #555;
+}
+
+.form-actions .btn-cancel:hover {
+    background-color: #e0e0e0;
+}
+
+.form-actions button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.form-error {
+    color: var(--error-color);
+    background-color: #ffebee;
+    border: 1px solid var(--error-color);
+    border-radius: 4px;
+    padding: 0.75rem;
+    text-align: center;
+    margin-bottom: 1rem;
+}

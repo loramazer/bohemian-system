@@ -10,6 +10,7 @@ const CartPage = () => {
     const { cartItems, esvaziarCarrinho, atualizarQuantidadeItem, removerItemCarrinho } = useContext(CartContext);
     const { user } = useContext(AuthContext);
     const navigate = useNavigate();
+    console.log("Itens do carrinho na CartPage:", cartItems);
 
     const subtotal = cartItems.reduce((total, item) => total + (parseFloat(item.preco_unitario) * item.quantidade), 0);
     
