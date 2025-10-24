@@ -14,7 +14,9 @@ const BestSellers = ({ bestSellers }) => {
       ...bestSellers.map(seller => `${seller.nome};${seller.total_vendido}`)
     ].join('\n');
 
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const csvWithBOM = '\uFEFF' + csvContent; 
+    
+    const blob = new Blob([csvWithBOM], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.setAttribute('download', 'best-sellers.csv');

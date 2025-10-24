@@ -1,7 +1,7 @@
 .catalog-main {
-    padding: 40px 0;
+    padding: 1px 0;
     position: relative; /* Define o contexto para a Sidebar sticky */
-     color: #5d7a7b;
+    color: #5d7a7b;
 }
 
 .page-header {

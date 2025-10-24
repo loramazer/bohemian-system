@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../../styles/Dashboard.css';
 
 const RecentOrdersTable = ({ orders, onSelectOrder }) => {
+  // ESTADO: Armazena o ID do pedido que está atualmente selecionado
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
+
   // Mapeia o status do backend para um texto amigável no frontend
   const mapStatusToLabel = (status) => {
     if (!status) {
@@ -23,6 +26,18 @@ const RecentOrdersTable = ({ orders, onSelectOrder }) => {
     }
   };
 
+  const handleCheckboxChange = (orderId, order) => {
+    // Implementa a lógica MÚTUA EXCLUSIVA
+    if (selectedOrderId === orderId) {
+      // Se já estiver selecionado, deseleciona (para permitir desmarcar)
+      setSelectedOrderId(null);
+    } else {
+      // Seleciona o novo item e dispara o modal
+      setSelectedOrderId(orderId);
+      onSelectOrder(order);
+    }
+  };
+
   return (
     <div className="recent-orders-container">
       <div className="table-header">
@@ -30,22 +45,32 @@ const RecentOrdersTable = ({ orders, onSelectOrder }) => {
       </div>
       <table className="orders-table">
         <thead>
-          <tr>
-            <th></th>
+          {/* CORREÇÃO: Colocar a tag <tr> e a primeira tag <th> na mesma linha 
+             para eliminar o nó de texto vazio (whitespace) que causa o aviso de hidratação. 
+          */}
+          <tr><th></th>{/* Mantém a coluna para o checkbox */}
             <th>Produto</th>
-            <th>ID Pedido</th>
+            <th>ID do Pedido</th>
             <th>Data</th>
-            <th>Nome Cliente</th>
+            <th>Cliente</th>
             <th>Status</th>
             <th>Valor</th>
           </tr>
         </thead>
         <tbody>
           {orders.map((order, index) => (
-            <tr key={index} onClick={() => onSelectOrder(order)}>
+            <tr
+              key={index}
+            >
               <td>
-                <input type="checkbox" id={`order-${index}`} />
-                <label htmlFor={`order-${index}`}></label>
+                {/* Checkbox controlado pelo estado, comportando-se como Radio Button visualmente */}
+                <input
+                  type="checkbox"
+                  id={`order-${order.id_pedido}`}
+                  checked={selectedOrderId === order.id_pedido}
+                  onChange={() => handleCheckboxChange(order.id_pedido, order)}
+                />
+                <label htmlFor={`order-${order.id_pedido}`}></label>
               </td>
               <td>{order.nome_produtos}</td>
               <td>{order.id_pedido}</td>

@@ -40,17 +40,15 @@ const CatalogPage = () => {
                     url = `/produtos?${params.toString()}`;
                 }
                 
-
                 const response = await apiClient.get(url);
                 
-                // CÓDIGO CORRIGIDO: Este bloco deve estar DENTRO do try
                 if (Array.isArray(response.data)) {
                     setProducts(response.data);
                 } else {
                     setError('Formato de dados inesperado.');
                     setProducts([]);
                 }
-            } catch (err) { // FIM DO TRY, INÍCIO DO CATCH
+            } catch (err) {
                 setError('Não foi possível carregar os produtos do catálogo.');
                 console.error('Erro ao carregar catálogo:', err);
             } finally {
@@ -75,7 +73,9 @@ const CatalogPage = () => {
             <main className="catalog-main">
                 <div className="page-header">
                     {/* Exibe o título e o filtro ativo (se houver) */}
-                    <h2 className="page-title">Catálogo de Produtos {categoryFilter ? `(${categoryFilter})` : ''}</h2>
+                    <h2 className="page-title">Catálogo de Produtos
+                        {categoryFilter.length > 0 && ` (${categoryFilter.join(', ')})`}
+                    </h2>
                 </div>
                 {/* O layout divide a tela entre a Sidebar e a Grade de Produtos */}
                 <div className="catalog-layout">

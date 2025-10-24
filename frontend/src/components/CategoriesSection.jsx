@@ -2,31 +2,61 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-// Importa ícones
-import { FaQuestionCircle, FaCertificate, FaFire, FaGift, FaTag, FaSeedling, FaPalette, FaCube } from 'react-icons/fa'; 
+// Importa ícones (Selecionados para representar categorias amplas)
+import { 
+    FaCertificate, FaFire, FaTag,     // Destaques e Vendas
+    FaSeedling, FaPalette, FaCube,     // Arranjos e Geral
+    FaLeaf, FaStore, FaHeart, FaStar,  // Plantas, Decoração, Ocasiões, Secas
+    FaGift                             // Presentes/Ocasiões
+} from 'react-icons/fa'; 
 import '../styles/CategoriesSection.css';
 import apiClient from '../api';
 
-// Mapeamento de Ícones para Nomes de Categoria. 
-// O nome da chave deve corresponder exatamente ao 'nome' que vem do banco ou do filtro estático.
-const iconMap = {
-    'Novidades': FaCertificate, // Filtro estático
-    'Mais Vendidos': FaFire,     // Filtro estático
-    'Dia dos Namorados': FaGift, // Filtro estático
-    'Ofertas': FaTag,            // Filtro estático
-    // Categoria do banco de dados (Exemplo - use o nome EXATO do seu banco)
-    'buque': FaSeedling, 
-    'arranjo': FaPalette, 
-    'default': FaCube, // Um ícone de fallback genérico
+// Mapeamento de Palavras-Chave (Mais Abrangente)
+const iconKeywordsMap = {
+    // Correspondência Exata / Palavras de Destaque
+    'novidades': FaCertificate, 
+    'mais vendidos': FaFire, 
+    'ofertas': FaTag,
+    
+    // Palavras-Chave mais genéricas e abrangentes (Foco na NATUREZA/USO)
+    'buque': FaSeedling,      // Buquê, buquês, noiva
+    'arranjo': FaPalette,     // Arranjo, arranjos, mesa
+    'vaso': FaStore,          // Vaso, vasos (para produtos em recipientes)
+    'decora': FaStore,        // Decoração, decorativos
+    'seco': FaStar,           // Secas, desidratadas (para durabilidade)
+    'desidratad': FaStar,     // Desidratadas, secas
+    'planta': FaLeaf,         // Plantas, mudas, vegetação
+    'natural': FaLeaf,        // Plantas naturais, flores frescas
+    'casamento': FaHeart,     // Ocasião romântica/especial
+    'romance': FaHeart,       
+    'aniversa': FaGift,       // Aniversário, presente
+    'ocasio': FaGift,         // Ocasião especial
+    
+    // Fallback
+    'default': FaCube, 
 };
 
-// Filtros estáticos que você quer exibir na Home Page
-const staticFilters = [
-    { id_categoria: 'f1', nome: 'Novidades' },
-    { id_categoria: 'f2', nome: 'Mais Vendidos' },
-    { id_categoria: 'f3', nome: 'Dia dos Namorados' },
-    { id_categoria: 'f4', nome: 'Ofertas' },
-];
+// FUNÇÃO CRÍTICA: Resolve o ícone procurando pela palavra-chave mais relevante no nome.
+const getIconComponent = (categoryName) => {
+    const nameLower = categoryName.toLowerCase();
+    
+    // 1. Tenta a correspondência exata primeiro (para novidades, ofertas)
+    if (iconKeywordsMap[nameLower]) {
+        return iconKeywordsMap[nameLower];
+    }
+    
+    // 2. Itera sobre o mapa de palavras-chave mais abrangentes.
+    for (const [keyword, Icon] of Object.entries(iconKeywordsMap)) {
+        if (nameLower.includes(keyword)) {
+            // Se encontrar a palavra-chave (ex: "vaso"), retorna o ícone
+            return Icon;
+        }
+    }
+
+    // 3. Retorna o ícone de fallback genérico se nenhuma palavra-chave for encontrada
+    return iconKeywordsMap['default'];
+};
 
 
 const CategoriesSection = () => {
@@ -39,23 +69,14 @@ const CategoriesSection = () => {
                 const response = await apiClient.get('/categorias');
 
                 if (Array.isArray(response.data)) {
-                    // CORREÇÃO: Usa um Set para remover duplicatas e combina com filtros estáticos
-                    const combined = [...staticFilters, ...response.data];
-                    const uniqueNames = new Set();
-                    const uniqueCategories = combined.filter(cat => {
-                        // Verifica se o nome já foi visto (para remover duplicação)
-                        const isDuplicate = uniqueNames.has(cat.nome);
-                        uniqueNames.add(cat.nome);
-                        return !isDuplicate;
-                    });
-                    
-                    setCategories(uniqueCategories);
+                    // Apenas utiliza os dados vindos do banco de dados.
+                    setCategories(response.data);
                 } else {
-                    setCategories(staticFilters); 
+                    setCategories([]); 
                 }
             } catch (err) {
                 console.error("Erro ao carregar categorias:", err);
-                setCategories(staticFilters); 
+                setCategories([]); 
             } finally {
                 setLoading(false);
             }
@@ -74,13 +95,12 @@ const CategoriesSection = () => {
             <div className="categories-grid">
                 {categories.length > 0 ? (
                     categories.map((category) => {
-                        // Tenta encontrar o ícone.
-                        const IconComponent = iconMap[category.nome] || iconMap[category.nome.toLowerCase()] || iconMap['default'];
+                        // Usa a função flexível para definir o ícone
+                        const IconComponent = getIconComponent(category.nome);
                         
                         return (
-                            // O Link aponta para o catálogo (/products) e passa o nome como filtro
                             <Link 
-                                to={`/products?categoria=${encodeURIComponent(category.nome)}`} // Use 'categoria'
+                                to={`/products?categoria=${encodeURIComponent(category.nome)}`} 
                                 key={category.id_categoria} 
                                 className="category-card"
                             >

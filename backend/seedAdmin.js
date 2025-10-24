@@ -1,17 +1,17 @@
+// backend/seedAdmin.js
+
 const bcrypt = require('bcrypt');
 const db = require('./config/db');
 
 async function createAdmin() {
     console.log('A iniciar script para criar administrador...');
-    
-    // --- CONFIGURE SEU ADMIN AQUI ---
+
     const adminData = {
         nome: 'Admin Bohemian',
         email: 'admin@bohemian.com',
         senha: 'senhaSuperSegura123',
     };
-    // ---------------------------------
-
+  
     let connection;
     try {
         connection = await db.getConnection();
@@ -29,14 +29,13 @@ async function createAdmin() {
         const saltRounds = 10;
         const senhaHash = await bcrypt.hash(adminData.senha, saltRounds);
 
-        const userSql = 'INSERT INTO usuario (login, senha, role) VALUES (?, ?, ?)';
-        const [userResult] = await connection.query(userSql, [adminData.email, senhaHash, 'admin']);
+        // CORREÇÃO: Incluindo 'nome' (obrigatório) e usando 'admin' (1 para TRUE)
+        const userSql = 'INSERT INTO usuario (nome, login, senha, admin) VALUES (?, ?, ?, ?)';
+        const [userResult] = await connection.query(userSql, [adminData.nome, adminData.email, senhaHash, 1]);
         const novoUsuarioId = userResult.insertId;
-        console.log(`-> Registo criado na tabela 'usuario' com ID: ${novoUsuarioId}`);
-
-        const colabSql = 'INSERT INTO colaborador (nome, fk_id_usuario) VALUES (?, ?)';
-        const [colabResult] = await connection.query(colabSql, [adminData.nome, novoUsuarioId]);
-        console.log(`-> Perfil criado na tabela 'colaborador' com ID: ${colabResult.insertId}`);
+        console.log(`-> Registo criado na tabela 'usuario' com ID: ${novoUsuarioId} e permissão ADMIN (1).`);
+        
+        // A lógica de inserção na tabela 'colaborador' FOI REMOVIDA.
 
         await connection.commit();
         console.log(`\n✅ Administrador "${adminData.nome}" criado com sucesso!`);

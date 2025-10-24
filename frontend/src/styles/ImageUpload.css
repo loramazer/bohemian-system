@@ -1,13 +1,6 @@
-.image-upload-container {
-    flex: 1;
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
 .upload-box {
-    border: 2px dashed #ccc;
+    /* Restaura a borda pontilhada */
+    border: 2px dashed #ccc; 
     border-radius: 8px;
     padding: 40px 20px;
     text-align: center;
@@ -55,10 +48,12 @@
     flex-grow: 1;
     display: flex;
     flex-direction: column;
+    border: 1px solid #ccc;
 }
 
 .file-info span {
     font-size: 0.9rem;
+    border: 1px solid #ccc;
 }
 
 .progress-bar {
@@ -93,18 +88,7 @@
     margin-left: 10px;
 }
 
-.action-buttons {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-}
 
-.action-buttons button {
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-weight: bold;
-    cursor: pointer;
-}
 
 .save-btn {
     background-color: #5d7a7b;

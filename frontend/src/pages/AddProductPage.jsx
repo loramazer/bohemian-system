@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import ProductForm from '../components/Admin/ProductForm.jsx'; 
 import ImageUpload from '../components/Shared/ImageUpload.jsx';
-import '../styles/AddProductPage.css';
 import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
+import apiClient from '../api.js'; // ⬅️ NOVO: Importar o cliente Axios
+
+import '../styles/AddProductPage.css';
 
 const AddProductPage = () => {
   const [categories, setCategories] = useState([]);
@@ -21,12 +23,17 @@ const AddProductPage = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch('http://localhost:3000/categorias');
-        if (!response.ok) throw new Error('Erro ao buscar categorias');
-        const data = await response.json();
-        setCategories(data);
+        const response = await apiClient.get('/categorias'); 
+        
+        const data = response.data;
+        
+        if (!response.status === 200) throw new Error('Erro ao buscar categorias');
+        
+        setCategories(data); 
       } catch (err) {
+        // Captura o erro do Axios
         setError(err.message);
+        console.error('Erro ao buscar categorias:', err);
       } finally {
         setLoading(false);
       }
@@ -57,23 +64,25 @@ const AddProductPage = () => {
       formDataToSend.append('descricao', formData.descricao);
       formDataToSend.append('status', 'ativo'); 
       formDataToSend.append('preco_venda', formData.precoRegular);
+      
+      formDataToSend.append('categoria', formData.categoria);
 
       if (uploadedFiles.length > 0) {
-        formDataToSend.append('imagem', uploadedFiles[0].file);
+        formDataToSend.append('imagem', uploadedFiles[0].file); 
       }
 
-      const response = await fetch('http://localhost:3000/produtos', {
-        method: 'POST',
-        body: formDataToSend
+      const response = await apiClient.post('/produtos', formDataToSend, {
+          headers: {
+              'Content-Type': 'multipart/form-data',
+          },
       });
 
-      if (!response.ok) throw new Error('Erro ao salvar produto');
-      const data = await response.json();
+      if (response.status !== 201) throw new Error('Erro ao salvar produto');
+      
+      const data = response.data;
 
-      alert('Produto salvo com sucesso!');
-      console.log('Produto criado:', data);
+      alert('Produto criado com sucesso! ID: ' + data.produto.id_produto);
 
-      // Resetar formulário e imagens
       setFormData({
         nome: '',
         descricao: '',
@@ -86,7 +95,7 @@ const AddProductPage = () => {
 
     } catch (err) {
       console.error('Erro ao salvar produto:', err);
-      alert('Erro ao salvar produto.');
+      alert('Erro ao salvar produto. Verifique o console.');
     }
   };
 
@@ -99,15 +108,12 @@ const AddProductPage = () => {
         <h2 className="page-title">Adicionar Novo Produto</h2>
         <form className="form-container" onSubmit={handleSubmit}>
           <div className="form-main">
-            {/* Formulário principal */}
             <ProductForm
               categories={categories}
               formData={formData}
               onFormChange={handleFormChange}
               onColorChange={handleColorChange}
             />
-
-            {/* Upload de imagem + botões */}
             <div className="upload-container">
               <ImageUpload
                 uploadedFiles={uploadedFiles}

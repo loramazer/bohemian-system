@@ -2,9 +2,13 @@ const Categoria = require('../models/categoriaModel');
 
 async function getAll(req, res) {
   try {
+    // A função getAll é a que o frontend está buscando via GET /api/categorias
     const categorias = await Categoria.getAll();
-    res.json(categorias);
+    
+    // Esta linha finaliza a requisição com sucesso (200 OK) e envia os dados.
+    res.json(categorias); 
   } catch (error) {
+    // Se o banco de dados falhar ou houver outro erro, ele envia 500.
     res.status(500).json({ message: error.message });
   }
 }

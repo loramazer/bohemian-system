@@ -1,11 +1,22 @@
+// backend/controllers/dashboardController.js
 const db = require('../config/db');
 
 async function getKpiData(req, res) {
   try {
     const [totalPedidosResult] = await db.execute('SELECT COUNT(*) AS total FROM pedido');
-    const [pedidosAtivosResult] = await db.execute('SELECT COUNT(*) AS total FROM pedido WHERE data_entrega >= CURDATE()');
+    
+    // Total de pedidos com data de entrega futura (Ativos)
+    const [pedidosAtivosResult] = await db.execute('SELECT COUNT(*) AS total FROM pedido WHERE data_entrega >= CURDATE()'); 
+    
+    // Total de pedidos com data de entrega passada (Fechados/Concluídos)
     const [pedidosFechadosResult] = await db.execute('SELECT COUNT(*) AS total FROM pedido WHERE data_entrega < CURDATE()');
-    const [pedidosPrevistosResult] = await db.execute('SELECT COUNT(*) AS total FROM pedidos_da_semana');
+    
+    // CORREÇÃO: Pedidos Previstos (entrega nos próximos 7 dias). Substitui a VIEW.
+    const [pedidosPrevistosResult] = await db.execute(`
+      SELECT COUNT(*) AS total 
+      FROM pedido 
+      WHERE data_entrega BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)
+    `);
 
     res.json({
       totalPedidos: totalPedidosResult[0].total,
@@ -22,7 +33,18 @@ async function getKpiData(req, res) {
 
 async function getBestSellers(req, res) {
     try {
-        const [rows] = await db.execute('SELECT nome, total_vendido FROM vw_produtos_mais_vendidos LIMIT 4');
+        // CORREÇÃO: SQL explícito para substituir a view 'vw_produtos_mais_vendidos'
+        const query = `
+            SELECT 
+                pr.nome, 
+                SUM(ip.quantidade) AS total_vendido 
+            FROM itempedido ip 
+            JOIN produto pr ON ip.fk_produto_id_produto = pr.id_produto
+            GROUP BY pr.nome
+            ORDER BY total_vendido DESC
+            LIMIT 4;
+        `;
+        const [rows] = await db.execute(query);
         res.json(rows);
     } catch (error) {
         console.error('Erro ao buscar produtos mais vendidos:', error);
@@ -80,6 +102,7 @@ async function getMonthlyRevenue(req, res) {
 
 async function getRecentOrders(req, res) {
     try {
+        // CORREÇÃO: Uso de LEFT JOIN para evitar que pedidos sejam excluídos se o cliente ou produto estiver faltando (inconsistência de seed)
         const query = `
             SELECT 
                 p.id_pedido, 
@@ -89,10 +112,10 @@ async function getRecentOrders(req, res) {
                 SUM(ip.precoUnitario * ip.quantidade) AS valor_total_pedido,
                 GROUP_CONCAT(pr.nome SEPARATOR ', ') AS nome_produtos
             FROM pedido p
-            JOIN cliente c ON p.fk_cliente_id_cliente = c.id_cliente
-            JOIN forma_pagamento fp ON p.fk_forma_pagamento_id_forma_pagamento = fp.id_forma_pagamento
-            JOIN itempedido ip ON p.id_pedido = ip.fk_pedido_id_pedido
-            JOIN produto pr ON ip.fk_produto_id_produto = pr.id_produto
+            LEFT JOIN cliente c ON p.fk_cliente_id_cliente = c.id_cliente
+            LEFT JOIN forma_pagamento fp ON p.fk_forma_pagamento_id_forma_pagamento = fp.id_forma_pagamento
+            LEFT JOIN itempedido ip ON p.id_pedido = ip.fk_pedido_id_pedido
+            LEFT JOIN produto pr ON ip.fk_produto_id_produto = pr.id_produto
             GROUP BY p.id_pedido, p.dataPedido, c.nome, fp.status_transacao
             ORDER BY p.dataPedido DESC
             LIMIT 6;
@@ -108,6 +131,7 @@ async function getRecentOrders(req, res) {
 async function getOrderDetails(req, res) {
     try {
         const { id } = req.params;
+         // CORREÇÃO: Uso de LEFT JOIN para robustez nos detalhes
         const query = `
             SELECT
                 p.id_pedido,
@@ -127,12 +151,12 @@ async function getOrderDetails(req, res) {
                 pr.nome AS nome_produto,
                 pr.descricao AS descricao_produto
             FROM pedido p
-            JOIN cliente c ON p.fk_cliente_id_cliente = c.id_cliente
-            JOIN forma_pagamento fp ON p.fk_forma_pagamento_id_forma_pagamento = fp.id_forma_pagamento
-            JOIN endereco e ON p.fk_endereco_id_endereco = e.id_endereco
-            JOIN cidade cid ON e.id_cidade = cid.id_cidade
-            JOIN itempedido ip ON p.id_pedido = ip.fk_pedido_id_pedido
-            JOIN produto pr ON ip.fk_produto_id_produto = pr.id_produto
+            LEFT JOIN cliente c ON p.fk_cliente_id_cliente = c.id_cliente
+            LEFT JOIN forma_pagamento fp ON p.fk_forma_pagamento_id_forma_pagamento = fp.id_forma_pagamento
+            LEFT JOIN endereco e ON p.fk_endereco_id_endereco = e.id_endereco
+            LEFT JOIN cidade cid ON e.id_cidade = cid.id_cidade
+            LEFT JOIN itempedido ip ON p.id_pedido = ip.fk_pedido_id_pedido
+            LEFT JOIN produto pr ON ip.fk_produto_id_produto = pr.id_produto
             WHERE p.id_pedido = ?;
         `;
         const [rows] = await db.execute(query, [id]);

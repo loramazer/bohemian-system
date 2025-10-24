@@ -34,12 +34,13 @@ const ProductGrid = ({ products }) => {
             <div className="product-grid">
                 {products && products.length > 0 ? (
                     products.map(product => (
-                            <ProductCard 
-                                product={product} 
-                                // NOVO: Passa a função de clique para o ProductCard
-                                onAddToCart={(e) => handleAddToCartClick(e, product)}
-                            />
-                    ))
+                    <ProductCard 
+                        key={product.id_produto}
+                        product={product} // <<<<< ESTA É A LINHA QUE FALTAVA!
+                        onAddToCart={(e) => handleAddToCartClick(e, product)}
+                        onAddToWishlist={() => console.log('Wishlist não implementada')} 
+                    />
+                ))
                 ) : (
                     <p>Nenhum produto encontrado.</p>
                 )}

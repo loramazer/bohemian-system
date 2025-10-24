@@ -1,54 +1,92 @@
+/* Arquivo: frontend/src/styles/AddProductPage.css */
+.page-title {
+  margin-top: -35px;
+}
+
 .add-product-page {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  box-shadow: none;
 }
 
 .form-container {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  box-shadow: none;
 }
 
-/* Layout lado a lado para ProductForm e Upload */
 .form-main {
   display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-  align-items: flex-start;
+  justify-content: center;      /* centraliza o bloco principal na página */
+  align-items: flex-start;      /* alinha pelo topo */
+  gap: 40px;                    /* espaço entre colunas */
+  max-width: 1000px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  margin-top: -15px;           /* controla margem superior/inferior do bloco */
+  box-shadow: none;
 }
 
-.form-main > * {
-  flex: 1;
-  min-width: 300px;
+/* Eleva levemente o card de upload */
+.upload-container {
+  margin-top: 20px; /* valor negativo sobe o componente */
+  box-shadow: none;
 }
 
-/* Container da imagem + botões */
+.image-upload-container {
+  margin-top: -40px;  
+  box-shadow: none;
+}
+
+/* Se quiser que suba mais ou menos, ajuste aqui: -10px ou -25px */
+
+/* Força que as duas colunas tenham o mesmo comportamento */
+.form-main > .product-form-container,
+.form-main > .upload-container,
+.form-main > .image-upload-container {
+  flex: 0 0 450px;    /* largura fixa coerente para ambas as colunas */
+  max-width: 450px;
+  box-sizing: border-box;
+  align-self: flex-start; /* garante topo alinhado mesmo se algum filho tiver margin */
+  box-shadow: none;
+}
+
+
+/* Container da imagem + botões (o card da coluna da direita) */
 .upload-container {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  align-items: center;
+  
+  /* Estilos de Card: Essencial para o alinhamento visual */
+  padding: 30px; 
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); 
+  
+  /* CRÍTICO: Garante alinhamento vertical correto, alinhando o topo com o container esquerdo */
+  height:502px; 
+  margin-top: -1px;  
+  box-shadow: none;
+  border: 1px solid #ccc;
 }
 
-/* Botões Salvar e Cancelar juntos */
+/* Botões Salvar e Can
+celar juntos */
 .upload-buttons {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-  width: 100%;
-  justify-content: center; /* centraliza os dois botões */
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    margin-top: -43px;  
+    justify-content: center;
+    box-shadow: none;
 }
 
 .upload-buttons .save-btn,
 .upload-buttons .cancel-btn {
-  flex: 1;
   max-width: 120px;
-}
-
-/* Responsividade */
-@media (max-width: 768px) {
-  .form-main {
-    flex-direction: column;
-  }
+  width: 100%;
+  padding: 10px 15px;
+  box-shadow: none;
 }
