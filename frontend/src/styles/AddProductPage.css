@@ -1,92 +1,89 @@
-/* Arquivo: frontend/src/styles/AddProductPage.css */
-.page-title {
-  margin-top: -35px;
-}
+  /* Arquivo: frontend/src/styles/AddProductPage.css */
+  .page-title {
+    margin-top: -35px;
+  }
 
-.add-product-page {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  box-shadow: none;
-}
-
-.form-container {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  box-shadow: none;
-}
-
-.form-main {
-  display: flex;
-  justify-content: center;      /* centraliza o bloco principal na página */
-  align-items: flex-start;      /* alinha pelo topo */
-  gap: 40px;                    /* espaço entre colunas */
-  max-width: 1000px;
-  margin: 0 auto;
-  box-sizing: border-box;
-  margin-top: -15px;           /* controla margem superior/inferior do bloco */
-  box-shadow: none;
-}
-
-/* Eleva levemente o card de upload */
-.upload-container {
-  margin-top: 20px; /* valor negativo sobe o componente */
-  box-shadow: none;
-}
-
-.image-upload-container {
-  margin-top: -40px;  
-  box-shadow: none;
-}
-
-/* Se quiser que suba mais ou menos, ajuste aqui: -10px ou -25px */
-
-/* Força que as duas colunas tenham o mesmo comportamento */
-.form-main > .product-form-container,
-.form-main > .upload-container,
-.form-main > .image-upload-container {
-  flex: 0 0 450px;    /* largura fixa coerente para ambas as colunas */
-  max-width: 450px;
-  box-sizing: border-box;
-  align-self: flex-start; /* garante topo alinhado mesmo se algum filho tiver margin */
-  box-shadow: none;
-}
-
-
-/* Container da imagem + botões (o card da coluna da direita) */
-.upload-container {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  
-  /* Estilos de Card: Essencial para o alinhamento visual */
-  padding: 30px; 
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); 
-  
-  /* CRÍTICO: Garante alinhamento vertical correto, alinhando o topo com o container esquerdo */
-  height:502px; 
-  margin-top: -1px;  
-  box-shadow: none;
-  border: 1px solid #ccc;
-}
-
-/* Botões Salvar e Can
-celar juntos */
-.upload-buttons {
+  .add-product-page {
     display: flex;
-    gap: 10px;
-    width: 100%;
-    margin-top: -43px;  
-    justify-content: center;
-    box-shadow: none;
-}
+    flex-direction: column;
+    gap: 20px;
+  }
 
-.upload-buttons .save-btn,
-.upload-buttons .cancel-btn {
-  max-width: 120px;
-  width: 100%;
-  padding: 10px 15px;
-  box-shadow: none;
-}
+  .form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .form-main {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* CRÍTICO: Mantenha flex-start para alinhar o topo */
+    gap: 40px;
+    max-width: 1000px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    margin-top: -15px;
+  }
+
+  /* Flexibilidade para as colunas */
+  .form-main > .product-form-container,
+  .form-main > .upload-container {
+    flex: 1 1 450px;
+    max-width: 450px;
+    box-sizing: border-box;
+    /* CRÍTICO: Removendo height: 100% que pode ter causado problemas de cálculo no flex */
+  }
+
+
+  /* Container da imagem + botões (o card da coluna da direita) */
+  .upload-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      
+      /* Estilos de Card: Essencial para o alinhamento visual */
+      padding: 30px; 
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); 
+      
+      /* REMOVIDO: height: auto; e margin-top: -1px; */
+      border: 1px solid #ccc;
+
+      /* NOVO CRÍTICO: Usamos flex-grow: 1 para forçar o container a se esticar verticalmente
+        e ter a mesma altura que o .product-form-container (que tem 100% no .form-main) */
+      flex-grow: 1; 
+  }
+
+  /* Botões Salvar e Cancelar juntos */
+  .upload-buttons {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+      /* CRÍTICO: Empurra os botões para o final, garantindo que o espaço 
+        extra gerado pelo flex-grow: 1 no .upload-container vá para o topo */
+      margin-top: auto; 
+      padding-top: 20px; /* Garante que haja espaço entre a lista de miniaturas e os botões */
+      justify-content: center;
+  }
+
+  .upload-buttons .save-btn,
+  .upload-buttons .cancel-btn {
+    max-width: 120px;
+    width: 100%;
+    padding: 10px 15px;
+  }
+
+  /* Responsividade para telas menores */
+  @media (max-width: 960px) {
+      .form-main {
+          flex-direction: column;
+          align-items: center;
+      }
+
+      .form-main > .product-form-container,
+      .form-main > .upload-container {
+          flex-basis: 100%;
+          max-width: 90%;
+      }
+  }

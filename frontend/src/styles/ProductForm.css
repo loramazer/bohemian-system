@@ -4,6 +4,7 @@
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
   width: 100%;
+  height: 569px;
   max-width: 450px;
   box-sizing: border-box;
   margin: 0;                 /* remove margens extras que podem "empurrar" visualmente */
@@ -13,14 +14,18 @@
 /* Garante que cada campo de largura total ocupe toda a largura interna da coluna */
 .product-form-container .form-group > input[type="text"],
 .product-form-container .form-group > textarea,
-.product-form-container .form-group > select {
+.product-form-container .form-group > select,
+.color-inputs input { /* Incluindo o input de cores */
   width: 100%;
   box-sizing: border-box;
   padding: 10px;
   border-radius: 5px;
-  margin: 0;                 /* evita gaps inesperados */
+  margin: 0;
   border: 1px solid #ccc;
   color: #555;
+  font-size: 1rem;
+  font-family: inherit; /* Garante que a fonte seja a mesma do elemento pai (root) */
+  font-weight: normal; /* Garante que não haja negrito se for o problema */
 }
 
 /* NÃO usar width:450px em containers internos — use max-width para responsividade */
@@ -46,8 +51,6 @@
 
 .form-gro   up {
     margin-bottom: 20px;
-    /* 🔑 ESSENCIAL: REMOVEMOS O MAX-WIDTH daqui. */
-    border: 1px solid #ccc;
 }
 
 .form-group label {
@@ -71,3 +74,4 @@
     color: #555;
     
 }
+
