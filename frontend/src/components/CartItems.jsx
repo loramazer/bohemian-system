@@ -21,7 +21,7 @@ const CartItems = ({ items, onEmptyCart, onUpdateQuantity, onRemoveItem }) => {
         <div className="cart-items-container">
             <div className="cart-items-header">
                 <span>Produto</span>
-                <span>Preço</span>
+                <span>Preço Unitário</span>
                 <span>Quantidade</span>
                 <span>Total</span>
                 <span></span>
@@ -35,9 +35,11 @@ const CartItems = ({ items, onEmptyCart, onUpdateQuantity, onRemoveItem }) => {
                         <div className="cart-item-details">
                             {/* Ajustado para usar os campos do backend */}
                             <h4>{item.nome_produto || 'Nome do Produto'}</h4>
-                            <p>Tamanho: P</p>
                         </div>
                     </div>
+                    <span className="cart-item-price">
+                        R${parseFloat(item.preco_unitario).toFixed(2)}
+                    </span>
                     <select
                         value={item.quantidade}
                         className="cart-item-quantity"
@@ -60,7 +62,7 @@ const CartItems = ({ items, onEmptyCart, onUpdateQuantity, onRemoveItem }) => {
             ))}
             <div className="cart-actions">
                 <button className="more-items-btn">Mais Itens</button>
-                <button className="empty-cart-btn" onClick={onEmptyCart}>Esvaziar</button>
+                <button className="empty-cart-btn" onClick={onEmptyCart}>Esvaziar Carrinho</button>
             </div>
         </div>
     );
