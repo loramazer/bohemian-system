@@ -34,20 +34,20 @@ const Header = () => {
                         <>
                             <span className="welcome-message">Olá, {user.nome}</span>
                             
-                            {user.role === 'admin' && (
-                                <div className="admin-menu-toggle">
-                                    <span className="admin-link" onClick={() => setAdminOpen(!adminOpen)}>
-                                        Admin <FaChevronDown size={10} />
-                                    </span>
-                                    {adminOpen && (
-                                        <div className="admin-dropdown">
-                                            <Link to="/dashboard">Dashboard</Link>
-                                            <Link to="/admin/products/add">Criar Produto</Link>
-                                            <Link to="/admin/orders">Ver Pedidos</Link>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
+                        {user.admin === 1 && ( // CORRIGIDO: Verifica se o campo 'admin' é igual a 1 (true)
+                            <div className="admin-menu-toggle">
+                                <span className="admin-link" onClick={() => setAdminOpen(!adminOpen)}>
+                                    Admin <FaChevronDown size={10} />
+                                </span>
+                                {adminOpen && (
+                                    <div className="admin-dropdown">
+                                        <Link to="/dashboard">Dashboard</Link>
+                                        <Link to="/admin/products/add">Criar Produto</Link>
+                                        <Link to="/admin/orders">Ver Pedidos</Link>
+                                    </div>
+                                )}
+                            </div>
+                        )}
 
                             <button onClick={handleLogout} className="logout-btn">
                                 Sair <FaSignOutAlt size={14} />

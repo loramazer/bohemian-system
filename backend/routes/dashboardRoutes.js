@@ -1,19 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const dashboardController = require('../controllers/dashboardController');
+const adminMiddleware = require('../middlewares/adminMiddleware');
 
 // Rota para buscar os KPIs
-router.get('/kpis', dashboardController.getKpiData);
+router.get('/kpis', adminMiddleware, dashboardController.getKpiData);
+router.get('/best-sellers', adminMiddleware, dashboardController.getBestSellers);
+router.get('/monthly-revenue', adminMiddleware, dashboardController.getMonthlyRevenue);
+router.get('/recent-orders', adminMiddleware, dashboardController.getRecentOrders);
+router.get('/orders/:id', adminMiddleware, dashboardController.getOrderDetails);
 
-// Rota para buscar os produtos mais vendidos
-router.get('/best-sellers', dashboardController.getBestSellers);
-
-// Rota para buscar o faturamento mensal (para o gráfico de vendas)
-router.get('/monthly-revenue', dashboardController.getMonthlyRevenue);
-
-// Rota para buscar os pedidos recentes
-router.get('/recent-orders', dashboardController.getRecentOrders);
-
-router.get('/orders/:id', dashboardController.getOrderDetails);
 
 module.exports = router;

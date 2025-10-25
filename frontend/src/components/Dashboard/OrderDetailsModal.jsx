@@ -8,6 +8,16 @@ const OrderDetailsModal = ({ order, onClose }) => {
 
   const totalValue = order.itens.reduce((sum, item) => sum + (parseFloat(item.precoUnitario) * item.quantidade), 0);
 
+  // Função utilitária para formatar datas, tratando null/inválido
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    try {
+        return new Date(dateString).toLocaleDateString();
+    } catch (e) {
+        return 'Data Inválida';
+    }
+  };
+
   return (
     <div className="modal-backdrop">
       <div className="modal-content">
@@ -15,14 +25,16 @@ const OrderDetailsModal = ({ order, onClose }) => {
         <h2>Detalhes do Pedido #{order.id_pedido}</h2>
         <div className="details-section">
           <h3>Informações do Cliente</h3>
-          <p><strong>Nome:</strong> {order.cliente}</p>
-          <p><strong>Email:</strong> {order.email_cliente}</p>
+          {/* CORREÇÃO: Usa os campos 'cliente' e 'email_cliente' diretamente */}
+          <p><strong>Nome:</strong> {order.cliente || 'N/A'}</p>
+          <p><strong>Email:</strong> {order.email_cliente || 'N/A'}</p>
         </div>
 
         <div className="details-section">
           <h3>Dados do Pedido</h3>
-          <p><strong>Data do Pedido:</strong> {new Date(order.dataPedido).toLocaleDateString()}</p>
-          <p><strong>Data de Entrega:</strong> {new Date(order.data_entrega).toLocaleDateString()}</p>
+          {/* CORREÇÃO: Usa a função formatDate */}
+          <p><strong>Data do Pedido:</strong> {formatDate(order.dataPedido)}</p>
+          <p><strong>Data de Entrega:</strong> {formatDate(order.data_entrega)}</p>
           <p><strong>Forma de Pagamento:</strong> {order.forma_pagamento}</p>
           <p><strong>Status do Pagamento:</strong> {order.status_pagamento}</p>
           <p><strong>Valor Total:</strong> {`R$${totalValue.toFixed(2)}`}</p>
