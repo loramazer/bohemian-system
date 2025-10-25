@@ -2,14 +2,13 @@
 
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
-// 1. IMPORTAR O CARTCONTEXT
 import { CartContext } from '../context/CartContext';
 import apiClient from '../api';
 import '../styles/CheckoutPage.css';
-import AddressForm from '../components/AddressForm';
+import AddressForm from '../components//Shared/AddressForm';
 
 // (Opcional) Um CSS para o resumo
-import '../styles/CheckoutSummary.css';
+//import '../styles/CheckoutSummary.css';
 
 const CheckoutPage = () => {
     // ... (todos os seus states: deliveryOption, addresses, etc.)
