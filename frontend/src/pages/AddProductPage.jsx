@@ -1,8 +1,10 @@
+// loramazer/bohemian-system/bohemian-system-refatorar-organizacao/frontend/src/pages/AddProductPage.jsx
+
 import React, { useState, useEffect } from 'react';
 import ProductForm from '../components/Admin/ProductForm.jsx'; 
 import ImageUpload from '../components/Shared/ImageUpload.jsx';
 import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
-import apiClient from '../api.js'; // ⬅️ NOVO: Importar o cliente Axios
+import apiClient from '../api.js'; 
 
 import '../styles/AddProductPage.css';
 
@@ -12,13 +14,13 @@ const AddProductPage = () => {
     nome: '',
     descricao: '',
     categoria: '',
-    cores: ['', '', ''],
     precoRegular: '',
     precoPromocao: ''
   });
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [formErrors, setFormErrors] = useState({}); 
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -31,7 +33,6 @@ const AddProductPage = () => {
         
         setCategories(data); 
       } catch (err) {
-        // Captura o erro do Axios
         setError(err.message);
         console.error('Erro ao buscar categorias:', err);
       } finally {
@@ -44,31 +45,48 @@ const AddProductPage = () => {
   const handleFormChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleColorChange = (e, index) => {
-    const newColors = [...formData.cores];
-    newColors[index] = e.target.value;
-    setFormData(prev => ({ ...prev, cores: newColors }));
+    // Limpa o erro do campo assim que o usuário começa a digitar
+    setFormErrors(prev => ({ ...prev, [name]: undefined }));
   };
 
   const handleFileChange = (updater) => {
     setUploadedFiles(updater);
   };
+  
+  // Função de validação
+  const validateForm = () => {
+    const errors = {};
+    if (!formData.nome.trim()) errors.nome = 'O Nome do Produto é obrigatório.';
+    if (!formData.descricao.trim()) errors.descricao = 'A Descrição é obrigatória.';
+    if (!formData.categoria.trim()) errors.categoria = 'A Categoria é obrigatória.';
+    if (!formData.precoRegular.trim()) errors.precoRegular = 'O Preço Regular é obrigatório.';
+    if (uploadedFiles.length === 0) errors.imagens = 'É obrigatório enviar pelo menos 1 imagem.';
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // CRÍTICO: Se a validação falhar, retorna sem fazer nada (sem alert)
+    if (!validateForm()) {
+        return; 
+    }
+
     try {
       const formDataToSend = new FormData();
       formDataToSend.append('nome', formData.nome);
       formDataToSend.append('descricao', formData.descricao);
       formDataToSend.append('status', 'ativo'); 
       formDataToSend.append('preco_venda', formData.precoRegular);
-      
       formDataToSend.append('categoria', formData.categoria);
 
+      // Anexa todas as imagens
       if (uploadedFiles.length > 0) {
-        formDataToSend.append('imagem', uploadedFiles[0].file); 
+        uploadedFiles.forEach((fileWrapper) => {
+          formDataToSend.append('imagens', fileWrapper.file); 
+        });
       }
 
       const response = await apiClient.post('/produtos', formDataToSend, {
@@ -81,21 +99,24 @@ const AddProductPage = () => {
       
       const data = response.data;
 
+      // Mantém um alerta para sucesso (opcional, pode ser trocado por um toast na aplicação real)
       alert('Produto criado com sucesso! ID: ' + data.produto.id_produto);
 
+      // Limpar formulário após sucesso
       setFormData({
         nome: '',
         descricao: '',
         categoria: '',
-        cores: ['', '', ''],
         precoRegular: '',
         precoPromocao: ''
       });
       setUploadedFiles([]);
+      setFormErrors({});
 
     } catch (err) {
       console.error('Erro ao salvar produto:', err);
-      alert('Erro ao salvar produto. Verifique o console.');
+      // Aqui você poderia definir um erro de servidor genérico no estado (opcional)
+      alert('Erro ao salvar produto. Verifique o console.'); 
     }
   };
 
@@ -112,12 +133,13 @@ const AddProductPage = () => {
               categories={categories}
               formData={formData}
               onFormChange={handleFormChange}
-              onColorChange={handleColorChange}
+              formErrors={formErrors}
             />
             <div className="upload-container">
               <ImageUpload
                 uploadedFiles={uploadedFiles}
                 onFileChange={handleFileChange}
+                error={formErrors.imagens} 
               />
               <div className="upload-buttons">
                 <button type="submit" className="save-btn">
@@ -131,11 +153,11 @@ const AddProductPage = () => {
                       nome: '',
                       descricao: '',
                       categoria: '',
-                      cores: ['', '', ''],
                       precoRegular: '',
                       precoPromocao: ''
                     });
                     setUploadedFiles([]);
+                    setFormErrors({}); 
                   }}
                 >
                   Cancelar

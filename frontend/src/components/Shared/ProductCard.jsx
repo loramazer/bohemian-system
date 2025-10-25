@@ -1,3 +1,5 @@
+// loramazer/bohemian-system/bohemian-system-refatorar-organizacao/frontend/src/components/Shared/ProductCard.jsx
+
 import React from 'react';
 import { FaShoppingCart, FaRegHeart } from 'react-icons/fa';
 import '../../styles/ProductCard.css';
@@ -10,6 +12,21 @@ const ProductCard = ({ product, onAddToCart, onAddToWishlist }) => {
     if (!product) {
         return null;
     }
+
+    // CRÍTICO: NOVO BLOCO PARA EXTRAIR A PRIMEIRA URL DA GALERIA (STRING JSON)
+    let displayImage = product.imagem_url;
+    try {
+        const parsedUrls = JSON.parse(product.imagem_url);
+        // Se for um array de strings, pegue o primeiro elemento
+        if (Array.isArray(parsedUrls) && parsedUrls.length > 0) {
+            displayImage = parsedUrls[0];
+        }
+    } catch (e) {
+        // Se falhar o parse, significa que era uma string de URL simples,
+        // então mantemos o valor original em displayImage.
+        // console.error("Erro ao fazer parse da URL da imagem:", e);
+    }
+    // FIM DO NOVO BLOCO
 
     const priceToFormat = product.preco_promocao || product.preco_venda;
     
@@ -38,7 +55,8 @@ const ProductCard = ({ product, onAddToCart, onAddToWishlist }) => {
                 
                 <div className="product-image-container">
                     <img 
-                        src={product.imagem_url || placeholderImage} 
+                        // CRÍTICO: Usa a URL processada (displayImage)
+                        src={displayImage || placeholderImage} 
                         alt={product.nome} 
                         className="product-image" 
                     />

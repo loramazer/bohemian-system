@@ -36,16 +36,33 @@
   align-items: center;
 }
 
+/* Dashboard.css */
+
+/* Garantir que o contêiner de info agrupe os itens verticalmente */
+.kpi-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* Talvez adicionar um pequeno gap aqui, se os elementos estiverem muito próximos */
+  gap: 2px; 
+}
+
+/* Título, garantindo que ele não tenha margens extras */
 .kpi-info .kpi-title {
   font-size: 0.9rem;
   color: #888;
+  margin: 0; /* Limpando margens desnecessárias */
 }
 
 .kpi-value {
   font-size: 1.5rem;
   color: #333;
   font-weight: bold;
-  margin: 5px 0;
+  
+  /* MUDANÇA: Remover a margem completamente (ou quase) para que o valor suba */
+  /* ANTES: margin: 2px 0; */
+  margin: 0; /* REMOVE TODA A MARGEM */
+  line-height: 1.2; /* Pode ser necessário ajustar a altura da linha para eliminar espaço vertical extra */
 }
 
 .kpi-change, .kpi-comparison {

@@ -13,12 +13,13 @@
 
 .products-grid {
     display: grid;
-    /* Define as colunas do grid: no mínimo 250px, com preenchimento automático */
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px; /* Espaço entre os cards */
-    margin-top: 30px;
-    /* Centraliza o grid dentro da seção */
-    max-width: 1200px;
-    margin-left: auto;
-    margin-right: auto;
+    gap: 40px; /* AUMENTADO PARA 40px */
+    /* ... */
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+    gap: 40px; /* AUMENTADO PARA 40px */
 }

@@ -4,70 +4,86 @@
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
   width: 100%;
-  height: 569px;
+  /* CRÍTICO: REMOVIDO a altura fixa de 569px e a borda temporária */
+  /* height: 569px; */
   max-width: 450px;
   box-sizing: border-box;
-  margin: 0;                 /* remove margens extras que podem "empurrar" visualmente */
+  margin: 0;                 
   border: 1px solid #ccc;
 }
 
 /* Garante que cada campo de largura total ocupe toda a largura interna da coluna */
 .product-form-container .form-group > input[type="text"],
 .product-form-container .form-group > textarea,
-.product-form-container .form-group > select,
-.color-inputs input { /* Incluindo o input de cores */
+.product-form-container .form-group > select {
   width: 100%;
   box-sizing: border-box;
   padding: 10px;
   border-radius: 5px;
-  margin: 0;
+  margin: 0;                 
   border: 1px solid #ccc;
   color: #555;
+  /* Adiciona transição para a mudança de cor da borda */
+  transition: border-color 0.2s ease-in-out; 
+}
+
+/* Estilo para campos com erro */
+.form-group.has-error input[type="text"],
+.form-group.has-error textarea,
+.form-group.has-error select {
+    border: 1px solid #f44336;
+}
+
+.product-form-container .form-group > input[type="text"],
+.product-form-container .form-group > textarea,
+.product-form-container .form-group > select,
+.color-inputs input { 
   font-size: 1rem;
   font-family: inherit; /* Garante que a fonte seja a mesma do elemento pai (root) */
   font-weight: normal; /* Garante que não haja negrito se for o problema */
 }
 
-/* NÃO usar width:450px em containers internos — use max-width para responsividade */
-.color-inputs,
-.form-group-row {
-  display: flex;
-  gap: 10px;
-  width: 100%;
-  max-width: 100%;
-  margin-bottom: 20px;
-  
-}
-.categoria {
-    color: #555;
-}
-
-.color-inputs input {
-  flex: 1;
-  min-width: 0; /* evita overflow em flex children */
-  border: 1px solid #ccc;
-  
+/* CRÍTICO: Estilo para a mensagem de erro (Máxima Proximidade) */
+.error-text {
+    text-align: left;
+    color: #f44336; /* Vermelho forte */
+    font-size: 0.8rem; /* Fonte menor */
+    font-weight: 500;
+    
+    /* CORREÇÃO: Colamos o texto no input e colocamos uma margem inferior muito pequena */
+    margin-top: 2px;    
+    margin-bottom: 2px; /* Margem mínima para separação visual */
+    
+    padding-left: 5px; 
+    display: block; 
 }
 
-.form-gro   up {
-    margin-bottom: 20px;
+/* Ajuste para input com erro no bloco de preços, para que a margem do container não seja afetada pelo erro */
+.form-group-row .form-group.has-error {
+    margin-bottom: 5px; /* Reduzimos para um valor menor */
+}
+
+
+/* Outros ajustes de espaçamento */
+.form-group {
+    /* Reduz a margem padrão entre grupos para compensar o espaço extra */
+    margin-bottom: 10px;
 }
 
 .form-group label {
-    display: block;
-    font-weight: bold;
-    color: #555;
-    margin-bottom: 8px;
-    
+    margin-bottom: 5px; /* Reduzido para aproximar do campo/erro */
 }
 
+.color-inputs,
+.form-group-row {
+    /* Mantém o espaçamento para os inputs de cor/preço */
+    margin-bottom: 20px;
+}
 
-/* Altura da descrição */
 .form-group textarea {
     min-height: 100px; 
     border: 1px solid #ccc;
 }
-
 
 .form-group-row .form-group {
     flex: 1;
@@ -75,3 +91,6 @@
     
 }
 
+.categoria {
+    color: #555;
+}

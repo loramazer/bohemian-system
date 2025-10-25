@@ -17,20 +17,41 @@ function formatarPreco(preco) {
     return parseFloat(valor);
 }
 
+async function processarImagens(files) {
+    const urls = [];
+    if (files && files.length > 0) {
+        for (const file of files) {
+            // Se for um arquivo temporário do multer, sobe para o Cloudinary
+            if (file.path) {
+                const result = await cloudinary.uploader.upload(file.path);
+                urls.push(result.secure_url);
+                fs.unlinkSync(file.path); // remove arquivo temporário
+            } else if (typeof file === 'string') {
+                // Caso seja uma URL existente que está sendo mantida na atualização
+                urls.push(file);
+            }
+        }
+    }
+    // Retorna a lista de URLs como uma string JSON
+    return JSON.stringify(urls);
+}
+
 async function create(req, res) {
     try {
-        let { nome, preco_venda, descricao, ativo } = req.body;
+        let { nome, preco_venda, descricao, ativo, categoria } = req.body; // <-- OBTÉM a categoria
 
         preco_venda = formatarPreco(preco_venda);
 
-        let imagem_url = null;
-        if (req.file) {
-            const result = await cloudinary.uploader.upload(req.file.path);
-            imagem_url = result.secure_url;
-            fs.unlinkSync(req.file.path); // remove arquivo temporário
-        }
+        const imagem_url_json = await processarImagens(req.files);
+        // O campo 'imagem_url' agora contém a string JSON de todas as URLs.
+        let imagem_url = imagem_url_json;
 
         const novoProduto = await produtoModel.create({ nome, preco_venda, descricao, ativo, imagem_url });
+        
+        if (categoria) {
+            await produtoModel.addCategoryToProduct(novoProduto.id_produto, categoria); 
+        }
+
         res.status(201).json({ message: 'Produto criado com sucesso', produto: novoProduto });
     } catch (error) {
         console.error('Erro ao criar produto:', error);
@@ -104,5 +125,6 @@ module.exports = {
     getById,
     update,
     remove,
-    upload
+    // NOVO: Exponha o middleware de upload modificado para suportar ARRAY de arquivos
+    uploadMiddleware: upload.array('imagens', 4) // Aceita até 4 arquivos no campo 'imagens'
 };

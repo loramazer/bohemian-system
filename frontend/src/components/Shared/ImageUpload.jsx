@@ -2,7 +2,8 @@ import React, { useRef, useState } from 'react';
 import '../../styles/ImageUpload.css';
 import { FaImage, FaCheckCircle, FaTrashAlt } from 'react-icons/fa';
 
-const ImageUpload = ({ uploadedFiles, onFileChange, onSubmit }) => {
+// NOVO: Adiciona a prop 'error'
+const ImageUpload = ({ uploadedFiles, onFileChange, onSubmit, error }) => {
     const fileInputRef = useRef(null);
     const [isDragging, setIsDragging] = useState(false);
 
@@ -69,7 +70,7 @@ const ImageUpload = ({ uploadedFiles, onFileChange, onSubmit }) => {
         onFileChange(prevFiles => prevFiles.filter(file => file.name !== fileName));
     };
 
-    const renderFileItem = (file, index) => (
+const renderFileItem = (file, index) => (
         <div key={file.name} className="thumbnail-item">
             <img src={file.url} alt={`Thumbnail ${index + 1}`} />
             <div className="file-info">
@@ -79,19 +80,24 @@ const ImageUpload = ({ uploadedFiles, onFileChange, onSubmit }) => {
                         <div className="progress loading"></div>
                     </div>
                 )}
+                {/* O checkmark é movido para o contêiner de ações */}
+            </div>
+            {/* CRÍTICO: NOVO CONTÊINER PARA OS ÍCONES */}
+            <div className="thumbnail-actions">
                 {file.status === 'completed' && (
                     <FaCheckCircle className="checkmark-icon" />
                 )}
+                <FaTrashAlt className="delete-icon" onClick={() => handleDeleteFile(file.name)} />
             </div>
-            <FaTrashAlt className="delete-icon" onClick={() => handleDeleteFile(file.name)} />
         </div>
     );
 
     return (
         <div className="image-upload-container">
             <h3>Imagem</h3>
+            {/* Adiciona classe de erro se a prop 'error' estiver presente */}
             <div
-                className={`upload-box ${isDragging ? 'dragging' : ''}`}
+                className={`upload-box ${isDragging ? 'dragging' : ''} ${error ? 'has-error' : ''}`}
                 onClick={handleUploadBoxClick}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
@@ -101,6 +107,8 @@ const ImageUpload = ({ uploadedFiles, onFileChange, onSubmit }) => {
                 <p>Solte ou clique para selecionar imagens</p>
                 <p>Até 4 arquivos (.jpg, .png, .gif)</p>
             </div>
+            {/* EXIBE O ERRO ABAIXO DO UPLOAD BOX */}
+            {error && <p className="image-error-text">{error}</p>} 
             
             <input
                 type="file"

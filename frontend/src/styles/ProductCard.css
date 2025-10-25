@@ -1,13 +1,49 @@
+/* loramazer/bohemian-system/bohemian-system-refatorar-organizacao/frontend/src/styles/ProductCard.css */
+
 .product-card {
-    border: 1px solid #e0e0e0; /* Borda mais suave */
-    border-radius: 12px; /* Cantos mais arredondados */
+    border: 1px solid #e0e0e0; 
+    border-radius: 12px; 
     padding: 15px;
     background-color: #fff;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); /* Sombra mais destacada */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); 
     transition: all 0.3s ease;
     position: relative;
     text-align: center;
-    overflow: hidden; /* Garante que elementos internos não vazem */
+    overflow: hidden; 
+    
+    display: flex;
+    flex-direction: column;
+    /* Certifica-se de que não há margem vertical aqui */
+    margin: 0; 
+    
+    height: 100%;
+}
+/* ... restante do código ProductCard.css ... */
+
+/* Ajuste na margem superior do nome para espaçar melhor, 
+   se isso não for o problema, ignore este ajuste */
+
+/* loramazer/bohemian-system/bohemian-system-refatorar-organizacao/frontend/src/styles/ProductCard.css */
+
+.product-name {
+    font-size: 1.1rem;
+    color: #333;
+    
+    /* REMOVIDO: A altura fixa estava empurrando. Mantenha só o min-height para 2 linhas */
+    min-height: 2.5em; 
+    /* height: 2.5em; <--- REMOVER ESSA LINHA */
+    
+    /* AJUSTE FINO: A margem de 10px pode ter sido demais */
+    margin: 5px 0; 
+    
+    font-weight: 600;
+    overflow: hidden; 
+    display: -webkit-box;
+    -webkit-line-clamp: 2; 
+    -webkit-box-orient: vertical;
+    line-clamp: 2; 
+    
+    text-align: center;
 }
 
 .product-card:hover {
@@ -38,14 +74,31 @@
 /* --- IMAGEM --- */
 .product-image-container {
     width: 100%;
-    height: 220px; /* Aumenta a área da imagem */
+    height: 220px; 
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
     margin-bottom: 15px;
-    border-radius: 8px; /* Arredonda a borda do container da imagem */
-    background-color: #f8f8f8; /* Fundo leve para imagens com transparência */
+    border-radius: 8px;
+    background-color: #f8f8f8; 
+    
+    /* CRÍTICO: Define o container da imagem como ponto de referência ABSOLUTO */
+    position: relative; 
+}
+
+.product-image-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(69, 90, 90, 0.8); /* Cor de sobreposição escura */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 5; /* Abaixo dos botões */
+    border-radius: 8px; /* Herda o border-radius do container */
 }
 
 .product-image {
@@ -55,16 +108,12 @@
     transition: transform 0.5s ease;
 }
 
-.product-card:hover .product-image {
-    transform: scale(1.05); /* Efeito de zoom no hover */
+.product-card:hover .product-image-container::before {
+    opacity: 1; /* Mostra o overlay no hover do card */
 }
 
-/* --- INFORMAÇÕES E PREÇOS --- */
-.product-name {
-    font-size: 1.1rem;
-    color: #333;
-    margin: 5px 0;
-    font-weight: 600;
+.product-card:hover .product-actions {
+    opacity: 1;
 }
 
 .product-code {
@@ -77,8 +126,11 @@
     display: flex;
     justify-content: center;
     align-items: baseline;
-    margin-top: 10px;
-    gap: 15px; /* Aumenta o espaço entre os preços */
+    
+    /* CRÍTICO: MANTIDO: Empurra o preço para o rodapé do card */
+    margin-top: auto; 
+    
+    gap: 15px; 
 }
 
 .old-price {
@@ -104,10 +156,9 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-}
-
-.product-card:hover .product-actions {
-    opacity: 1;
+    
+    /* CRÍTICO: Z-INDEX para estar acima da sobreposição e do nome */
+    z-index: 10; 
 }
 
 .add-to-cart-btn {

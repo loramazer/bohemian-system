@@ -5,7 +5,14 @@
 .product-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
-    gap: 30px; 
+    gap: 40px; /* AUMENTADO PARA 40px */
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 40px; /* AUMENTADO PARA 40px */
+    /* ... */
 }
 
 /* Responsividade ajustada para telas menores */

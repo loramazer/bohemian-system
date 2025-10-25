@@ -86,4 +86,27 @@ async function remove(id) {
   await db.execute('DELETE FROM produto WHERE id_produto = ?', [id]);
 }
 
-module.exports = { getAll, getById, create, update, remove };
+async function getCategoryIdByName(categoryName) {
+    const [rows] = await db.execute('SELECT id_categoria FROM categoria WHERE nome = ?', [categoryName]);
+    return rows.length > 0 ? rows[0].id_categoria : null;
+}
+
+// NOVO: Função para adicionar a categoria ao produto
+async function addCategoryToProduct(productId, categoryName) {
+    const categoryId = await getCategoryIdByName(categoryName);
+    
+    if (categoryId) {
+        // Insere na tabela de associação 'produtocategoria'
+        const sql = `
+            INSERT INTO produtocategoria (fk_produto_id_produto, fk_categoria_id_categoria)
+            VALUES (?, ?)
+        `;
+        await db.execute(sql, [productId, categoryId]);
+        return true;
+    }
+    
+    console.warn(`Categoria "${categoryName}" não encontrada. Associação não criada.`);
+    return false;
+}
+
+module.exports = { getAll, getById, create, update, remove, addCategoryToProduct };

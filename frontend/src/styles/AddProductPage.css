@@ -1,3 +1,5 @@
+/* AddProductPage.css */
+
   /* Arquivo: frontend/src/styles/AddProductPage.css */
   .page-title {
     margin-top: -35px;
@@ -18,7 +20,7 @@
   .form-main {
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* CRÍTICO: Mantenha flex-start para alinhar o topo */
+    align-items: flex-start; /* Mantenha flex-start para alinhar o topo */
     gap: 40px;
     max-width: 1000px;
     margin: 0 auto;
@@ -27,51 +29,67 @@
   }
 
   /* Flexibilidade para as colunas */
-  .form-main > .product-form-container,
-  .form-main > .upload-container {
-    flex: 1 1 450px;
-    max-width: 450px;
-    box-sizing: border-box;
-    /* CRÍTICO: Removendo height: 100% que pode ter causado problemas de cálculo no flex */
-  }
+.form-main > .product-form-container,
+.form-main > .upload-container,
+.form-main > .image-upload-container {
+  flex: 0 0 450px;    
+  max-width: 450px;
+  box-sizing: border-box;
+  align-self: flex-start;
+  box-shadow: none;
+  width: 100%;
+  
+  /* CRÍTICO: Remova o height fixo daqui. Deixaremos a altura ser ditada pelo conteúdo interno */
+  /* height: 569px; <--- REMOVIDO/COMENTADO como você já fez */ 
+}
 
 
-  /* Container da imagem + botões (o card da coluna da direita) */
-  .upload-container {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      
-      /* Estilos de Card: Essencial para o alinhamento visual */
-      padding: 30px; 
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); 
-      
-      /* REMOVIDO: height: auto; e margin-top: -1px; */
-      border: 1px solid #ccc;
+/* Container da imagem + botões (o card da coluna da direita) */
+.upload-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    
+    /* Estilos de Card: Essencial para o alinhamento visual */
+    padding: 30px; 
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); 
+    
+    border: 1px solid #ccc;
 
-      /* NOVO CRÍTICO: Usamos flex-grow: 1 para forçar o container a se esticar verticalmente
-        e ter a mesma altura que o .product-form-container (que tem 100% no .form-main) */
-      flex-grow: 1; 
-  }
+    flex-grow: 1; /* Garante que ele ocupe o espaço se for necessário, mas com width fixo de 450px, é secundário */
+    width: 100%;
+    
+    /* CRÍTICO: Mantenha a altura como 'auto' para que ela cresça com o conteúdo */
+    height: auto; 
+}
 
   /* Botões Salvar e Cancelar juntos */
-  .upload-buttons {
-      display: flex;
-      gap: 10px;
-      width: 100%;
-      /* CRÍTICO: Empurra os botões para o final, garantindo que o espaço 
-        extra gerado pelo flex-grow: 1 no .upload-container vá para o topo */
-      margin-top: auto; 
-      padding-top: 20px; /* Garante que haja espaço entre a lista de miniaturas e os botões */
-      justify-content: center;
-  }
+/* AddProductPage.css */
 
-  .upload-buttons .save-btn,
-  .upload-buttons .cancel-btn {
-    max-width: 120px;
+/* Botões Salvar e Cancelar juntos */
+.upload-buttons {
+    display: flex;
+    gap: 10px;
     width: 100%;
-    padding: 10px 15px;
+    margin-top: auto; /* CRÍTICO: Empurra para o final do contêiner */ 
+    padding-top: 20px;
+    justify-content: center;
+}
+
+/* AddProductPage.css */
+
+.upload-buttons .save-btn,
+.upload-buttons .cancel-btn {
+  max-width: 120px;
+  width: 100%;
+  padding: 10px 15px;
+  /* CRÍTICO: Remova qualquer margin-top negativo se ainda estiver lá */
+  margin-top: 0; 
+}
+
+  .upload-buttons .cancel-btn {
+    border: 1px solid #ccc;
   }
 
   /* Responsividade para telas menores */
@@ -81,9 +99,20 @@
           align-items: center;
       }
 
-      .form-main > .product-form-container,
-      .form-main > .upload-container {
+.form-main > .product-form-container,
+.form-main > .upload-container {
           flex-basis: 100%;
-          max-width: 90%;
+          max-width: 100%;
       }
   }
+
+.add-more-files-btn {
+  width: 390px;
+  display: flex;
+  align-content: center;
+  gap: 15px;
+  padding: 10px;
+  border: 1px solid #eee;
+  border-radius: 5px;
+  position: relative;
+}
