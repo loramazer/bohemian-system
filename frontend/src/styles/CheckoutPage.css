@@ -144,3 +144,109 @@
     font-size: 1.1rem;
     color: var(--text-color);
 }
+
+.checkout-page-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    /* 2/3 para o conteúdo, 1/3 para o resumo */
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.checkout-summary-container {
+    background-color: #fdfdfd;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 1.5rem 2rem;
+    height: fit-content;
+    /* Faz o resumo "grudar" no topo */
+    position: sticky;
+    top: 100px;
+    /* Ajuste com base na altura do seu Header */
+}
+
+.checkout-summary-container h3 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+}
+
+.summary-details .summary-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 0.75rem;
+}
+
+.summary-details .item-name {
+    margin-right: 1rem;
+}
+
+.summary-details .item-price {
+    font-weight: 500;
+}
+
+.summary-details .summary-line {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px dashed #ddd;
+}
+
+.summary-details .summary-line.total {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.payment-btn {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #fff;
+    background-color: #009e2a;
+    /* Cor verde (padrão MP) */
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 1.5rem;
+    transition: background-color 0.2s;
+}
+
+.payment-btn:hover {
+    background-color: #007d21;
+}
+
+.payment-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.payment-error {
+    color: #d32f2f;
+    /* Vermelho de erro */
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 900px) {
+    .checkout-page-grid {
+        grid-template-columns: 1fr;
+        /* Coluna única */
+    }
+
+    .checkout-summary-container {
+        position: static;
+        /* Remove o "sticky" */
+        grid-row: 1;
+        /* Opcional: Move o resumo para o topo em telas pequenas */
+    }
+}
