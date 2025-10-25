@@ -2,32 +2,42 @@
 
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
+// 1. IMPORTAR O CARTCONTEXT
+import { CartContext } from '../context/CartContext';
 import apiClient from '../api';
-// 1. IMPORTAR O CSS DA PÁGINA
 import '../styles/CheckoutPage.css';
-// 2. IMPORTAR O NOVO COMPONENTE DE FORMULÁRIO
-import AddressForm from '../components/Shared/AddressForm';
+import AddressForm from '../components/AddressForm';
+
+// (Opcional) Um CSS para o resumo
+import '../styles/CheckoutSummary.css';
 
 const CheckoutPage = () => {
+    // ... (todos os seus states: deliveryOption, addresses, etc.)
     const { user } = useContext(AuthContext);
+
+    // 2. PEGAR DADOS DO CARRINHO E LOADING DO CARRINHO
+    const { cartItems, loading: loadingCart } = useContext(CartContext);
+
+    // 3. NOVO STATE PARA LOADING DO PAGAMENTO
+    const [isCreatingPreference, setIsCreatingPreference] = useState(false);
+    const [paymentError, setPaymentError] = useState('');
+
     const [deliveryOption, setDeliveryOption] = useState('retirada');
     const [addresses, setAddresses] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [selectedAddressId, setSelectedAddressId] = useState(null);
     const [showAddForm, setShowAddForm] = useState(false);
-
     const storeAddress = "Rua das Flores, 123, Centro, São Paulo - SP";
 
+    // ... (suas funções fetchAddresses, handleSaveAddress, renderAddressList) ...
+    // Coloquei suas funções originais aqui para o contexto
     const fetchAddresses = async () => {
         setIsLoading(true);
         try {
             const response = await apiClient.get('/enderecos');
             setAddresses(response.data);
-            if (response.data.length > 0) {
-                // Se não houver um endereço selecionado E a entrega estiver ativa, seleciona o primeiro
-                if (deliveryOption === 'entrega' && !selectedAddressId) {
-                    setSelectedAddressId(response.data[0].id_endereco);
-                }
+            if (response.data.length > 0 && !selectedAddressId) {
+                setSelectedAddressId(response.data[0].id_endereco);
             }
         } catch (error) {
             console.error("Erro ao buscar endereços:", error);
@@ -42,28 +52,15 @@ const CheckoutPage = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
 
-    // Função para salvar um novo endereço
     const handleSaveAddress = async (formData) => {
-        // A lógica de 'await' já está dentro do AddressForm
-        // Apenas precisamos que ele nos diga que terminou.
         await apiClient.post('/enderecos', formData);
-        fetchAddresses(); // Atualiza a lista
-        setShowAddForm(false); // Esconde o formulário
+        fetchAddresses();
+        setShowAddForm(false);
     };
 
-    // Renderiza a lista de endereços do usuário
     const renderAddressList = () => {
-        if (isLoading) {
-            return <p>Carregando endereços...</p>;
-        }
-
-        if (addresses.length === 0) {
-            return (
-                <div className="address-notice">
-                    <p>Você não possui nenhum endereço cadastrado.</p>
-                </div>
-            );
-        }
+        if (isLoading) return <p>Carregando endereços...</p>;
+        if (addresses.length === 0) return <div className="address-notice"><p>Você não possui nenhum endereço cadastrado.</p></div>;
 
         return (
             <div className="address-list">
@@ -81,68 +78,151 @@ const CheckoutPage = () => {
             </div>
         );
     };
+    // --- Fim das suas funções originais ---
 
+
+    // 4. CALCULAR TOTAIS
+    const subtotal = cartItems.reduce((acc, item) => acc + item.preco_unitario * item.quantidade, 0);
+
+    // O custo do frete simulado
+    // Se for 'retirada', frete é 0.
+    const shippingCost = deliveryOption === 'retirada' ? 0 : 15.00;
+
+    const total = subtotal + shippingCost;
+
+    // 5. FUNÇÃO PARA LIDAR COM O PAGAMENTO
+    const handleGoToPayment = async () => {
+        setPaymentError('');
+
+        // Validação: Se for entrega, precisa ter um endereço selecionado
+        if (deliveryOption === 'entrega' && !selectedAddressId) {
+            setPaymentError('Por favor, selecione um endereço de entrega ou adicione um novo.');
+            return;
+        }
+
+        // Validação: Carrinho não pode estar vazio
+        if (cartItems.length === 0) {
+            setPaymentError('Seu carrinho está vazio.');
+            return;
+        }
+
+        setIsCreatingPreference(true);
+        try {
+            // Envia os dados para o backend
+            const response = await apiClient.post('/pagamentos/criar-preferencia', {
+                cartItems: cartItems,
+                shippingCost: shippingCost,
+                deliveryOption: deliveryOption,
+                selectedAddressId: selectedAddressId, // Envia o ID do endereço
+            });
+
+            // 6. REDIRECIONA PARA O MERCADO PAGO
+            // O backend nos devolveu o link de pagamento
+            if (response.data.init_point) {
+                window.location.href = response.data.init_point;
+            }
+
+        } catch (error) {
+            console.error("Erro ao criar preferência:", error);
+            setPaymentError('Não foi possível iniciar o pagamento. Tente novamente.');
+        } finally {
+            setIsCreatingPreference(false);
+        }
+    };
+
+    // 7. RENDERIZAÇÃO
     return (
-        <main className="checkout-container">
-            <h2>Como você prefere receber seu pedido?</h2>
+        // Usamos um grid para dividir a página em duas colunas: Opções e Resumo
+        <div className="checkout-page-grid">
 
-            <div className="delivery-options">
-                <button
-                    className={deliveryOption === 'retirada' ? 'active' : ''}
-                    onClick={() => setDeliveryOption('retirada')}
-                >
-                    Retirada na Loja
-                </button>
-                <button
-                    className={deliveryOption === 'entrega' ? 'active' : ''}
-                    onClick={() => setDeliveryOption('entrega')}
-                >
-                    Receber em Casa
-                </button>
-            </div>
+            {/* Coluna da Esquerda: Opções de Entrega */}
+            <main className="checkout-container">
+                <h2>Como você prefere receber seu pedido?</h2>
+                <div className="delivery-options">
+                    {/* ... seus botões de 'retirada' e 'entrega' ... */}
+                    <button
+                        className={deliveryOption === 'retirada' ? 'active' : ''}
+                        onClick={() => setDeliveryOption('retirada')}
+                    >
+                        Retirada na Loja
+                    </button>
+                    <button
+                        className={deliveryOption === 'entrega' ? 'active' : ''}
+                        onClick={() => setDeliveryOption('entrega')}
+                    >
+                        Receber em Casa
+                    </button>
+                </div>
 
-            <div className="delivery-content">
-                {deliveryOption === 'retirada' ? (
-                    <div className="pickup-info">
-                        <h3>Retirada Grátis</h3>
-                        <p>Seu pedido estará disponível em nosso endereço:</p>
-                        <strong>{storeAddress}</strong>
-                        <p className="shipping-cost">Custo do Frete: <strong>Grátis</strong></p>
-                    </div>
+                <div className="delivery-content">
+                    {deliveryOption === 'retirada' ? (
+                        <div className="pickup-info">
+                            <h3>Retirada Grátis</h3>
+                            <strong>{storeAddress}</strong>
+                        </div>
+                    ) : (
+                        <div className="delivery-info">
+                            <h3>Endereço de Entrega</h3>
+                            {renderAddressList()}
+                            {!showAddForm && (
+                                <button className="add-address-btn" onClick={() => setShowAddForm(true)}>
+                                    + Adicionar novo endereço
+                                </button>
+                            )}
+                            {showAddForm && (
+                                <AddressForm
+                                    onSave={handleSaveAddress}
+                                    onCancel={() => setShowAddForm(false)}
+                                />
+                            )}
+                        </div>
+                    )}
+                </div>
+            </main>
+
+            {/* Coluna da Direita: Resumo do Pedido */}
+            <aside className="checkout-summary-container">
+                <h3>Resumo do Pedido</h3>
+
+                {loadingCart ? (
+                    <p>Carregando carrinho...</p>
                 ) : (
-                    <div className="delivery-info">
-                        <h3>Endereço de Entrega</h3>
-                        {renderAddressList()}
-
-                        {/* 3. SUBSTITUIR O BOTÃO ANTIGO E O PLACEHOLDER */}
-
-                        {/* Se o formulário NÃO estiver visível, mostre o botão "Adicionar" */}
-                        {!showAddForm && (
-                            <button className="add-address-btn" onClick={() => setShowAddForm(true)}>
-                                + Adicionar novo endereço
-                            </button>
-                        )}
-
-                        {/* Se o formulário ESTIVER visível, renderize o componente */}
-                        {showAddForm && (
-                            <AddressForm
-                                onSave={handleSaveAddress}
-                                onCancel={() => setShowAddForm(false)}
-                            />
-                        )}
-
-                        {/* REGRA: Só mostra o frete se um endereço estiver selecionado */}
-                        {selectedAddressId && (
-                            <div className="shipping-cost">
-                                <p>Custo do Frete: <strong>R$ 15,00 (Simulado)</strong></p>
+                    <div className="summary-details">
+                        {cartItems.map(item => (
+                            <div className="summary-item" key={item.id_item_carrinho}>
+                                <span className="item-name">{item.quantidade}x {item.nome}</span>
+                                <span className="item-price">R$ {(item.preco_unitario * item.quantidade).toFixed(2)}</span>
                             </div>
-                        )}
+                        ))}
+                        <div className="summary-line">
+                            <span>Subtotal</span>
+                            <span>R$ {subtotal.toFixed(2)}</span>
+                        </div>
+                        <div className="summary-line">
+                            <span>Frete</span>
+                            <span>{shippingCost === 0 ? 'Grátis' : `R$ ${shippingCost.toFixed(2)}`}</span>
+                        </div>
+                        <div className="summary-line total">
+                            <span>Total</span>
+                            <span>R$ {total.toFixed(2)}</span>
+                        </div>
                     </div>
                 )}
-            </div>
 
-            {/* (O Resumo do Pedido e o botão de "Ir para Pagamento" viriam aqui) */}
-        </main>
+                {/* Botão de Pagamento */}
+                <button
+                    className="payment-btn"
+                    onClick={handleGoToPayment}
+                    disabled={loadingCart || isCreatingPreference}
+                >
+                    {isCreatingPreference ? 'Processando...' : 'Ir para Pagamento'}
+                </button>
+
+                {paymentError && (
+                    <p className="payment-error">{paymentError}</p>
+                )}
+            </aside>
+        </div>
     );
 };
 
