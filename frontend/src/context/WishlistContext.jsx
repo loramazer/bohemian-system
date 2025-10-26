@@ -13,7 +13,7 @@ export const WishlistProvider = ({ children }) => {
     const [wishlistIds, setWishlistIds] = useState(new Set());
     
     const { user } = useContext(AuthContext);
-    const { showWishlistSuccess } = useContext(FeedbackContext);
+    const { showWishlistSuccess, showWishlistRemoved } = useContext(FeedbackContext);
 
     // Função interna para atualizar ambos os estados
     const updateWishlistState = (items) => {
@@ -24,7 +24,7 @@ export const WishlistProvider = ({ children }) => {
 
     const fetchWishlist = useCallback(async () => {
         if (!user) {
-            updateWishlistState([]); // Limpa a lista se o usuário deslogar
+            updateWishlistState([]); 
             return;
         }
         try {
@@ -36,18 +36,17 @@ export const WishlistProvider = ({ children }) => {
         }
     }, [user]);
 
-    // Usado quando o usuário loga
     useEffect(() => {
         fetchWishlist();
     }, [fetchWishlist]);
 
     const addWishlistItem = async (product) => {
-        if (!user) return; // Verificação de segurança
+        if (!user) return; 
         
         try {
             const response = await apiClient.post('/favoritos', { id_produto: product.id_produto });
-            updateWishlistState(response.data); // Atualiza o estado com a nova lista
-            showWishlistSuccess(); // Mostra o toast "Adicionado à lista de desejos!"
+            updateWishlistState(response.data); 
+            showWishlistSuccess(); // Mostra "Adicionado!"
         } catch (err) {
             console.error("Erro ao adicionar favorito:", err);
         }
@@ -59,7 +58,7 @@ export const WishlistProvider = ({ children }) => {
         try {
             const response = await apiClient.delete(`/favoritos/${id_produto}`);
             updateWishlistState(response.data); // Atualiza o estado com a nova lista
-            // (Opcional: podemos criar um showWishlistRemoved() no FeedbackContext)
+            showWishlistRemoved();
         } catch (err) {
             console.error("Erro ao remover favorito:", err);
         }

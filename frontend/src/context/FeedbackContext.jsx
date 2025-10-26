@@ -5,14 +5,11 @@ import ToastContainer from '../components/Shared/ToastContainer.jsx';
 export const FeedbackContext = createContext();
 
 export const FeedbackProvider = ({ children }) => {
-    // MUDANÇA: De array 'toasts' para objeto 'toast'
     const [toast, setToast] = useState(null); 
-    // NOVO: Referência para o timer do setTimeout
     const timerRef = useRef(null); 
+    const TIMEOUT_MS = 3000; // 3 segundos
 
-    // NOVO: Garantir que o timer seja limpo se o componente for desmontado
     useEffect(() => {
-        // Retorna uma função de limpeza
         return () => {
             if (timerRef.current) {
                 clearTimeout(timerRef.current);
@@ -21,42 +18,46 @@ export const FeedbackProvider = ({ children }) => {
     }, []);
 
     const showToast = useCallback((message, type = 'success') => {
-        // 1. Limpa o timer anterior (se houver um toast ativo)
+        
         if (timerRef.current) {
             clearTimeout(timerRef.current);
         }
 
-        // 2. Define o novo toast (substitui o anterior)
-        // Usamos um ID (timestamp) para forçar o React a re-renderizar o <ToastContainer>
         const newToast = { id: Date.now(), message, type };
         setToast(newToast); 
 
-        // 3. Agenda a remoção deste novo toast e armazena a referência
         timerRef.current = setTimeout(() => {
-            setToast(null); // Limpa o toast
-            timerRef.current = null; // Limpa a referência do timer
-        }, 3000); // 3 segundos
+            setToast(null); 
+            timerRef.current = null; 
+        }, TIMEOUT_MS);
 
-    }, []); // As dependências foram removidas para garantir que a função seja estável
+    }, []); 
 
     const showCartSuccess = useCallback(() => {
-        showToast('Produto adicionado ao carrinho com sucesso!', 'cart');
+        showToast('Produto adicionado ao carrinho!', 'cart'); // Mensagem simplificada
     }, [showToast]);
 
     const showWishlistSuccess = useCallback(() => {
         showToast('Produto adicionado à lista de desejos!', 'wishlist');
     }, [showToast]);
 
+    // --- NOVO ---
+    // Função para o toast de remoção
+    const showWishlistRemoved = useCallback(() => {
+        showToast('Produto removido da lista de desejos.', 'wishlist-removed');
+    }, [showToast]);
+    // ------------
+
     const value = {
         showToast,
         showCartSuccess,
         showWishlistSuccess,
+        showWishlistRemoved // NOVO: Exporta a função
     };
 
     return (
         <FeedbackContext.Provider value={value}>
             {children}
-            {/* MUDANÇA: Passa o objeto 'toast' em vez do array 'toasts' */}
             <ToastContainer toast={toast} /> 
         </FeedbackContext.Provider>
     );

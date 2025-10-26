@@ -82,3 +82,13 @@
 .toast-success .toast-icon {
     color: #155724;
 }
+
+/* --- NOVO ESTILO (Adicione ao final) --- */
+/* Remoção da Wishlist (Cinza/Neutro) */
+.toast-wishlist-removed {
+    background-color: #7f8c8d; /* Um cinza neutro */
+    color: white;
+}
+.toast-wishlist-removed .toast-icon {
+    color: #ecf0f1; /* Um cinza mais claro */
+}
