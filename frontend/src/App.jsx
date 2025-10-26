@@ -1,7 +1,5 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-
-// --- 1. IMPORTE OS PROVIDERS ---
 import { AuthProvider } from './context/AuthContext.jsx';
 import { CartProvider } from './context/CartContext.jsx';
 
@@ -25,17 +23,16 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage.jsx';
 import ResetPasswordPage from './pages/ResetPasswordPage.jsx';
 import RequireLoginPage from './pages/RequireLoginPage.jsx';
 import CheckoutPage from './pages/CheckoutPage.jsx'; 
+import WishlistPage from './pages/WishlistPage.jsx';
+
 
 import './styles/App.css';
 
 function App() {
   return (
-    // --- 2. ENVOLVA TUDO COM OS PROVIDERS ---
-    <AuthProvider>
-      <CartProvider>
-        <div className="app-container">
-          <Header />
-          <Routes>
+    <div className="app-container">
+        <Header />
+        <Routes>
             {/* Suas rotas ficam aqui dentro */}
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
@@ -54,11 +51,10 @@ function App() {
             <Route path="/admin/orders" element={<AllOrdersPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
-          </Routes>
-          <Footer />
-        </div>
-      </CartProvider>
-    </AuthProvider>
+            <Route path="/wishlist" element={<WishlistPage />} />
+        </Routes>
+        <Footer />
+    </div>
   );
 }
 

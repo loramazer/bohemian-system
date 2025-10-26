@@ -5,32 +5,28 @@ import '../styles/FeaturedProductsSection.css';
 import apiClient from '../api';
 import { CartContext } from '../context/CartContext.jsx';
 import { AuthContext } from '../context/AuthContext.jsx'; 
-// OBS: Assumindo que você terá um WishlistContext ou que a lógica só verifica o login
-// Se você quiser adicionar o item aos favoritos, você faria a chamada de API aqui.
+import { WishlistContext } from '../context/WishlistContext.jsx'; // Importe o WishlistContext
 
 const FeaturedProductsSection = () => {
-    // ... (Estados e Contextos existentes)
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const { addItem } = useContext(CartContext);
     const { user } = useContext(AuthContext);
+    // Consumir o WishlistContext
+    const { addWishlistItem, removeWishlistItem, isFavorited } = useContext(WishlistContext);
     const navigate = useNavigate();
 
-    // ... (useEffect existente para carregar produtos)
     useEffect(() => {
         const fetchProducts = async () => {
             try {
                 const response = await apiClient.get('/produtos');
-
                 if (Array.isArray(response.data)) {
                     setProducts(response.data.slice(0, 8));
                 } else {
-                    console.error("A resposta da API não é um array:", response.data);
                     setError('Formato de dados inesperado recebido do servidor.');
                     setProducts([]);
                 }
-
             } catch (err) {
                 setError('Não foi possível carregar os produtos.');
                 console.error(err);
@@ -38,37 +34,34 @@ const FeaturedProductsSection = () => {
                 setLoading(false);
             }
         };
-
         fetchProducts();
     }, []);
-    // ...
 
-    // Lógica de clique para ADICIONAR AO CARRINHO (já existente)
+    // Função do Carrinho
     const handleAddToCartClick = (e, product) => {
         e.preventDefault(); 
         e.stopPropagation();
-
         if (!user) {
             navigate('/require-login'); 
             return;
         }
-        
-        addItem(product);
+        addItem(product); // Chama o Contexto do Carrinho
     };
 
-    // CRÍTICO: NOVA Lógica de clique para ADICIONAR AOS FAVORITOS
+    // Função da Lista de Desejos
     const handleAddToWishlistClick = (e, product) => {
         e.preventDefault(); 
         e.stopPropagation();
-
         if (!user) {
             navigate('/require-login'); 
             return;
         }
-        
-        // Aqui você faria a chamada de API para adicionar o produto à lista de desejos
-        console.log(`Produto ${product.nome} adicionado aos favoritos!`); 
-        // Exemplo: addWishlistItem(product.id_produto);
+        // Lógica de adicionar/remover
+        if (isFavorited(product.id_produto)) {
+            removeWishlistItem(product.id_produto);
+        } else {
+            addWishlistItem(product); // Chama o Contexto da Wishlist
+        }
     };
 
     if (loading) {
@@ -87,9 +80,12 @@ const FeaturedProductsSection = () => {
                     <ProductCard 
                         key={product.id_produto} 
                         product={product} 
-                        // Passa o manipulador do Carrinho
+                        
+                        // --- CORREÇÃO AQUI ---
+                        // Garanta que o botão de Carrinho (onAddToCart) chama a função do Carrinho
                         onAddToCart={(e) => handleAddToCartClick(e, product)}
-                        // CRÍTICO: Passa o novo manipulador de Favoritos
+                        
+                        // Garanta que o botão de Coração (onAddToWishlist) chama a função de Desejos
                         onAddToWishlist={(e) => handleAddToWishlistClick(e, product)}
                     />
                 ))}

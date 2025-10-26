@@ -1,3 +1,5 @@
+// loramazer/bohemian-system/bohemian-system-refatorar-organizacao/frontend/src/pages/CatalogPage.jsx
+
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import ContentWrapper from '../components/Shared/ContentWrapper.jsx';

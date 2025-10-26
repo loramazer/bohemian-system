@@ -1,25 +1,38 @@
 import React, { useContext } from 'react';
 import '../../styles/ProductDetails.css';
-import { FaHeart, FaShareAlt, FaShoppingCart } from 'react-icons/fa';
+import { FaHeart, FaShareAlt, FaShoppingCart, FaRegHeart } from 'react-icons/fa'; // NOVO: FaRegHeart
 import { CartContext } from '../../context/CartContext.jsx'; 
+import { FeedbackContext } from '../../context/FeedbackContext.jsx'; 
+// NOVO: Importar WishlistContext
+import { WishlistContext } from '../../context/WishlistContext.jsx'; 
 
 const ProductInfo = ({ product }) => {
-    // Acesse a função addItem do CartContext
     const { addItem } = useContext(CartContext);
+    // REMOVIDO: showWishlistSuccess (agora está no WishlistContext)
+    
+    // NOVO: Consumir WishlistContext
+    const { addWishlistItem, removeWishlistItem, isFavorited } = useContext(WishlistContext);
 
-    // Agora, esta função chamará a lógica real para adicionar o item
+    // Lógica do carrinho (sem alteração)
     const handleAddToCart = () => {
         addItem(product);
     };
 
+    // NOVO: Lógica de Wishlist atualizada
     const handleAddToWishlist = () => {
-        alert('Produto adicionado à lista de desejos!');
+        if (isFavorited(product.id_produto)) {
+            removeWishlistItem(product.id_produto);
+        } else {
+            addWishlistItem(product);
+        }
     };
 
     const handleShare = () => {
         navigator.clipboard.writeText(window.location.href);
         alert('Link do produto copiado!');
     };
+
+    const isLiked = isFavorited(product.id_produto);
 
     return (
         <div className="product-info-section">
@@ -45,7 +58,7 @@ const ProductInfo = ({ product }) => {
                     <FaShoppingCart /> Carrinho
                 </button>
                 <button className="add-to-wishlist-btn" onClick={handleAddToWishlist}>
-                    <FaHeart />
+                    {isLiked ? <FaHeart style={{ color: '#e74c3c' }} /> : <FaRegHeart />}
                 </button>
             </div>
             <div className="share-section">

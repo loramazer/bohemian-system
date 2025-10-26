@@ -1,0 +1,60 @@
+/* frontend/src/styles/Pagination.css */
+
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+    padding-bottom: 40px;
+}
+
+.pagination-arrow,
+.pagination-number {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 5px 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    color: #5d7a7b;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+/* --- ADICIONE ESTA NOVA REGRA --- */
+/* Remove o anel de foco azul (outline) de todos os botões */
+.pagination-arrow:focus,
+.pagination-number:focus,
+.pagination-arrow:focus-visible,
+.pagination-number:focus-visible {
+    outline: none;
+    box-shadow: none;
+}
+/* ------------------------------- */
+
+
+.pagination-arrow:disabled {
+    color: #ccc;
+    cursor: default; /* Mantém o cursor padrão */
+    background-color: #f9f9f9;
+    border-color: #ddd; /* Garante que a borda não mude */
+}
+
+.pagination-arrow:not(:disabled):hover,
+.pagination-number:hover {
+    background-color: #f4f4f4;
+    border-color: #ccc;
+}
+
+.pagination-number.active {
+    background-color: #5d7a7b;
+    border-color: #5d7a7b;
+    color: #fff;
+    cursor: default;
+}

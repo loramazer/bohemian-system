@@ -1,4 +1,4 @@
-const mercadopago = require('mercadopago');
+/*const mercadopago = require('mercadopago');
 require('dotenv').config();
 
 // 1. Configura o SDK do Mercado Pago
@@ -63,4 +63,4 @@ exports.criarPreferencia = async (req, res) => {
         console.error("Erro ao criar preferência de pagamento:", error);
         res.status(500).json({ message: "Erro ao criar pagamento." });
     }
-};
+};*/

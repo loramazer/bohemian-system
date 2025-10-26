@@ -2,12 +2,15 @@
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react'; // Adicionado useCallback
 import apiClient from '../api';
 import { AuthContext } from "./AuthContext.jsx";
+import { FeedbackContext } from "./FeedbackContext.jsx"; // Assumindo que este arquivo foi criado
 
 export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
     const [cartItems, setCartItems] = useState([]);
     const { user } = useContext(AuthContext);
+    // --- NOVO: Consumindo o FeedbackContext ---
+    const { showCartSuccess } = useContext(FeedbackContext);
 
     // Envolve fetchCart em useCallback para evitar problemas no useEffect
     const fetchCart = useCallback(async () => {
@@ -34,34 +37,49 @@ export const CartProvider = ({ children }) => {
         }
     };
 
-    const addItem = async (produto) => {
+const addItem = async (produto) => {
         if (!user) {
             alert('Você precisa estar logado para adicionar itens ao carrinho.');
             return;
         }
         
-        // NOVO PASSO: Garante que o carrinho existe antes de adicionar itens
+        // Garante que o carrinho existe antes de adicionar itens
         const cartReady = await ensureCartExists();
         if (!cartReady) {
             alert('Falha ao preparar o carrinho. Tente fazer login novamente.');
             return;
         }
 
+        // --- CORREÇÃO CRÍTICA: Determinar e validar o preço unitário ---
+        // 1. Prioriza o preco_promocao se existir, senão usa preco_venda.
+        // Isso resolve o problema de usar o preço errado ou um valor indefinido.
+        const precoVenda = produto.preco_promocao || produto.preco_venda;
+        
+        // 2. Garante que seja um float válido.
+        const precoUnitario = parseFloat(precoVenda); 
+        
+        // Se o preço for inválido (NaN) ou for 0 (opcionalmente, dependendo da regra de negócio)
+        if (isNaN(precoUnitario) || precoUnitario <= 0) {
+            console.error("Erro: Preço unitário inválido para o produto:", produto);
+            alert('Erro: O produto não tem um preço de venda válido.');
+            return; 
+        }
+        // ---------------------------------------------------------------
+
+
         try {
             const response = await apiClient.post('/carrinho/adicionar', {
                 produto_id: produto.id_produto,
                 quantidade: 1, 
-                // Garante que o preço é um float antes de enviar
-                preco_unitario: parseFloat(produto.preco_venda) 
+                // Usa o preço unitário validado
+                preco_unitario: precoUnitario 
             });
             
             // Atualiza o contexto com a nova lista de itens retornada pelo backend
             setCartItems(response.data.itens || []); 
-            // Não é necessário o alert aqui, pois o ProductGrid já gerencia o fluxo de sucesso/erro.
+            showCartSuccess();
         } catch (err) {
             console.error("Erro ao adicionar item:", err);
-            // Removendo o alert duplicado para a interface
-            // alert('Erro ao adicionar produto ao carrinho. Tente novamente.'); 
         }
     };
     
