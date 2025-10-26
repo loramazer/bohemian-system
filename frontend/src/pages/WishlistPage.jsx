@@ -52,7 +52,7 @@ const WishlistPage = () => {
     return (
         <ContentWrapper>
             <main className="wishlist-main">
-                <div className="catalog-breadcrumbs">
+                <div className="wishlist-breadcrumbs">
                     <Link to="/">Home</Link> &gt; <span>Lista de Desejos</span>
                 </div>
                 
