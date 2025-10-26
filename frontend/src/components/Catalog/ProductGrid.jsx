@@ -65,7 +65,7 @@ const ProductGrid = ({ products }) => {
                         />
                     ))
                 ) : (
-                    <p>Nenhum produto encontrado.</p>
+                    <p></p>
                 )}
             </div>
         </div>

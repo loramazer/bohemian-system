@@ -20,9 +20,12 @@ const FeaturedProductsSection = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await apiClient.get('/produtos');
-                if (Array.isArray(response.data)) {
-                    setProducts(response.data.slice(0, 8));
+                // CORREÇÃO 1: Pede especificamente 8 produtos para a API
+                const response = await apiClient.get('/produtos', { params: { limit: 8 } });
+                
+                // CORREÇÃO 2: Verifica 'response.data.products' (o objeto) em vez de 'response.data' (o array)
+                if (response.data && Array.isArray(response.data.products)) {
+                    setProducts(response.data.products); // Pega os produtos de dentro do objeto
                 } else {
                     setError('Formato de dados inesperado recebido do servidor.');
                     setProducts([]);

@@ -2,10 +2,12 @@
     text-align: center; /* Centraliza o título */
     padding: 60px 20px;
     background-color: #fff;
+    margin-top: -20px;
 }
 
 /* NOVO: Ajusta o título h2 para corresponder ao estilo do título de categorias */
 .featured-products h2 {
+    margin-top: -20px;
     font-size: 2rem; /* Define o tamanho da fonte */
     margin-bottom: 40px; /* Adiciona margem inferior consistente */
     color: #333; /* Define a cor do texto consistente */

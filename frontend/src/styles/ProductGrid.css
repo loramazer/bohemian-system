@@ -1,26 +1,40 @@
+/* frontend/src/styles/ProductGrid.css */
+
 .product-grid-container {
-    flex: 1;
+    /* A propriedade 'flex: 1;' foi REMOVIDA daqui. 
+      Isso impede que o contêiner da grade cresça e sobreponha a paginação.
+    */
+    width: 100%; /* Garante que ocupe a largura do container pai */
 }
 
 .product-grid {
     display: grid;
+    /* Define o tamanho mínimo do card, permitindo que se ajustem */
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
-    gap: 40px; /* AUMENTADO PARA 40px */
+    gap: 40px; 
+    
+    /* NOVO: Adiciona uma margem inferior para dar espaço antes da paginação */
+    margin-bottom: 40px;
 }
 
+/* Esta classe é usada na sua HomePage e pode conflitar. 
+  Vamos garantir que a .product-grid (acima) seja a principal.
+  Se esta regra não for necessária para a HomePage, pode ser removida,
+  mas por segurança vamos mantê-la como está no seu arquivo.
+*/
 .products-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 40px; /* AUMENTADO PARA 40px */
-    /* ... */
+    gap: 40px; 
 }
 
-/* Responsividade ajustada para telas menores */
+/* Responsividade */
 @media (max-width: 1200px) {
     .product-grid {
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     }
 }
+
 @media (max-width: 768px) {
     .product-grid-container {
         width: 100%;

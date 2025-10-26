@@ -100,7 +100,7 @@ const CategoriesSection = () => {
                         
                         return (
                             <Link 
-                                to={`/products?categoria=${encodeURIComponent(category.nome)}`} 
+                                to={`/products?categories=${category.id_categoria}`} 
                                 key={category.id_categoria} 
                                 className="category-card"
                             >

@@ -1,21 +1,52 @@
+/* frontend/src/styles/CatalogPage.css */
+
+/*
+  Define o layout da página inteira (Sidebar + Conteúdo Principal)
+*/
+.catalog-page {
+  display: flex;
+  max-width: 1400px;
+  margin: 20px auto;
+  padding: 0 20px;
+  gap: 20px;
+}
+
+/*
+  Define o Conteúdo Principal (Grid de Produtos + Paginação)
+*/
 .catalog-main {
-    padding: 1px 0;
-    position: relative; /* Define o contexto para a Sidebar sticky */
-    color: #5d7a7b;
+  flex: 1;
+  display: flex;
+  flex-direction: column; 
+  min-width: 0; 
+  padding-top: 20px; /* <-- ADICIONE ESTA LINHA */
+  margin-top: -25px;
 }
 
+/*
+  Estilos para os cabeçalhos (se existirem, como "Catálogo de Produtos")
+*/
 .page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px; 
-    color: #5d7a7b;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  color: #5d7a7b;
 }
 
-
-.catalog-layout {
-    display: flex;
-    gap: 40px;
-    /* Adiciona uma margem inferior para dar espaço após a rolagem */
-    margin-bottom: 50px; 
+/*
+  Mensagens de feedback (Loading, Erro, Nada encontrado)
+*/
+.loader,
+.error-message,
+.no-products-found {
+  width: 100%;
+  text-align: center;
+  font-size: 1.2rem;
+  padding: 50px 20px;
+  color: #555;
 }
+
+/* O .pagination-container (de Pagination.css) será posicionado 
+  corretamente no final do .catalog-main por causa do flex-direction: column.
+*/

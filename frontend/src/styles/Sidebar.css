@@ -1,117 +1,118 @@
-.catalog-sidebar {
-    /* Define uma largura de base, mas garante que não ocupe espaço demais */
-    width: 250px; 
-    min-width: 200px; /* Impede que ele fique muito pequeno */
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); 
-    height: fit-content; 
-    flex-shrink: 0; /* IMPEDE QUE A SIDEBAR ENCOLHA */
+/* Conteúdo CORRETO para frontend/src/styles/Sidebar.css */
+
+.sidebar {
+  width: 280px;
+  min-width: 280px; /* Evita que encolha */
+  padding: 20px;
+  background-color: #fdfdfd; /* Um fundo ligeiramente diferente para destaque */
+  
+  border-right: 1px solid #eee;
+  border-bottom: 1px solid #eee; /* <-- ADICIONE ESTA LINHA */
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.02); /* <-- AJUSTE ESTA LINHA */      
+  
+  height: 100%; /* Para ocupar a altura */
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
 }
 
-.catalog-sidebar {
-    width: 250px;
-    min-width: 200px;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-    height: fit-content;
-    flex-shrink: 0; 
-    
-    /* NOVO: Propriedades para fixar a barra lateral na rolagem */
-    position: sticky;
-    top: 20px; /* Distância do topo da tela */
-    align-self: flex-start; /* Impede que ele estique verticalmente */
+.filter-section {
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 20px;
 }
 
-.catalog-sidebar {
-    width: 250px;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); /* Sombra mais limpa */
-    height: fit-content; /* Ajusta a altura ao conteúdo */
+.filter-section:last-of-type {
+  border-bottom: none;
 }
 
-.filter-group {
-    margin-bottom: 30px;
+.filter-section h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 15px;
 }
 
-.filter-group h4 {
-    font-size: 1.4rem; /* Título maior */
-    margin-bottom: 15px;
-    color: #5d7a7b; /* Cor principal */
-    border-bottom: 2px solid #e0e0e0;
-    padding-bottom: 10px;
+/* Lista de Categorias */
+.category-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 200px; /* Limita a altura */
+  overflow-y: auto; /* Adiciona scroll se muitas categorias */
 }
 
-.filter-group ul {
-    list-style: none;
-    padding: 0;
+.category-list li label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #555;
 }
 
-.filter-group ul li {
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    font-size: 1rem;
-    color: #555;
-    cursor: pointer;
-    transition: color 0.2s ease;
+.category-list li label input[type="checkbox"] {
+  /* Isso garante que o checkbox padrão do navegador seja usado, 
+     como no seu print, mas alinhado */
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary-color);
 }
 
-.filter-group ul li:hover {
-    color: #4a6263; /* Efeito hover na lista */
+/* Select de Ordenação */
+.filter-section select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  background-color: #fff;
 }
 
-/* Estilo para os checkboxes personalizados (mantido e aprimorado) */
-.filter-group input[type="checkbox"] {
-    display: none; 
+/* Filtro de Preço */
+.price-display {
+  font-size: 1rem;
+  font-weight: 500;
+  /* A cor var(--primary-color) será definida no seu index.css, 
+     mas se não estiver, use #5d7a7b */
+  color: var(--primary-color, #5d7a7b); 
+  margin-bottom: 10px;
+  text-align: center;
 }
 
-.filter-group input[type="checkbox"] + label {
-    position: relative;
-    padding-left: 30px; 
-    cursor: pointer;
+.price-slider {
+  width: 100%;
+  cursor: pointer;
+  accent-color: var(--primary-color, #5d7a7b);
 }
 
-/* O quadrado do checkbox */
-.filter-group input[type="checkbox"] + label::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 2px;
-    width: 18px;
-    height: 18px;
-    border: 2px solid #ccc; /* Borda mais grossa */
-    background-color: #f0f0f0;
-    border-radius: 4px;
-    transition: all 0.2s ease-in-out;
+.price-range-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #777;
+  margin-top: 5px;
 }
 
-/* Cor de fundo e borda quando o checkbox está marcado */
-.filter-group input[type="checkbox"]:checked + label::before {
-    background-color: #5d7a7b;
-    border-color: #5d7a7b;
+/* Botão Aplicar */
+.apply-filters-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--primary-color, #5d7a7b);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: -10px; /* Espaçamento */
+  margin-bottom: 10px;
+
 }
 
-/* O ícone de checkmark quando o checkbox está marcado */
-.filter-group input[type="checkbox"]:checked + label::after {
-    content: '✔';
-    font-size: 12px;
-    position: absolute;
-    top: 3px;
-    left: 4px;
-    color: #fff;
-}
-
-/* Responsividade da Sidebar */
-@media (max-width: 768px) {
-    .catalog-sidebar {
-        width: 100%; /* Ocupa a largura total em telas pequenas */
-        margin-bottom: 30px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Sombra mais sutil em mobile */
-    }
+.apply-filters-btn:hover {
+  background-color: var(--primary-color-dark, #4a6263);
 }

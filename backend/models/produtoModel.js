@@ -1,9 +1,22 @@
+// backend/models/produtoModel.js
 const db = require('../config/db');
 
-// Manteremos as suas funções com os nomes originais em português
+// ----------------------------------------------------------------
+// SUBSTITUA TODA A FUNÇÃO 'getAll' (da linha 4 até ~116) POR ESTA:
+// ----------------------------------------------------------------
+async function getAll(options) {
+    const {
+        categories, // string '1,2,3'
+        search,
+        sort,
+        maxPrice,
+        page = 1,
+        limit = 9
+    } = options;
 
-async function getAll(categoriaNomeCSV, searchTerm) {
-let sql = `
+    let params = [];
+    let whereClauses = ["p.ativo = 1"];
+    let sql = `
         SELECT 
             p.id_produto, 
             p.nome, 
@@ -13,76 +26,123 @@ let sql = `
             p.imagem_url 
         FROM produto p
     `;
-    let params = [];
-    let whereClauses = ["p.ativo = 1"]; 
+    
+    let countParams = [];
+    let countSql = `SELECT COUNT(DISTINCT p.id_produto) as totalProducts FROM produto p`;
 
-    // 1. FILTRO DE CATEGORIA (MÚLTIPLO)
-    if (categoriaNomeCSV) {
-        // Transforma o CSV (ex: 'Novidades,Ofertas') em um array
-        const categoryNames = categoriaNomeCSV.split(',');
-        
-        sql += `
+    // Lógica de JOIN (só adiciona se o filtro de categoria existir)
+    const categoryIds = (categories || '')
+                                  .split(',')
+                                  .map(id => parseInt(id.trim()))
+                                  .filter(id => !isNaN(id) && id > 0);
+
+    if (categoryIds.length > 0) {
+        const joinSql = `
             INNER JOIN produtocategoria pc ON p.id_produto = pc.fk_produto_id_produto
             INNER JOIN categoria c ON pc.fk_categoria_id_categoria = c.id_categoria
         `;
+        sql += joinSql;
+        countSql += joinSql;
         
-        // CRÍTICO: Cria placeholders (?) dinâmicos para a cláusula IN
-        const placeholders = categoryNames.map(() => '?').join(',');
-        
-        whereClauses.push(`c.nome IN (${placeholders})`);
-        // Adiciona cada nome da categoria individualmente aos parâmetros
-        params.push(...categoryNames); 
+        const placeholders = categoryIds.map(() => '?').join(',');
+        whereClauses.push(`c.id_categoria IN (${placeholders})`);
+        params.push(...categoryIds);
+        countParams.push(...categoryIds);
     }
 
-    // 2. FILTRO DE BUSCA (Mantido)
-    if (searchTerm) {
+    // Lógica de WHERE
+    if (search) {
         whereClauses.push(`(p.nome LIKE ? OR p.descricao LIKE ?)`);
-        params.push(`%${searchTerm}%`);
-        params.push(`%${searchTerm}%`);
+        const searchParam = `%${search}%`;
+        params.push(searchParam, searchParam);
+        countParams.push(searchParam, searchParam);
     }
 
-    // 3. Monta a cláusula WHERE
+if (maxPrice !== undefined && maxPrice !== null && !isNaN(maxPrice)) {
+    whereClauses.push(`p.preco_venda <= ?`);
+    params.push(Number(maxPrice));
+    countParams.push(Number(maxPrice));
+}
+
+
+    // Aplica o WHERE
     if (whereClauses.length > 0) {
-        sql += ` WHERE ` + whereClauses.join(' AND ');
+        const whereString = ` WHERE ` + whereClauses.join(' AND ');
+        sql += whereString;
+        countSql += whereString;
     }
 
-    // CRÍTICO: Adiciona GROUP BY para evitar duplicatas ao usar JOIN com múltiplas categorias
-    sql += ` GROUP BY p.id_produto ORDER BY p.id_produto DESC`;
+    // --- CORREÇÃO: Execução Sequencial (Sem Promise.all) ---
 
-    console.log("SQL executado:", sql); 
-    console.log("Parâmetros:", params);
+    // 1. Executa a contagem PRIMEIRO
+    const [countResult] = await db.execute(countSql, countParams);
+    const totalProducts = countResult[0].totalProducts;
+    const totalPages = Math.ceil(totalProducts / limit);
 
-    const [rows] = await db.execute(sql, params);
-    return rows;
-  }
-// Buscar produto por ID
+    // 2. Adiciona GROUP BY e ORDER BY (Apenas para a query de produtos)
+    sql += ` GROUP BY p.id_produto`;
+    
+    let orderBy = ' ORDER BY p.nome ASC'; // Padrão
+    switch (sort) {
+        case 'name_desc':
+            orderBy = ' ORDER BY p.nome DESC';
+            break;
+        case 'price_asc':
+            orderBy = ' ORDER BY p.preco_venda ASC';
+            break;
+        case 'price_desc':
+            orderBy = ' ORDER BY p.preco_venda DESC';
+            break;
+    }
+    sql += orderBy;
+// 3. Adiciona Paginação (Apenas para a query de produtos)
+const offset = (page - 1) * limit;
+const safeLimit = parseInt(limit, 10);
+const safeOffset = parseInt(offset, 10);
+
+// ✅ Interpola na query (MySQL2 não lida bem com placeholders aqui)
+sql += ` LIMIT ${safeLimit} OFFSET ${safeOffset}`;
+
+console.log('SQL executado:\n', sql);
+console.log('Parâmetros enviados:', params);
+
+// 4. Executa a busca de produtos SEGUNDO
+const [productRows] = await db.execute(sql, params);
+
+// 5. Retorna o objeto
+return {
+    products: productRows,
+    pages: totalPages,
+    totalProducts: totalProducts
+};
+}
+// ----------------------------------------------------------------
+// FIM DA SUBSTITUIÇÃO (MANTENHA O RESTANTE DO ARQUIVO ABAIXO)
+// ----------------------------------------------------------------
+
+
 async function getById(id) {
-  // CORRIGIDO: A coluna `produto_id` foi alterada para `id_produto`
   const [rows] = await db.execute('SELECT * FROM produto WHERE id_produto = ?', [id]);
   return rows[0];
 }
 
-// Criar produto
 async function create({ nome, preco_venda, descricao = null, ativo = 1, imagem_url = null }) {
   const [result] = await db.execute(
-    'INSERT INTO produto (nome, preco_venda, descricao, ativo, imagem_url) VALUES (?, ?, ?, ?, ?)',
-    [nome, preco_venda, descricao, ativo, imagem_url]
+  	'INSERT INTO produto (nome, preco_venda, descricao, ativo, imagem_url) VALUES (?, ?, ?, ?, ?)',
+  	[nome, preco_venda, descricao, ativo, imagem_url]
   );
   return { id_produto: result.insertId, nome, preco_venda, descricao, ativo, imagem_url };
 }
 
-// Atualizar produto
 async function update(id, { nome, preco_venda, descricao = null, ativo = 1, imagem_url = null }) {
   await db.execute(
-    'UPDATE produto SET nome = ?, preco_venda = ?, descricao = ?, ativo = ?, imagem_url = ? WHERE id_produto = ?',
-    [nome, preco_venda, descricao, ativo, imagem_url, id]
+  	'UPDATE produto SET nome = ?, preco_venda = ?, descricao = ?, ativo = ?, imagem_url = ? WHERE id_produto = ?',
+  	[nome, preco_venda, descricao, ativo, imagem_url, id]
   );
   return { id_produto: id, nome, preco_venda, descricao, ativo, imagem_url };
 }
 
-// Remover um produto
 async function remove(id) {
-  // CORRIGIDO: A coluna `produto_id` foi alterada para `id_produto`
   await db.execute('DELETE FROM produto WHERE id_produto = ?', [id]);
 }
 
@@ -91,16 +151,17 @@ async function getCategoryIdByName(categoryName) {
     return rows.length > 0 ? rows[0].id_categoria : null;
 }
 
-// NOVO: Função para adicionar a categoria ao produto
 async function addCategoryToProduct(productId, categoryName) {
     const categoryId = await getCategoryIdByName(categoryName);
     
     if (categoryId) {
-        // Insere na tabela de associação 'produtocategoria'
         const sql = `
             INSERT INTO produtocategoria (fk_produto_id_produto, fk_categoria_id_categoria)
             VALUES (?, ?)
         `;
+        console.log('SQL:', sql);
+console.log('Params:', params);
+
         await db.execute(sql, [productId, categoryId]);
         return true;
     }
