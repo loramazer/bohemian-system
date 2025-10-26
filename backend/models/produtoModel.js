@@ -160,7 +160,7 @@ async function addCategoryToProduct(productId, categoryName) {
             VALUES (?, ?)
         `;
         console.log('SQL:', sql);
-console.log('Params:', params);
+        console.log('Params:', [productId, categoryId]);
 
         await db.execute(sql, [productId, categoryId]);
         return true;

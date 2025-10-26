@@ -100,7 +100,7 @@
 
 .search-results-header {
   margin-bottom: 20px;
-  padding-bottom: 10px;
+  padding-bottom: 0px;
   border-bottom: 1px solid #eee;
 }
 
@@ -108,4 +108,5 @@
   font-size: 1.2rem;
   color: #555;
   font-weight: 500;
+  margin-top: -50px;
 }
