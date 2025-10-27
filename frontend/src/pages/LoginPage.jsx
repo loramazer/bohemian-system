@@ -11,6 +11,7 @@ const LoginPage = () => {
             <div className="login-form-wrapper">
                 <LoginForm />
             </div>
+
  
         </main>
     );

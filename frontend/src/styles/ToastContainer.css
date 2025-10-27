@@ -1,0 +1,94 @@
+/* frontend/src/styles/Toast.css */
+
+/* Onde os toasts flutuam */
+.toast-container-wrapper {
+    position: fixed;
+    
+    /* ANTERIOR:
+    top: 100px; 
+    right: 20px;
+    */
+
+    /* NOVO: Centralização na tela */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Centraliza vertical e horizontalmente */
+    
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.toast-notification {
+    /* NOVO: Aumentado */
+    padding: 25px 35px;
+    
+    /* NOVO: Mais condizente (arredondado) */
+    border-radius: 12px; 
+    
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centraliza o ícone e o texto */
+    gap: 15px;
+    
+    /* NOVO: Aumentado */
+    font-size: 1.25rem; 
+    font-weight: 600; /* Texto mais destacado */
+    
+    /* NOVO: Aumentado */
+    min-width: 400px; 
+    
+    /* NOVO: Mais condizente (sombra) */
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2); /* Sombra mais forte */
+}
+
+.toast-icon {
+    /* NOVO: Aumentado */
+    font-size: 1.8rem; 
+}
+
+.toast-message {
+    color: inherit;
+}
+
+
+/* --- Estilos de Cores (Mantidos) --- */
+
+/* Carrinho (Green/Teal principal) */
+.toast-cart {
+    background-color: #5d7a7b; 
+    color: white;
+}
+.toast-cart .toast-icon {
+    color: #a4d4c5; /* Cor de destaque para o ícone */
+}
+
+/* Wishlist (Red/Pink) */
+.toast-wishlist {
+    background-color: #e74c3c; 
+    color: white;
+}
+.toast-wishlist .toast-icon {
+    color: #ffd1d1;
+}
+
+/* Sucesso Genérico (Fallback) */
+.toast-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+.toast-success .toast-icon {
+    color: #155724;
+}
+
+/* --- NOVO ESTILO (Adicione ao final) --- */
+/* Remoção da Wishlist (Cinza/Neutro) */
+.toast-wishlist-removed {
+    background-color: #7f8c8d; /* Um cinza neutro */
+    color: white;
+}
+.toast-wishlist-removed .toast-icon {
+    color: #ecf0f1; /* Um cinza mais claro */
+}

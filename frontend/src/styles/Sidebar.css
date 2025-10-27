@@ -1,72 +1,118 @@
-.catalog-sidebar {
-    width: 250px;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+/* Conteúdo CORRETO para frontend/src/styles/Sidebar.css */
+
+.sidebar {
+  width: 280px;
+  min-width: 280px; /* Evita que encolha */
+  padding: 20px;
+  background-color: #fdfdfd; /* Um fundo ligeiramente diferente para destaque */
+  
+  border-right: 1px solid #eee;
+  border-bottom: 1px solid #eee; /* <-- ADICIONE ESTA LINHA */
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.02); /* <-- AJUSTE ESTA LINHA */      
+  
+  height: 100%; /* Para ocupar a altura */
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
 }
 
-.filter-group {
-    margin-bottom: 30px;
+.filter-section {
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 20px;
 }
 
-.filter-group h4 {
-    font-size: 1.2rem;
-    margin-bottom: 15px;
-    color: #333;
+.filter-section:last-of-type {
+  border-bottom: none;
 }
 
-.filter-group ul {
-    list-style: none;
-    padding: 0;
+.filter-section h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 15px;
 }
 
-.filter-group ul li {
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    font-size: 1rem;
-    color: #555;
-    cursor: pointer;
+/* Lista de Categorias */
+.category-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 200px; /* Limita a altura */
+  overflow-y: auto; /* Adiciona scroll se muitas categorias */
 }
 
-/* Estilo para os checkboxes personalizados */
-.filter-group input[type="checkbox"] {
-    display: none; /* Esconde o checkbox padrão */
+.category-list li label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #555;
 }
 
-.filter-group input[type="checkbox"] + label {
-    position: relative;
-    padding-left: 25px; /* Espaço para o checkbox customizado */
-    cursor: pointer;
+.category-list li label input[type="checkbox"] {
+  /* Isso garante que o checkbox padrão do navegador seja usado, 
+     como no seu print, mas alinhado */
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary-color);
 }
 
-/* O quadrado do checkbox */
-.filter-group input[type="checkbox"] + label::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 2px;
-    width: 16px;
-    height: 16px;
-    border: 1px solid #ccc;
-    background-color: #f0f0f0;
-    border-radius: 3px;
-    transition: all 0.2s ease-in-out;
+/* Select de Ordenação */
+.filter-section select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  background-color: #fff;
 }
 
-/* Cor de fundo e borda quando o checkbox está marcado */
-.filter-group input[type="checkbox"]:checked + label::before {
-    background-color: #603EFF;
-    border-color: #603EFF;
+/* Filtro de Preço */
+.price-display {
+  font-size: 1rem;
+  font-weight: 500;
+  /* A cor var(--primary-color) será definida no seu index.css, 
+     mas se não estiver, use #5d7a7b */
+  color: var(--primary-color, #5d7a7b); 
+  margin-bottom: 10px;
+  text-align: center;
 }
 
-/* O ícone de checkmark quando o checkbox está marcado */
-.filter-group input[type="checkbox"]:checked + label::after {
-    content: '✔';
-    font-size: 12px;
-    position: absolute;
-    top: 2px;
-    left: 3px;
-    color: #fff;
+.price-slider {
+  width: 100%;
+  cursor: pointer;
+  accent-color: var(--primary-color, #5d7a7b);
+}
+
+.price-range-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #777;
+  margin-top: 5px;
+}
+
+/* Botão Aplicar */
+.apply-filters-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--primary-color, #5d7a7b);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: -10px; /* Espaçamento */
+  margin-bottom: 10px;
+
+}
+
+.apply-filters-btn:hover {
+  background-color: var(--primary-color-dark, #4a6263);
 }

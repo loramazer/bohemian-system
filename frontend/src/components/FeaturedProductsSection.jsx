@@ -1,33 +1,95 @@
-import React from 'react';
-import ProductCard from './ProductCard.jsx';
-import img1 from '../assets/1.png';
-import img2 from '../assets/2.png';
-import img3 from '../assets/3.png';
-import img4 from '../assets/4.png';
-import img5 from '../assets/5.png';
-
-const IMAGES = [img1, img2, img3, img4, img5];
-
-const featuredProducts = [
-    { id: 1, name: 'Cone de Flores', code: '132301', price: 'R$99,00', tag: null },
-    { id: 2, name: 'Bohemian Glass', code: '151230', price: 'R$129,00', tag: 'New' },
-    { id: 3, name: 'Rosa com Lindt', code: '122201', price: 'R$42,00', tag: null },
-    { id: 4, name: 'Mini Desidratado', code: '152201', price: 'R$59,00', tag: null },
-];
+import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import ProductCard from './Shared/ProductCard';
+import '../styles/FeaturedProductsSection.css';
+import apiClient from '../api';
+import { CartContext } from '../context/CartContext.jsx';
+import { AuthContext } from '../context/AuthContext.jsx'; 
+import { WishlistContext } from '../context/WishlistContext.jsx'; // Importe o WishlistContext
 
 const FeaturedProductsSection = () => {
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const { addItem } = useContext(CartContext);
+    const { user } = useContext(AuthContext);
+    // Consumir o WishlistContext
+    const { addWishlistItem, removeWishlistItem, isFavorited } = useContext(WishlistContext);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                // CORREÇÃO 1: Pede especificamente 8 produtos para a API
+                const response = await apiClient.get('/produtos', { params: { limit: 8 } });
+                
+                // CORREÇÃO 2: Verifica 'response.data.products' (o objeto) em vez de 'response.data' (o array)
+                if (response.data && Array.isArray(response.data.products)) {
+                    setProducts(response.data.products); // Pega os produtos de dentro do objeto
+                } else {
+                    setError('Formato de dados inesperado recebido do servidor.');
+                    setProducts([]);
+                }
+            } catch (err) {
+                setError('Não foi possível carregar os produtos.');
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchProducts();
+    }, []);
+
+    // Função do Carrinho
+    const handleAddToCartClick = (e, product) => {
+        e.preventDefault(); 
+        e.stopPropagation();
+        if (!user) {
+            navigate('/require-login'); 
+            return;
+        }
+        addItem(product); // Chama o Contexto do Carrinho
+    };
+
+    // Função da Lista de Desejos
+    const handleAddToWishlistClick = (e, product) => {
+        e.preventDefault(); 
+        e.stopPropagation();
+        if (!user) {
+            navigate('/require-login'); 
+            return;
+        }
+        // Lógica de adicionar/remover
+        if (isFavorited(product.id_produto)) {
+            removeWishlistItem(product.id_produto);
+        } else {
+            addWishlistItem(product); // Chama o Contexto da Wishlist
+        }
+    };
+
+    if (loading) {
+        return <section className="featured-products"><p>Carregando produtos...</p></section>;
+    }
+
+    if (error) {
+        return <section className="featured-products"><p>{error}</p></section>;
+    }
+
     return (
         <section className="featured-products">
-            <h2 className="section-title">Produtos em Destaque</h2>
+            <h2>Produtos em Destaque</h2>
             <div className="products-grid">
-                {featuredProducts.map((product, index) => (
-                    <ProductCard
-                        key={product.id}
-                        name={product.name}
-                        code={product.code}
-                        price={product.price}
-                        imageSrc={IMAGES[index % IMAGES.length]}
-                        tag={product.tag}
+                {products.map((product) => (
+                    <ProductCard 
+                        key={product.id_produto} 
+                        product={product} 
+                        
+                        // --- CORREÇÃO AQUI ---
+                        // Garanta que o botão de Carrinho (onAddToCart) chama a função do Carrinho
+                        onAddToCart={(e) => handleAddToCartClick(e, product)}
+                        
+                        // Garanta que o botão de Coração (onAddToWishlist) chama a função de Desejos
+                        onAddToWishlist={(e) => handleAddToWishlistClick(e, product)}
                     />
                 ))}
             </div>

@@ -1,57 +1,119 @@
-import React, { useState } from 'react';
-import ProductCard from './ProductCard.jsx';
-import img1 from '../assets/1.png';
-import img2 from '../assets/2.png';
-import img3 from '../assets/3.png';
-import img4 from '../assets/4.png';
-import img5 from '../assets/5.png';
+// frontend/src/components/CategoriesSection.jsx
 
-const IMAGES = [img1, img2, img3, img4, img5];
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+// Importa ícones (Selecionados para representar categorias amplas)
+import { 
+    FaCertificate, FaFire, FaTag,     // Destaques e Vendas
+    FaSeedling, FaPalette, FaCube,     // Arranjos e Geral
+    FaLeaf, FaStore, FaHeart, FaStar,  // Plantas, Decoração, Ocasiões, Secas
+    FaGift                             // Presentes/Ocasiões
+} from 'react-icons/fa'; 
+import '../styles/CategoriesSection.css';
+import apiClient from '../api';
 
-const categories = {
-    'novidades': [
-        { id: 5, name: 'Box Flores Mistas', price: 'R$270', oldPrice: 'R$290', image: img1, tag: null },
-        { id: 6, name: 'Wine Box + Lindt', price: 'R$140', oldPrice: 'R$160', image: img2, tag: 'Sale' },
-        { id: 7, name: 'Box Mistas + Frisante', price: 'R$340', oldPrice: null, image: img3, tag: null },
-    ],
-    'mais-vendidos': [
-        { id: 8, name: 'Box Flores Mistas', price: 'R$270', oldPrice: 'R$290', image: img4, tag: null },
-        { id: 9, name: 'Box Flores Mistas', price: 'R$270', oldPrice: null, image: img5, tag: null },
-        { id: 10, name: 'Box Flores Mistas', price: 'R$270', oldPrice: null, image: img1, tag: null },
-    ],
-    'dia-dos-namorados': [],
-    'ofertas': [],
+// Mapeamento de Palavras-Chave (Mais Abrangente)
+const iconKeywordsMap = {
+    // Correspondência Exata / Palavras de Destaque
+    'novidades': FaCertificate, 
+    'mais vendidos': FaFire, 
+    'ofertas': FaTag,
+    
+    // Palavras-Chave mais genéricas e abrangentes (Foco na NATUREZA/USO)
+    'buque': FaSeedling,      // Buquê, buquês, noiva
+    'arranjo': FaPalette,     // Arranjo, arranjos, mesa
+    'vaso': FaStore,          // Vaso, vasos (para produtos em recipientes)
+    'decora': FaStore,        // Decoração, decorativos
+    'seco': FaStar,           // Secas, desidratadas (para durabilidade)
+    'desidratad': FaStar,     // Desidratadas, secas
+    'planta': FaLeaf,         // Plantas, mudas, vegetação
+    'natural': FaLeaf,        // Plantas naturais, flores frescas
+    'casamento': FaHeart,     // Ocasião romântica/especial
+    'romance': FaHeart,       
+    'aniversa': FaGift,       // Aniversário, presente
+    'ocasio': FaGift,         // Ocasião especial
+    
+    // Fallback
+    'default': FaCube, 
 };
 
-const CategoriesSection = () => {
-    const [activeTab, setActiveTab] = useState('novidades');
+// FUNÇÃO CRÍTICA: Resolve o ícone procurando pela palavra-chave mais relevante no nome.
+const getIconComponent = (categoryName) => {
+    const nameLower = categoryName.toLowerCase();
+    
+    // 1. Tenta a correspondência exata primeiro (para novidades, ofertas)
+    if (iconKeywordsMap[nameLower]) {
+        return iconKeywordsMap[nameLower];
+    }
+    
+    // 2. Itera sobre o mapa de palavras-chave mais abrangentes.
+    for (const [keyword, Icon] of Object.entries(iconKeywordsMap)) {
+        if (nameLower.includes(keyword)) {
+            // Se encontrar a palavra-chave (ex: "vaso"), retorna o ícone
+            return Icon;
+        }
+    }
 
-    const handleTabClick = (tab) => {
-        setActiveTab(tab);
-    };
+    // 3. Retorna o ícone de fallback genérico se nenhuma palavra-chave for encontrada
+    return iconKeywordsMap['default'];
+};
+
+
+const CategoriesSection = () => {
+    const [categories, setCategories] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await apiClient.get('/categorias');
+
+                if (Array.isArray(response.data)) {
+                    // Apenas utiliza os dados vindos do banco de dados.
+                    setCategories(response.data);
+                } else {
+                    setCategories([]); 
+                }
+            } catch (err) {
+                console.error("Erro ao carregar categorias:", err);
+                setCategories([]); 
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchCategories();
+    }, []);
+
+    if (loading) {
+        return <div className="categories-container"><p>Carregando categorias...</p></div>;
+    }
 
     return (
-        <section className="categories-section">
-            <h2 className="section-title">Categorias</h2>
-            <div className="categories-tabs">
-                <button className={`tab-button ${activeTab === 'novidades' ? 'active' : ''}`} onClick={() => handleTabClick('novidades')}>Novidades</button>
-                <button className={`tab-button ${activeTab === 'mais-vendidos' ? 'active' : ''}`} onClick={() => handleTabClick('mais-vendidos')}>Mais Vendidos</button>
-                <button className={`tab-button ${activeTab === 'dia-dos-namorados' ? 'active' : ''}`} onClick={() => handleTabClick('dia-dos-namorados')}>Dia dos Namorados</button>
-                <button className={`tab-button ${activeTab === 'ofertas' ? 'active' : ''}`} onClick={() => handleTabClick('ofertas')}>Ofertas</button>
+        <div className="categories-container">
+            <h2>Categorias em Destaque</h2>
+            <div className="categories-grid">
+                {categories.length > 0 ? (
+                    categories.map((category) => {
+                        // Usa a função flexível para definir o ícone
+                        const IconComponent = getIconComponent(category.nome);
+                        
+                        return (
+                            <Link 
+                                to={`/products?categories=${category.id_categoria}`} 
+                                key={category.id_categoria} 
+                                className="category-card"
+                            >
+                                <IconComponent className="category-icon" size={30} />
+                                <p>{category.nome}</p>
+                            </Link>
+                        );
+                    })
+                ) : (
+                    <p>Nenhuma categoria ou filtro disponível.</p>
+                )}
             </div>
-            <div className="products-grid">
-                {categories[activeTab].map((product, index) => (
-                    <ProductCard
-                        key={product.id}
-                        name={product.name}
-                        price={product.price}
-                        oldPrice={product.oldPrice}
-                        imageSrc={IMAGES[index % IMAGES.length]}
-                        tag={product.tag}
-                    />
-                ))}
-            </div>
-        </section>
+        </div>
     );
 };
 

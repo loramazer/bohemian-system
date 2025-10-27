@@ -1,0 +1,205 @@
+/* Estilos globais da Header */
+.main-header {
+  background-color: #fff;
+  border-bottom: 1px solid #e0e0e0;
+  width: 100%;
+}
+
+/* --- BARRA SUPERIOR (Informações e Login/Ações) --- */
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 5vw; /* Padding lateral em porcentagem para se expandir */
+    background-color: #516A6A; /* Cor de fundo escura (cinza-azulado) */
+    color: #ffffff; /* Cor do texto claro */
+    font-size: 0.9rem;
+}
+
+.contact-info span {
+    margin-right: 25px;
+}
+
+/* Grupo de ações do usuário (Login/Sair, Admin, Ícones) */
+.user-actions-group {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Espaçamento padrão entre os elementos */
+}
+
+/* Estilos para textos de usuário logado (welcome-message, admin-link, logout-btn) */
+.user-actions-group .welcome-message,
+.user-actions-group .admin-link,
+.user-actions-group .logout-btn {
+    text-decoration: none;
+    color: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 5px 0;
+    transition: opacity 0.2s;
+}
+
+/* CRÍTICO: NOVO ESTILO PARA BOTÃO LOGIN DESLOGADO */
+.user-actions-group .login-btn-final-style {
+    background-color: #fff; /* Fundo Branco (botão com aspecto de botão) */
+    color: #516A6A; /* Texto na cor da barra superior (Dark Teal) */
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+    border: 1px solid #E0E7E9; /* Borda sutil para aspecto de botão */
+    white-space: nowrap;
+}
+
+.user-actions-group .login-btn-final-style:hover {
+    background-color: #E0E7E9; /* Fundo levemente mais escuro no hover */
+    color: #516A6A; 
+    border-color: #516A6A;
+}
+
+/* Garante que os ícones de Carrinho/Favoritos (visíveis somente quando logado) tenham a cor clara da barra */
+.user-actions-group .icon-link {
+    color: inherit; /* Herda a cor #E0E7E9 da .header-top */
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    transition: opacity 0.2s;
+    font-size: 1.0rem;
+}
+
+.user-actions-group .icon-link:hover {
+    opacity: 0.8;
+}
+
+/* Botão Sair/Logout */
+.logout-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Badge de contagem do carrinho */
+.cart-icon-container {
+    position: relative;
+    margin-left: 3px;
+    margin-right: -41px;
+}
+
+.cart-badge {
+    position: absolute;
+    top: -8px;
+    left: 13px;
+    background-color: #a4d4c5; /* Cor de destaque (Verde-azulado) */
+    color: white;
+    border-radius: 50%;
+    padding: 2px 5px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    min-width: 18px;
+    text-align: center;
+    line-height: 1.2;
+    font-size: 0.8rem;
+}
+
+/* --- ADMIN DROPDOWN --- */
+.admin-menu-toggle {
+    position: relative;
+}
+
+.admin-dropdown {
+    position: absolute;
+    top: 30px;
+    right: 0;
+    background-color: #fff;
+    color: #555;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 10px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 100;
+    white-space: nowrap;
+    border-radius: 5px;
+}
+
+.admin-dropdown a {
+    text-decoration: none;
+    color: #555;
+    font-weight: normal;
+}
+
+/* --- BARRA INFERIOR (Logo e Navegação) --- */
+.header-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 5vw;
+}
+
+.logo-container .logo {
+    height: 100px; /* Reduzido para melhor proporção */
+}
+
+.main-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 30px; /* Mais espaçamento entre os links de navegação */
+}
+
+.main-nav ul li a {
+    text-decoration: none;
+    color: #516A6A;
+    font-weight: bold;
+    font-size: 1.1rem;
+    transition: color 0.2s ease;
+}
+
+.main-nav ul li a:hover {
+    color: #5d7a7b; /* Cor de destaque ao passar o mouse */
+}
+
+/* --- PESQUISA --- */
+.search-container {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    overflow: hidden;
+    max-width: 250px;
+}
+
+.search-input {
+    border: none;
+    padding: 8px 10px;
+    outline: none;
+    width: 100%;
+}
+
+.search-container .search-button {
+    background-color: #f8f8f8;
+    border: none;
+    cursor: pointer;
+    color: #555;
+    padding: 8px 12px;
+    height: 100%;
+}
+
+.search-container .search-button:hover {
+    background-color: #eee;
+}
+
+/* Remoção de classes temporárias/conflitantes */
+.user-actions-group .login-btn {
+    display: none;
+}
+.user-actions-group .login-btn-styled {
+    display: none;
+}

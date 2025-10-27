@@ -1,33 +1,118 @@
-.add-product-main {
-    padding: 40px 0;
-}
+/* AddProductPage.css */
 
-.admin-breadcrumbs {
-    margin-bottom: 20px;
-    font-size: 0.9rem;
-    color: #888;
-}
+  /* Arquivo: frontend/src/styles/AddProductPage.css */
+  .page-title {
+    margin-top: -35px;
+  }
 
-.admin-breadcrumbs a {
-    color: #888;
-    text-decoration: none;
-}
+  .add-product-page {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
 
-.admin-page-title {
-    font-size: 2rem;
-    color: #333;
-    margin-bottom: 30px;
-    text-align: center;
-}
+  .form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
 
-
-.add-product-card-wrapper {
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    padding: 30px;
+  .form-main {
     display: flex;
     justify-content: center;
-    gap: 40px; 
-    flex-wrap: wrap;
+    align-items: flex-start; /* Mantenha flex-start para alinhar o topo */
+    gap: 40px;
+    max-width: 1000px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    margin-top: -15px;
+  }
+
+  /* Flexibilidade para as colunas */
+.form-main > .product-form-container,
+.form-main > .upload-container,
+.form-main > .image-upload-container {
+  flex: 0 0 450px;    
+  max-width: 450px;
+  box-sizing: border-box;
+  align-self: flex-start;
+  box-shadow: none;
+  width: 100%;
+  
+  /* CRÍTICO: Remova o height fixo daqui. Deixaremos a altura ser ditada pelo conteúdo interno */
+  /* height: 569px; <--- REMOVIDO/COMENTADO como você já fez */ 
+}
+
+
+/* Container da imagem + botões (o card da coluna da direita) */
+.upload-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    
+    /* Estilos de Card: Essencial para o alinhamento visual */
+    padding: 30px; 
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); 
+    
+    border: 1px solid #ccc;
+
+    flex-grow: 1; /* Garante que ele ocupe o espaço se for necessário, mas com width fixo de 450px, é secundário */
+    width: 100%;
+    
+    /* CRÍTICO: Mantenha a altura como 'auto' para que ela cresça com o conteúdo */
+    height: auto; 
+}
+
+  /* Botões Salvar e Cancelar juntos */
+/* AddProductPage.css */
+
+/* Botões Salvar e Cancelar juntos */
+.upload-buttons {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    margin-top: auto; /* CRÍTICO: Empurra para o final do contêiner */ 
+    padding-top: 20px;
+    justify-content: center;
+}
+
+/* AddProductPage.css */
+
+.upload-buttons .save-btn,
+.upload-buttons .cancel-btn {
+  max-width: 120px;
+  width: 100%;
+  padding: 10px 15px;
+  /* CRÍTICO: Remova qualquer margin-top negativo se ainda estiver lá */
+  margin-top: 0; 
+}
+
+  .upload-buttons .cancel-btn {
+    border: 1px solid #ccc;
+  }
+
+  /* Responsividade para telas menores */
+  @media (max-width: 960px) {
+      .form-main {
+          flex-direction: column;
+          align-items: center;
+      }
+
+.form-main > .product-form-container,
+.form-main > .upload-container {
+          flex-basis: 100%;
+          max-width: 100%;
+      }
+  }
+
+.add-more-files-btn {
+  width: 390px;
+  display: flex;
+  align-content: center;
+  gap: 15px;
+  padding: 10px;
+  border: 1px solid #eee;
+  border-radius: 5px;
+  position: relative;
 }

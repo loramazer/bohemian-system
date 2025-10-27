@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
-import ContentWrapper from '../components/ContentWrapper.jsx';
+import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
 import OrderInfoCards from '../components/Admin/OrderInfoCards.jsx';
 import OrderProductsTable from '../components/Admin/OrderProductsTable.jsx';
 import OrderSummary from '../components/Admin/OrderSummary.jsx';

@@ -1,46 +1,46 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import './RegisterForm.css';
+import { useNavigate } from 'react-router-dom';
+import apiClient from '../api';
+import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
+import '../styles/RegisterForm.css';
 
 const RegisterForm = () => {
     const [formData, setFormData] = useState({
         nome: '',
-        email: '',
         telefone: '',
-        senha: ''
+        email: '',
+        senha: '',
     });
+    const [confirmarSenha, setConfirmarSenha] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState('');
     const navigate = useNavigate();
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError('');
+        if (formData.senha !== confirmarSenha) {
+            setError('As senhas não coincidem!');
+            return;
+        }
         try {
-            const response = await fetch('http://localhost:3000/auth/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            });
+            const response = await apiClient.post('/auth/register', formData);
 
-            const data = await response.json();
-
-            if (response.ok) {
-                alert('Cadastro realizado com sucesso! Faça login para continuar.');
+            if (response.status === 201) {
                 navigate('/login');
-            } else {
-                alert(data.message || 'Erro ao cadastrar. Tente novamente.');
             }
-        } catch (error) {
-            console.error('Erro de rede:', error);
-            alert('Não foi possível conectar ao servidor. Tente novamente mais tarde.');
+        } catch (err) {
+            const errorMessage = err.response?.data?.message || 'Erro ao registrar. Tente novamente.';
+            setError(errorMessage);
+            console.error('Erro de rede:', err);
         }
     };
 
@@ -54,17 +54,45 @@ const RegisterForm = () => {
                     <input type="text" id="nome" name="nome" placeholder="Seu nome" value={formData.nome} onChange={handleChange} required />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="email">Email Address</label>
-                    <input type="email" id="email" name="email" placeholder="Seu email" value={formData.email} onChange={handleChange} required />
+                    <label htmlFor="login">Email Address</label>
+                    <input type="email" id="login" name="email" placeholder="Seu email" value={formData.email} onChange={handleChange} required />
                 </div>
                 <div className="form-group">
                     <label htmlFor="telefone">Telefone</label>
                     <input type="tel" id="telefone" name="telefone" placeholder="Seu telefone" value={formData.telefone} onChange={handleChange} required />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="senha">Senha</label>
-                    <input type="password" id="senha" name="senha" placeholder="Sua senha" value={formData.senha} onChange={handleChange} required />
+                    <div className="label-wrapper"> {/* Novo div para alinhar label e ícone */}
+                        <label htmlFor="senha">Senha</label>
+                        <button type="button" onClick={togglePasswordVisibility} className="password-toggle-btn"
+                            title={showPassword ? 'Ocultar senha' : 'Mostrar senha'}>
+                            {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+                        </button>
+                    </div>
+                    <input
+                        type={showPassword ? 'text' : 'password'}
+                        id="senha"
+                        name="senha"
+                        placeholder="Sua senha"
+                        value={formData.senha}
+                        onChange={handleChange}
+                        required
+                    />
                 </div>
+                <div className="form-group">
+                    <label htmlFor="confirmarSenha">Confirmar Senha</label>
+                    <input
+                        // O tipo também é dinâmico para ser consistente
+                        type={showPassword ? 'text' : 'password'}
+                        id="confirmarSenha"
+                        name="confirmarSenha"
+                        placeholder="Confirme sua senha"
+                        value={confirmarSenha}
+                        onChange={(e) => setConfirmarSenha(e.target.value)}
+                        required
+                    />
+                </div>
+                {error && <p className="error-message">{error}</p>}
                 <button type="submit" className="register-button">Cadastrar</button>
             </form>
         </div>

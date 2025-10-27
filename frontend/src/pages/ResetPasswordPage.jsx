@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import ContentWrapper from '../components/ContentWrapper.jsx';
+import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
+import apiClient from '../api.js'; // NOVO: Importação do apiClient
 import '../styles/LoginPage.css'; 
 
 const ResetPasswordPage = () => {
@@ -14,26 +15,24 @@ const ResetPasswordPage = () => {
         setMessage('Redefinindo sua senha...');
 
         try {
-            const response = await fetch('http://localhost:3000/auth/reset-password', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ token, newPassword: senha }),
-            });
-
-            const data = await response.json();
+            // CORRIGIDO: Usando apiClient.post para enviar o token e a nova senha
+            const response = await apiClient.post('/auth/reset-password', { token, newPassword: senha });
             
-            if (response.ok) {
+            const data = response.data;
+            
+            if (response.status === 200) {
                 setMessage('Senha redefinida com sucesso! Você será redirecionado para o login.');
                 setTimeout(() => navigate('/login'), 3000);
             } else {
+                 // Tratamento de erro via corpo da resposta (se for status 2xx)
                 setMessage(data.message || 'Ocorreu um erro. Por favor, tente novamente.');
             }
 
         } catch (error) {
+            // Tratamento de erro específico para Axios (captura a mensagem do backend)
+            const errorMessage = error.response?.data?.message || 'Não foi possível conectar ao servidor.';
             console.error('Erro ao redefinir senha:', error);
-            setMessage('Não foi possível conectar ao servidor.');
+            setMessage(errorMessage);
         }
     };
 

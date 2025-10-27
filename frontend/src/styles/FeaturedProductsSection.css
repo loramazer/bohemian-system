@@ -2,16 +2,26 @@
     text-align: center; /* Centraliza o título */
     padding: 60px 20px;
     background-color: #fff;
+    margin-top: -20px;
+}
+
+/* NOVO: Ajusta o título h2 para corresponder ao estilo do título de categorias */
+.featured-products h2 {
+    margin-top: -20px;
+    font-size: 2rem; /* Define o tamanho da fonte */
+    margin-bottom: 40px; /* Adiciona margem inferior consistente */
+    color: #333; /* Define a cor do texto consistente */
 }
 
 .products-grid {
     display: grid;
-    /* Define as colunas do grid: no mínimo 250px, com preenchimento automático */
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px; /* Espaço entre os cards */
-    margin-top: 30px;
-    /* Centraliza o grid dentro da seção */
-    max-width: 1200px;
-    margin-left: auto;
-    margin-right: auto;
+    gap: 40px; /* AUMENTADO PARA 40px */
+    /* ... */
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+    gap: 40px; /* AUMENTADO PARA 40px */
 }

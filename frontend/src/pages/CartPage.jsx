@@ -1,33 +1,25 @@
-import React, { useState } from 'react';
+import React, { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import CartItems from '../components/CartItems.jsx';
 import CartSummary from '../components/CartSummary.jsx';
-
-
-import img1 from '../assets/1.png';
-import img2 from '../assets/2.png';
-import img3 from '../assets/3.png';
-import img4 from '../assets/4.png';
-import img5 from '../assets/5.png';
-
+import { AuthContext } from "../context/AuthContext.jsx";
+import { CartContext } from "../context/CartContext.jsx";
 import '../styles/CartPage.css';
 
-const IMAGES = [img1, img2, img3, img4, img5];
-
-const cartItemsData = [
-    { id: 1, name: 'Box com Flores Mistas', price: 219.00, quantity: 1, image: IMAGES[0] },
-    { id: 2, name: 'Box com Flores Mistas', price: 219.00, quantity: 1, image: IMAGES[1] },
-    { id: 3, name: 'Box com Flores Mistas', price: 219.00, quantity: 1, image: IMAGES[2] },
-    { id: 4, name: 'Box com Flores Mistas', price: 219.00, quantity: 1, image: IMAGES[3] },
-    { id: 5, name: 'Box com Flores Mistas', price: 219.00, quantity: 1, image: IMAGES[4] },
-];
-
 const CartPage = () => {
-    const [cartItems, setCartItems] = useState(cartItemsData);
+    const { cartItems, esvaziarCarrinho, atualizarQuantidadeItem, removerItemCarrinho } = useContext(CartContext);
+    const { user } = useContext(AuthContext);
+    const navigate = useNavigate();
+    console.log("Itens do carrinho na CartPage:", cartItems);
 
-    const subtotal = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+    const subtotal = cartItems.reduce((total, item) => total + (parseFloat(item.preco_unitario) * item.quantidade), 0);
     
-    const emptyCart = () => {
-        setCartItems([]);
+    const handleContinuarComprando = () => {
+        navigate('/products');
+    };
+
+    const handleEsvaziar = () => {
+        esvaziarCarrinho();
     };
 
     return (
@@ -39,10 +31,20 @@ const CartPage = () => {
                 <div className="cart-header">
                     <h2 className="page-title">Carrinho</h2>
                 </div>
-                <div className="cart-layout">
-                    <CartItems items={cartItems} onEmptyCart={emptyCart} />
-                    <CartSummary subtotal={subtotal} />
-                </div>
+                {cartItems && cartItems.length > 0 ? (
+                    <div className="cart-layout">
+                        <CartItems items={cartItems} onEmptyCart={esvaziarCarrinho} onUpdateQuantity={atualizarQuantidadeItem}
+                            onRemoveItem={removerItemCarrinho} />
+                        <CartSummary subtotal={subtotal} itens={cartItems} />
+                    </div>
+                ) : (
+                    <div className="empty-cart-message">
+                        <p>Seu carrinho está vazio.</p>
+                        <button onClick={handleContinuarComprando} className="continue-shopping-button">
+                            Voltar para o Catálogo
+                        </button>
+                    </div>
+                )}
             </div>
         </main>
     );

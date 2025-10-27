@@ -1,0 +1,104 @@
+/* frontend/src/styles/HeroSection.css */
+
+.hero-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Reduz o padding para que o ContentWrapper possa gerenciá-lo */
+    padding: 40px 0; 
+    
+    background-color: #f8f7fa; /* Fundo limpo (ou use #fff se quiser branco total) */
+    position: relative; 
+    overflow: hidden; 
+    text-align: left; 
+    gap: 80px; 
+    /* REMOVIDO: max-width: 1400px; - Agora controlado pelo ContentWrapper */
+    margin: 0 auto;
+}
+
+/* Remove a estilização do círculo que causava o problema */
+.hero-circle-background {
+    display: none;
+}
+
+.hero-content {
+    max-width: 450px;
+    position: relative;
+    z-index: 2;
+}
+
+.hero-content h1 {
+    font-size: 3.5rem; 
+    color: #333;
+    margin-bottom: 20px;
+    line-height: 1.1;
+}
+
+.hero-content p {
+    color: #666;
+    line-height: 1.6;
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+}
+
+.cta-button {
+    background-color: #5d7a7b; 
+    color: #fff;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+.cta-button:hover {
+    background-color: #4a6263;
+}
+
+.hero-image-container {
+    position: relative;
+    z-index: 2; 
+    max-width: 400px; 
+    flex-shrink: 0;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); 
+    border-radius: 8px;
+}
+
+.hero-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+}
+
+.sale-badge {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #a4d4c5;
+    color: #333;
+    padding: 8px 15px;
+    border-radius: 8px 0 8px 0;
+    font-weight: bold;
+    z-index: 3;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 900px) {
+    .hero-section {
+        flex-direction: column;
+        text-align: center;
+        gap: 40px;
+        padding: 40px 0; 
+    }
+    .hero-content {
+        order: 2;
+    }
+    .hero-image-container {
+        order: 1;
+        max-width: 300px;
+    }
+    .cta-button {
+        width: 80%;
+    }
+}

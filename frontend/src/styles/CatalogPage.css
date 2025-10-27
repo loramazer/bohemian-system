@@ -1,15 +1,112 @@
+.catalog-page-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 10px 20px 0; /* espaço suficiente abaixo da header */
+  box-sizing: border-box;
+}
+
+/* Breadcrumbs */
+.catalog-breadcrumbs {
+  margin-top: 10px;       /* leve espaçamento entre header e link */
+  margin-bottom: 20px;    /* reduz espaço antes do conteúdo */
+  padding-left: 0px;     /* ligeiro recuo para a direita */
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.catalog-breadcrumbs a {
+  color: #5d7a7b;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.catalog-breadcrumbs a:hover {
+  text-decoration: underline;
+}
+
+/* Área principal */
+.catalog-page {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+  gap: 20px;
+}
+
+.catalog-content-area {
+  display: flex;
+  width: 100%;
+  gap: 20px;
+  margin-top: 0; /* remove o deslocamento negativo */
+}
+
 .catalog-main {
-    padding: 40px 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  margin-top: 0;
 }
 
+.sidebar {
+  border: 1px solid #e0e0e0;              /* mesma cor de borda dos cards */
+  border-left: none;                      /* remove totalmente a borda esquerda */
+  border-top-left-radius: 0;              /* remove arredondamento no canto superior esquerdo */
+  border-bottom-left-radius: 0;           /* remove arredondamento no canto inferior esquerdo */
+  border-top-right-radius: 12px;          /* mantém igual aos cards */
+  border-bottom-right-radius: 12px;
+  
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); /* mesma sombra */
+  background-color: #fff;                 /* mesmo fundo branco */
+  padding: 20px;                          /* espaçamento interno confortável */
+  height: fit-content;                    /* evita ocupar toda a altura da página */
+  position: sticky;                       /* mantém visível ao rolar */
+  top: 100px;                             /* ajusta conforme a altura da header */
+  margin-left: -19px;
+}
+
+@media (max-width: 768px) {
+  .catalog-content-area {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #eee;
+    border-top: 1px solid #eee;
+  }
+}
+
+/* Header e mensagens */
 .page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  color: #5d7a7b;
 }
 
-.catalog-layout {
-    display: flex;
-    gap: 30px;
+.loader,
+.error-message,
+.no-products-found {
+  width: 100%;
+  text-align: center;
+  font-size: 1.2rem;
+  padding: 50px 20px;
+  color: #555;
+}
+
+.search-results-header {
+  margin-bottom: 20px;
+  padding-bottom: 0px;
+  border-bottom: 1px solid #eee;
+}
+
+.search-results-header h3 {
+  font-size: 1.2rem;
+  color: #555;
+  font-weight: 500;
+  margin-top: -50px;
 }

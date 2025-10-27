@@ -3,7 +3,7 @@ import HeroSection from '../components/HeroSection.jsx';
 import FeaturedProductsSection from '../components/FeaturedProductsSection.jsx';
 import CategoriesSection from '../components/CategoriesSection.jsx';
 import TestimonialsSection from '../components/TestimonialsSection.jsx'; 
-import ContentWrapper from '../components/ContentWrapper.jsx';
+import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
 
 import '../styles/HomePage.css';
 import '../styles/FeaturedProductsSection.css';
@@ -18,7 +18,11 @@ const HomePage = () => {
 
     return (
         <main>
-            <HeroSection />
+            {/* NOVO: Envolve HeroSection dentro de ContentWrapper */}
+            <ContentWrapper> 
+                <HeroSection />
+            </ContentWrapper>
+            
             <ContentWrapper>
                 {userName && (
                     <div style={{ padding: '20px 0', fontSize: '1.5rem', fontWeight: 'bold' }}>

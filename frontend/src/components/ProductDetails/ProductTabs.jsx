@@ -1,40 +1,28 @@
-import React, { useState } from 'react';
-import '../../styles/ProductDetails.css';
+// src/components/ProductDetails/ProductTabs.jsx
 
-const ProductTabs = () => {
-    const [activeTab, setActiveTab] = useState('description');
+import React from 'react';
+//import '../../styles/ProductDetails.css';
 
-    const renderContent = () => {
-        switch (activeTab) {
-            case 'description':
-                return (
-                    <div className="tab-content">
-                        <h3>Sobre o Produto:</h3>
-                        <p>Aliquam dis vulputate integer sagittis. Faucibus dis diam arcu, nulla lobortis justo netus dis. Eu in fringilla vulputate nunc nec. Dui, massa viverra...</p>
-                        <h3>Mais Detalhes:</h3>
-                        <ul>
-                            <li>Aliquam dis vulputate integer sagittis...</li>
-                            <li>Aliquam dis vulputate integer sagittis...</li>
-                        </ul>
-                    </div>
-                );
-            case 'additional':
-                return <div className="tab-content">Informações adicionais sobre o produto.</div>;
-            case 'comments':
-                return <div className="tab-content">Comentários e avaliações dos clientes.</div>;
-            default:
-                return null;
-        }
-    };
+// 1. Receba 'product' como uma prop
+const ProductTabs = ({ product }) => {
+
+    // 2. Removemos o 'useState' e a função 'renderContent',
+    //    pois não há mais abas para gerenciar.
 
     return (
         <div className="product-tabs-container">
-            <div className="tabs-header">
-                <button className={`tab-button ${activeTab === 'description' ? 'active' : ''}`} onClick={() => setActiveTab('description')}>Descrição</button>
-                <button className={`tab-button ${activeTab === 'additional' ? 'active' : ''}`} onClick={() => setActiveTab('additional')}>Informações Adicionais</button>
-                <button className={`tab-button ${activeTab === 'comments' ? 'active' : ''}`} onClick={() => setActiveTab('comments')}>Comentários</button>
+
+            {/* 3. O 'tabs-header' (botões) foi removido. */}
+
+            {/* 4. Renderiza o conteúdo da descrição diretamente */}
+            <div className="tab-content">
+                <h3>Sobre o Produto:</h3>
+
+                {/* 5. Puxa a descrição do objeto 'product' vindo da API */}
+                <p>{product.descricao}</p>
+
+                {/* A lista <ul> estática foi removida */}
             </div>
-            {renderContent()}
         </div>
     );
 };

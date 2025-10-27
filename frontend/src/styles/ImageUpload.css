@@ -1,0 +1,180 @@
+/* ImageUpload.css */
+
+.upload-box {
+    /* Restaura a borda pontilhada */
+    border: 2px dashed #ccc; 
+    border-radius: 8px;
+    
+    /* MUDANÇA: Reduzindo o padding vertical para um valor intermediário (50px) */
+    padding: 50px 20px; 
+    
+    text-align: center;
+    color: #888;
+    cursor: pointer;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+    margin-top: 30px; /* Mantém 10px de margem superior */
+}
+
+.upload-box.dragging {
+    border-color: #5d7a7b;
+    background-color: #f0f8ff;
+}
+
+.upload-icon {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+.thumbnail-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.thumbnail-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+/* Miniatura (fixa e pequena) */
+.thumbnail-item img {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 6px;
+    flex: 0 0 64px;               /* não cresce nem encolhe, mantém largura fixa */
+}
+
+/* Área de info -> agora em linha: nome + check */
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+}
+
+.file-info span {
+  display: block;
+  font-size: 0.95rem;
+  color: #333;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 200px; /* <-- limite fixo do nome */
+}
+
+
+/* === AJUSTES VISUAIS === */
+
+/* Mantém ícones alinhados e com tamanho fixo */
+.thumbnail-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  width: 48px; /* <-- largura fixa garante que fiquem alinhados */
+  flex-shrink: 0;
+}
+
+.checkmark-icon,
+.delete-icon {
+  width: 20px;
+  height: 20px;
+  font-size: 1rem;
+}
+
+
+/* Ícones padronizados */
+.checkmark-icon {
+  color: #28a745;
+}
+
+.delete-icon {
+  color: #e74c3c;
+  cursor: pointer;
+}
+
+/* Botão de adicionar imagens */
+/* ImageUpload.css */
+
+/* Botão de adicionar imagens */
+/* ImageUpload.css */
+
+/* Botão de adicionar imagens */
+/* ImageUpload.css */
+
+/* Botão de adicionar imagens */
+.add-more-files-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: #f8faf9;
+  color: #3b5d5c;
+  
+  /* MUDANÇA: Aumentando a borda para 3px para maior destaque */
+  border: 3px solid #5d7a7b; 
+  
+  border-radius: 12px;
+  padding: 12px 18px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 10px auto 20px;
+  
+  /* Mantendo a sombra sutil */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); 
+  
+  width: fit-content;
+}
+
+/* Efeito de hover */
+.add-more-files-btn:hover {
+  background-color: #5d7a7b; 
+  color: #fff;
+  
+  /* Mantém a borda da mesma cor no hover para um visual limpo e sólido */
+  border: 3px solid #5d7a7b; 
+  
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* O :active permanece inalterado */
+.add-more-files-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.no-files-message {
+    align-content: center;
+    margin: auto;
+}
+
+.image-error-text {
+  text-align: left;
+  color: #f44336;
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-top: -14px;
+  margin-bottom: 24px;
+  padding-left: 5px;
+  display: block;
+}
+
+.image-upload-container {
+    margin: 0;
+    width: 100%;
+}

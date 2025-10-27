@@ -1,26 +1,23 @@
+// frontend/src/components/HeroSection.jsx
+
 import React from 'react';
-import './HeroSection.css'; 
+import { Link } from 'react-router-dom'; 
+import '../styles/HeroSection.css'; 
 import mainImage from '../assets/bohemian-floral.png'; 
 
 const HeroSection = () => {
     return (
         <section className="hero-section">
-            {/* Adicionamos uma div separada para o círculo de fundo */}
-            <div className="hero-circle-background"></div>
-            
             <div className="hero-content">
-                <h1>Workshop Bohemian Floral</h1>
+                <h1>Flores Frescas & Decoração Bohemian</h1>
                 <p>
-                    Descubra a arte dos arranjos de flores.
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Magna in est adipiscing.
-                    In phasellus non in justo.
+                    Descubra arranjos florais únicos e itens de decoração artesanais que trazem vida e estilo para qualquer ambiente. Entregamos a beleza diretamente para você.
                 </p>
-                <button className="cta-button">Contratar agora</button>
+                <Link to="/products" className="cta-button">Ver Catálogo</Link> 
             </div>
             
             <div className="hero-image-container">
-                <img src={mainImage} alt="Arranjo de flores" className="hero-image" />
-                <span className="sale-badge">50% off</span>
+                <img src={mainImage} alt="Arranjo de flores Bohemian Floral" className="hero-image" />
             </div>
         </section>
     );
