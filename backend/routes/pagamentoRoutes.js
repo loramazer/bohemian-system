@@ -1,7 +1,7 @@
 /*const express = require('express');
 const router = express.Router();
 const pagamentoController = require('../controllers/pagamentoController');
-const authMiddleware = require('../middleware/authMiddleware'); // (Use o seu middleware)
+const authMiddleware = require('../middlewares/authMiddleware'); // (Use o seu middleware)
 
 // Rota para criar a preferência de pagamento
 router.post(
