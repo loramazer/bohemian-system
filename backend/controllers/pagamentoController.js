@@ -1,5 +1,9 @@
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 /*const mercadopago = require('mercadopago');
+=======
+// backend/controllers/pagamentoController.js
+>>>>>>> Stashed changes
 =======
 // backend/controllers/pagamentoController.js
 >>>>>>> Stashed changes

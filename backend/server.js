@@ -28,7 +28,11 @@ const apiRouter = express.Router();
 apiRouter.use('/auth', authRoutes);
 apiRouter.use('/categorias', categoriaRoutes);
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 //apiRouter.use('/pagamento', pagamentoRoutes);
+=======
+apiRouter.use('/pagamentos', pagamentoRoutes);
+>>>>>>> Stashed changes
 =======
 apiRouter.use('/pagamentos', pagamentoRoutes);
 >>>>>>> Stashed changes
