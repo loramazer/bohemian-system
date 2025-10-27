@@ -5,18 +5,8 @@ import { AuthContext } from '../context/AuthContext';
 import { CartContext } from '../context/CartContext';
 import apiClient from '../api';
 import '../styles/CheckoutPage.css';
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 import AddressForm from '../components//Shared/AddressForm';
 
-// (Opcional) Um CSS para o resumo
-//import '../styles/CheckoutSummary.css';
-=======
-import AddressForm from '../components/Shared/AddressForm';
->>>>>>> Stashed changes
-=======
-import AddressForm from '../components/Shared/AddressForm';
->>>>>>> Stashed changes
 
 const CheckoutPage = () => {
     // ... (todos os seus states: deliveryOption, addresses, etc.)

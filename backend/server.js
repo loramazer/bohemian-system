@@ -27,15 +27,8 @@ const apiRouter = express.Router();
 // 3. Use o roteador principal para definir suas rotas
 apiRouter.use('/auth', authRoutes);
 apiRouter.use('/categorias', categoriaRoutes);
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 //apiRouter.use('/pagamento', pagamentoRoutes);
-=======
 apiRouter.use('/pagamentos', pagamentoRoutes);
->>>>>>> Stashed changes
-=======
-apiRouter.use('/pagamentos', pagamentoRoutes);
->>>>>>> Stashed changes
 apiRouter.use('/produtos', produtoRoutes);
 apiRouter.use('/dashboard', dashboardRoutes);
 apiRouter.use('/carrinho', carrinhoRoutes);
