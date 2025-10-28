@@ -38,10 +38,11 @@ exports.criarPreferencia = async (req, res) => {
             }),
 
             back_urls: {
-                success: 'http://localhost:5173/order-confirmed',
-                failure: 'http://localhost:5173/cart',
-                pending: 'http://localhost:5173/cart',
-            },
+    success: 'http://localhost:3000/pedido/sucesso', // URL para onde o usuário volta
+    failure: 'http://localhost:3000/pedido/falha',
+    pending: 'http://localhost:3000/pedido/pendente',
+  },
+  auto_return: 'approved',
             locale: 'pt-BR',
            
         };

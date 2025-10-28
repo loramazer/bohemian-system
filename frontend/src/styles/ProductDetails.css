@@ -1,5 +1,6 @@
 /* Força a exibição dos botões de ação.
   O !important é usado para "vencer" o reset do Tailwind 
+  Productdetailspage
 */
 
 .product-info-section .product-actions {
