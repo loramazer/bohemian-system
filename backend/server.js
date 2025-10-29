@@ -12,7 +12,6 @@ const produtoRoutes = require('./routes/produtoRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const enderecoRoutes = require('./routes/enderecoRoutes');
 const pagamentoRoutes = require('./routes/pagamentoRoutes');
-const pedidoRoutes = require('./routes/pedidoRoutes');
 const favoritoRoutes = require('./routes/favoritoRoutes');
 
 
@@ -28,9 +27,8 @@ const apiRouter = express.Router();
 // 3. Use o roteador principal para definir suas rotas
 apiRouter.use('/auth', authRoutes);
 apiRouter.use('/categorias', categoriaRoutes);
-//apiRouter.use('/pagamento', pagamentoRoutes);
+apiRouter.use('/pagamento', pagamentoRoutes);
 apiRouter.use('/pagamentos', pagamentoRoutes);
-apiRouter.use('/pedidos', pedidoRoutes);
 apiRouter.use('/produtos', produtoRoutes);
 apiRouter.use('/dashboard', dashboardRoutes);
 apiRouter.use('/carrinho', carrinhoRoutes);

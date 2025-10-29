@@ -10,4 +10,7 @@ router.post(
     pagamentoController.criarPreferencia
 );
 
+// Rotas
+router.post('/confirmar-pedido', pagamentoController.confirmarPedido);
+
 module.exports = router;
