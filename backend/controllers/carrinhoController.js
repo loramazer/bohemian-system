@@ -31,10 +31,13 @@ exports.adicionarItem = async (req, res) => {
         if (!req.user || !req.user.id) {
             return res.status(401).json({ error: "Usuário não autenticado." });
         }
+        const id_usuario = req.user.id;
+        console.log("[carrinhoController] Recebido req.body:", req.body);
         const { produto_id, quantidade, preco_unitario } = req.body;
         const usuarioId = req.user.id;
+        console.log("[carrinhoController] ID do Usuário:", id_usuario);
         const carrinho = await carrinhoModel.buscarCarrinhoAtivo(usuarioId);
-
+        console.log("[carrinhoController] ID do Usuário:", id_usuario);
         if (!carrinho) {
             return res.status(404).json({ error: "Carrinho não encontrado para este usuário." });
         }

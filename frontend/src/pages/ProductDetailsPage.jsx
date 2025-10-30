@@ -45,7 +45,7 @@ const ProductDetailsPage = () => {
                     <ProductGallery product={productData} />
                     <ProductInfo product={productData} />
                 </div>
-                <ProductTabs />
+                <ProductTabs product={productData}/>
             </main>
         </ContentWrapper>
     );

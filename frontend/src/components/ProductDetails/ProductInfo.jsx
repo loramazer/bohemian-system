@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import '../../styles/ProductDetails.css';
+//import '../../styles/ProductDetails.css';
 import { FaHeart, FaShareAlt, FaShoppingCart, FaRegHeart } from 'react-icons/fa'; // NOVO: FaRegHeart
 import { CartContext } from '../../context/CartContext.jsx'; 
 import { FeedbackContext } from '../../context/FeedbackContext.jsx'; 
@@ -45,10 +45,9 @@ const ProductInfo = ({ product }) => {
                     {`R$${product.preco_promocao || product.preco_venda}`}
                 </span>
             </div>
-            <div className="product-rating">
+            {<div className="product-rating">
                 {/* Estrelas de avaliação */}
-            </div>
-            <p className="product-description">{product.descricao}</p>
+            </div>}
             <div className="color-options">
                 {/*<span>Cores:</span>*/}
                 {/* Aqui você pode mapear as cores se tiver no banco */}
@@ -63,7 +62,9 @@ const ProductInfo = ({ product }) => {
             </div>
             <div className="share-section">
                 <span>Compartilhar:</span>
-                <FaShareAlt onClick={handleShare} className="share-icon" />
+                <button className="share-btn" onClick={handleShare}>
+                    <FaShareAlt />
+                </button>
             </div>
         </div>
     );

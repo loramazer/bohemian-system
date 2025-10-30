@@ -7,8 +7,6 @@ import apiClient from '../api';
 import '../styles/CheckoutPage.css';
 import AddressForm from '../components//Shared/AddressForm';
 
-// (Opcional) Um CSS para o resumo
-//import '../styles/CheckoutSummary.css';
 
 const CheckoutPage = () => {
     // ... (todos os seus states: deliveryOption, addresses, etc.)

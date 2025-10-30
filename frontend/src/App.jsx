@@ -24,6 +24,7 @@ import ResetPasswordPage from './pages/ResetPasswordPage.jsx';
 import RequireLoginPage from './pages/RequireLoginPage.jsx';
 import CheckoutPage from './pages/CheckoutPage.jsx'; 
 import WishlistPage from './pages/WishlistPage.jsx';
+import ScrollToTop from './components/Shared/ScrollToTop.jsx';
 
 
 import './styles/App.css';
@@ -32,6 +33,7 @@ function App() {
   return (
     <div className="app-container">
         <Header />
+        <ScrollToTop />
         <Routes>
             {/* Suas rotas ficam aqui dentro */}
             <Route path="/" element={<HomePage />} />
@@ -52,6 +54,7 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
             <Route path="/wishlist" element={<WishlistPage />} />
+
         </Routes>
         <Footer />
     </div>

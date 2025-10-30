@@ -28,6 +28,7 @@ const apiRouter = express.Router();
 apiRouter.use('/auth', authRoutes);
 apiRouter.use('/categorias', categoriaRoutes);
 //apiRouter.use('/pagamento', pagamentoRoutes);
+apiRouter.use('/pagamentos', pagamentoRoutes);
 apiRouter.use('/produtos', produtoRoutes);
 apiRouter.use('/dashboard', dashboardRoutes);
 apiRouter.use('/carrinho', carrinhoRoutes);

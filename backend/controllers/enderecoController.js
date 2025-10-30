@@ -1,6 +1,7 @@
 const Endereco = require('../models/enderecoModel');
 const Cidade = require('../models/cidadeModel');
 
+
 exports.createEndereco = async (req, res) => {
     try {
         const id_usuario = req.user.id; 

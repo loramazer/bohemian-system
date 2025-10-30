@@ -11,7 +11,7 @@ const CartItems = ({ items, onEmptyCart, onUpdateQuantity, onRemoveItem }) => {
             <div className="cart-items-container">
                 <p>Seu carrinho está vazio.</p>
                 <div className="cart-actions">
-                    <Link to="./CatalogPage.jsx" className="more-items-btn">Ver Produtos</Link>
+                    <Link to="../products" className="more-items-btn">Ver Produtos</Link>
                 </div>
             </div>
         );
@@ -61,7 +61,7 @@ const CartItems = ({ items, onEmptyCart, onUpdateQuantity, onRemoveItem }) => {
                 </div>
             ))}
             <div className="cart-actions">
-                <button className="more-items-btn">Mais Itens</button>
+                <Link to="../products" className="more-items-btn">Selecionar mais produtos</Link>
                 <button className="empty-cart-btn" onClick={onEmptyCart}>Esvaziar Carrinho</button>
             </div>
         </div>
