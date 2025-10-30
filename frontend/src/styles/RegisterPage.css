@@ -12,7 +12,7 @@
     font-size: 0.9rem;
     color: #5d7a7b;
     margin-bottom: 10px; /* aproxima o link do formulário */
-    max-width: 400px;
+    max-width: 500px; /* <-- MUDANÇA (para 500px) */
     width: 100%;
     text-align: left;
     margin-bottom: 30px;
@@ -20,7 +20,7 @@
 
 .register-breadcrumbs a {
     text-align: left;
-    margin-left: -470px;
+    margin-left: -420px; /* <-- MUDANÇA (removido -470px) */
     color: #5d7a7b; /* mesma cor do login */
     text-decoration: none;
     font-weight: 500;

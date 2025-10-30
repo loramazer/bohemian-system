@@ -4,7 +4,7 @@
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
-    max-width: 400px; /* mesmo tamanho do login */
+    max-width: 500px; /* <-- MUDANÇA: alterado de 400px para 500px */
     width: 100%;
 }
 
@@ -38,6 +38,8 @@
     border: 1px solid #ccc;
     border-radius: 5px;
     box-sizing: border-box;
+    font-size: 1rem;      /* <-- ADICIONADO */
+    font-family: inherit;
 }
 
 .register-button {
