@@ -7,12 +7,25 @@
 }
 
 .login-breadcrumbs {
+    margin-top: -60px;
     font-size: 0.9rem;
     color: #888;
     margin-bottom: 20px;
     width: 100%; 
     text-align: left;
 }
+
+/* --- ADICIONE ESTAS REGRAS --- */
+.login-breadcrumbs a {
+    color: inherit; /* Faz o link herdar a cor do elemento pai (#888) */
+    text-decoration: none; /* Remove o sublinhado */
+}
+
+.login-breadcrumbs a:hover {
+    text-decoration: underline; /* Adiciona sublinhado ao passar o mouse */
+}
+/* --- FIM DA ADIÇÃO --- */
+
 
 .login-form-wrapper {
     max-width: 500px;
