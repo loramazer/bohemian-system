@@ -23,6 +23,7 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage.jsx';
 import ResetPasswordPage from './pages/ResetPasswordPage.jsx';
 import RequireLoginPage from './pages/RequireLoginPage.jsx';
 import CheckoutPage from './pages/CheckoutPage.jsx'; 
+import ContactPage from './pages/ContactPage.jsx'; 
 import WishlistPage from './pages/WishlistPage.jsx';
 import ScrollToTop from './components/Shared/ScrollToTop.jsx';
 
@@ -46,6 +47,7 @@ function App() {
             <Route path="/require-login" element={<RequireLoginPage />} />
             <Route path="/product/:productId" element={<ProductDetailsPage />} />
             <Route path="/sobre-nos" element={<AboutPage />} />
+            <Route path="/contato" element={<ContactPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/admin/products" element={<AllProductsPage />} />
             <Route path="/admin/products/add" element={<AddProductPage />} />

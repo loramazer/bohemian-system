@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import ContentWrapper from '../components/ContentWrapper.jsx'; 
+import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
 import { FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaClock } from 'react-icons/fa'; 
 import '../styles/ContactPage.css';
 
@@ -25,7 +25,7 @@ const ContactPage = () => {
             <main className="contact-main-content">
                 <section className="contact-hero-section">
                     <div className="contact-breadcrumbs">
-                        <Link to="/">Home</Link>  <span>Contato</span>
+                        <Link to="/">Home</Link> &gt;  <span>Contato</span>
                     </div>
                     <h1 className="contact-page-title">Nossa Boutique Floral</h1>
                     <p className="contact-subtitle-sophisticated">

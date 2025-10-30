@@ -12,13 +12,18 @@
 }
 
 .contact-breadcrumbs {
+    color: #5d7a7b;
     margin-bottom: 15px;
     font-size: 0.9rem;
+    margin-top: -120px;
+    margin-left: -1200px;
 }
 
 .contact-breadcrumbs a {
-    color: #888;
+    text-align: left;
+    color: #5d7a7b; /* mesma cor do login */
     text-decoration: none;
+    font-weight: 500;
 }
 
 .contact-page-title {
