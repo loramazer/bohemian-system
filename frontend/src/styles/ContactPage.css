@@ -1,101 +1,164 @@
+/* loramazer/bohemian-system/bohemian-system-refatorar-organizacao/frontend/src/styles/ContactPage.css */
+
 .contact-main-content {
     background-color: #fcfcfc;
-    padding-bottom: 100px;
+    /* MUDANÇA: Reduzido o padding inferior */
+    padding-bottom: 40px; 
 }
 
-/* --- Seção Hero / Título --- */
-.contact-hero-section {
-    padding: 80px 20px 60px;
-    max-width: 900px;
-    margin: 0 auto;
+/* --- Seção Hero / Título (Estilo "Sobre Nós") --- */
+.contact-hero {
+    position: relative;
+    height: 60vh;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
+    overflow: hidden;
+    width: 100%; 
+}
+
+.contact-hero-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    filter: brightness(0.7) grayscale(0.1); 
+}
+
+.contact-hero-overlay {
+    position: relative;
+    z-index: 10;
+    color: #fff;
+    max-width: 900px;
+    padding: 0 20px;
 }
 
 .contact-breadcrumbs {
-    color: #5d7a7b;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     font-size: 0.9rem;
-    margin-top: -120px;
-    margin-left: -1200px;
+    color: rgba(255, 255, 255, 0.8);
+    margin-top: 0;
+    margin-left: 0;
+    text-align: center;
 }
 
 .contact-breadcrumbs a {
-    text-align: left;
-    color: #5d7a7b; /* mesma cor do login */
+    color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
+    transition: color 0.3s;
+    text-align: center;
+    margin-left: 0; 
     font-weight: 500;
 }
 
-.contact-page-title {
-    font-size: 3.2rem;
-    font-weight: 600;
-    margin-bottom: 10px;
-    color: #333;
+.contact-page-title-hero {
+    font-size: 3.5rem; 
+    font-weight: 700;
+    margin-bottom: 15px;
+    line-height: 1.1;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    color: #fff; 
 }
 
-.contact-subtitle-sophisticated {
-    font-size: 1.2rem;
-    color: #555;
+.contact-hero-subtitle {
+    font-size: 1.15rem;
+    margin-bottom: 30px;
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: 300;
     max-width: 750px;
     margin: 0 auto;
     line-height: 1.7;
-    font-style: italic;
 }
 
 /* --- Layout Principal (Grid) --- */
 .contact-content-grid-v2 {
     display: flex;
     max-width: 1200px;
-    margin: 40px auto;
+    margin: 80px auto 40px; /* Reduzida margem inferior */
     padding: 0 20px;
     gap: 50px;
 }
 
+/* --- CORREÇÃO GERAL DO CARD (Padding e Flex) --- */
 .contact-info-container-v2,
 .contact-map-container {
     flex: 1;
     background-color: #fff;
-    padding: 50px;
+    padding: 30px 50px; 
     border-radius: 10px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
 }
 
+/* --- CORREÇÃO CARD ESQUERDO (Distribuição) --- */
+.contact-info-container-v2 {
+    display: flex;
+    flex-direction: column;
+    /* REMOVIDO: justify-content: space-between; */
+}
+
+/* --- CORREÇÃO TÍTULO H2 --- */
 .contact-info-container-v2 h2,
 .contact-map-container h2 {
     font-size: 2rem;
     color: #516A6A;
     margin-bottom: 30px;
-    border-bottom: 3px solid #101750;
-    padding-bottom: 10px;
     font-weight: 500;
+    position: relative;
+    display: inline-block; 
+    padding-bottom: 10px; 
+    margin-top: 5px;
 }
 
-/* --- Estilo dos Itens de Informação Sofisticados --- */
+.contact-info-container-v2 h2::after,
+.contact-map-container h2::after {
+    content: '';
+    display: block;
+    width: 100%; 
+    height: 3px; 
+    background-color: #a4d4c5; 
+    position: absolute;
+    bottom: 0; 
+    left: 0;
+    z-index: 1; 
+    border-radius: 2px;
+}
+
+
+/* --- CORREÇÃO ÍCONES (align-items: center) --- */
 .info-item-sophisticated,
 .info-item-hours {
     display: flex;
-    align-items: flex-start;
+    align-items: center; /* Alinha ícone e texto */
     gap: 20px;
     margin-bottom: 30px;
     padding-bottom: 25px;
     border-bottom: 1px solid #f0f0f0;
+    margin-top: -20px;
 }
 .info-item-hours {
     border-bottom: none;
     margin-bottom: 0;
 }
 
-/* NOVO: Ajuste para o último item do info-container-v2 */
+.info-item-sophisticated{
+    margin-top: 60px;
+}
+/* --- CORREÇÃO CARD ESQUERDO (Empurra o último item para baixo) --- */
 .contact-info-container-v2 .info-item-sophisticated:last-of-type {
+    margin-top: 10px; /* A MÁGICA ACONTECE AQUI */
     border-bottom: none;
     margin-bottom: 0;
-    padding-bottom: 0; /* Remover padding extra também */
+    padding-bottom: 0; 
 }
 
 
+/* --- CORREÇÃO ÍCONES (Alinhamento) --- */
 .info-icon {
     font-size: 1.6rem;
-    padding-top: 4px; 
     line-height: 1;
     color: #516A6A; 
 }
@@ -139,7 +202,7 @@
     color: #555 !important;
 }
 
-/* --- Estilo do Mapa --- */
+/* --- Estilo do Mapa (sem alteração) --- */
 .contact-map-container {
     display: flex;
     flex-direction: column;
@@ -175,28 +238,25 @@
     text-decoration: none;
     font-weight: 600;
     transition: background-color 0.3s;
-    margin-bottom: 30px; /* Adiciona margem abaixo do CTA para separar das novas infos */
+    margin-bottom: 30px; 
 }
 
 .map-link-cta:hover {
     background-color: #e0e0f5; 
 }
 
-/* NOVO ESTILO: Container para as informações adicionais no bloco do mapa */
 .map-additional-info {
-    margin-top: 20px; /* Espaçamento entre o CTA e as novas infos */
+    margin-top: 20px; 
     padding-top: 20px;
-    border-top: 1px solid #f0f0f0; /* Separador sutil */
+    border-top: 1px solid #f0f0f0; 
 }
 
-/* NOVO: Ajustes para os itens de info dentro do mapa */
 .map-additional-info .info-item-sophisticated,
 .map-additional-info .info-item-hours {
-    margin-bottom: 20px; /* Reduz margem inferior para mais compactação */
-    padding-bottom: 15px; /* Reduz padding inferior */
+    margin-bottom: 20px; 
+    padding-bottom: 15px; 
 }
 
-/* Garante que o último item dentro de map-additional-info não tenha borda */
 .map-additional-info .info-item-hours:last-of-type {
     border-bottom: none;
     margin-bottom: 0;
@@ -236,7 +296,6 @@
         margin-bottom: 5px;
     }
 
-    /* Ajustes responsivos para as novas infos do mapa */
     .map-additional-info .info-item-sophisticated,
     .map-additional-info .info-item-hours {
         flex-direction: column;
@@ -247,14 +306,19 @@
         padding-top: 0;
         margin-bottom: 5px;
     }
+
+    /* Em telas menores, removemos a distribuição automática de espaço */
+    .contact-info-container-v2 .info-item-sophisticated:last-of-type {
+        margin-top: 0; 
+    }
 }
 
 @media (max-width: 600px) {
     .contact-hero-section {
         padding-top: 40px;
     }
-
-    .contact-page-title {
+    
+    .contact-page-title-hero {
         font-size: 2.5rem;
     }
     
