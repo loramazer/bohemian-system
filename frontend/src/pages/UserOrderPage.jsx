@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import ContentWrapper from '../components/ContentWrapper.jsx';
-import '../styles/UserOrdersPage.css';
+import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
+import '../styles/UserOrderPage.css';
+import { AuthContext } from '../context/AuthContext.jsx';
 
 import img1 from '../assets/1.png';
 import img2 from '../assets/2.png';

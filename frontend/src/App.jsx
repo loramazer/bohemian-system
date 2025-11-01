@@ -26,6 +26,7 @@ import CheckoutPage from './pages/CheckoutPage.jsx';
 import ContactPage from './pages/ContactPage.jsx'; 
 import WishlistPage from './pages/WishlistPage.jsx';
 import ScrollToTop from './components/Shared/ScrollToTop.jsx';
+import UserOrderPage from './pages/UserOrderPage.jsx'; 
 
 
 import './styles/App.css';
@@ -56,6 +57,7 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
             <Route path="/wishlist" element={<WishlistPage />} />
+            <Route path="/meus-pedidos" element={<UserOrderPage />} />
 
         </Routes>
         <Footer />

@@ -50,7 +50,8 @@ const Header = () => {
                         <>
                             <span className="welcome-message">Olá, {user.nome}</span>
 
-                        {user.admin === 1 && ( // CORRIGIDO: Verifica se o campo 'admin' é igual a 1 (true)
+                        {/* SEÇÃO DO ADMIN (sem alteração) */}
+                        {user.admin === 1 && ( 
                             <div className="admin-menu-toggle">
                                 <span className="admin-link" onClick={() => setAdminOpen(!adminOpen)}>
                                     Admin <FaChevronDown size={10} />
@@ -65,25 +66,35 @@ const Header = () => {
                             </div>
                         )}
 
-                            <button onClick={handleLogout} className="logout-btn">
-                                Sair <FaSignOutAlt size={14} />
-                            </button>
-
-                            {/* CRÍTICO: Ícones de Carrinho e Favoritos (corretamente visíveis APENAS quando logado) */}
+                        {/* SEÇÃO DO USUÁRIO COMUM */}
+                        {user.admin !== 1 && (
+                            <Link to="/meus-pedidos" className="admin-link">Meus Pedidos</Link>
+                        )}
+                        {user.admin !== 1 && (
+                            /* CORREÇÃO: Remova o 'size' prop. Deixe apenas o componente. */
                             <Link to="/wishlist" className="icon-link"><FaHeart /></Link>
+                        )}
+                        {user.admin !== 1 && (
                             <Link to="/cart" className="icon-link cart-icon-container">
-                                <FaShoppingCart size={20} />
+                                {/* CORREÇÃO: Remova o 'size={20}' prop. */}
+                                <FaShoppingCart /> 
                                 {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
                             </Link>
+                        )}
+                            
+                            {/* Botão de Sair (comum a ambos) */}
+                            <button onClick={handleLogout} className="logout-btn">
+                                {/* CORREÇÃO: Remova o 'size={14}' prop. */}
+                                Sair <FaSignOutAlt />
+                            </button>
                         </>
                     ) : (
-                        // CRÍTICO: Apenas o botão de login é exibido aqui
+                        // Usuário Deslogado
                         <Link to="/login" className="login-btn-final-style">Login</Link>
                     )}
 
                 </div>
             </div>
-
 
             <div className="header-bottom">
                 <div className="logo-container">
