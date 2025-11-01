@@ -1,18 +1,19 @@
-// frontend/src/components/Shared/ToastContainer.jsx
+// loramazer/bohemian-system/bohemian-system-refatorar-organizacao/frontend/src/components/Shared/ToastContainer.jsx
 
 import React from 'react';
-// IMPORTAÇÃO CORRIGIDA: FaTimes para o ícone 'x'
-import { FaCheckCircle, FaHeart, FaShoppingCart, FaTimes } from 'react-icons/fa';
+// *** CORREÇÃO AQUI: Adicionar FaExclamationTriangle ***
+import { FaCheckCircle, FaHeart, FaShoppingCart, FaTimes, FaExclamationTriangle } from 'react-icons/fa';
 import '../../styles/ToastContainer.css';
 
+// *** CORREÇÃO AQUI: Adicionar o novo ícone ao map ***
 const IconMap = {
     success: FaCheckCircle,
     cart: FaShoppingCart,
     wishlist: FaHeart,
-    'wishlist-removed': FaHeart, // Pode usar o mesmo ícone ou outro
+    'wishlist-removed': FaHeart,
+    'warning': FaExclamationTriangle // <-- NOVO TIPO
 };
 
-// MUDANÇA: Recebe 'toast' (objeto) e a função 'onClose'
 const ToastContainer = ({ toast, onClose }) => {
 
     if (!toast) {
@@ -25,13 +26,13 @@ const ToastContainer = ({ toast, onClose }) => {
         <div className="toast-container-wrapper">
             <div
                 key={toast.id}
-                className={`toast-notification toast-${toast.type}`}
+                // *** CORREÇÃO AQUI: O CSS usará 'toast-warning' ***
+                className={`toast-notification toast-${toast.type}`} 
             >
                 <IconComponent className="toast-icon" />
                 <span className="toast-message">{toast.message}</span>
-                {/* BOTÃO FECHAR ADICIONADO */}
                 <button onClick={onClose} className="toast-close-btn">
-                    <FaTimes /> {/* Ícone 'x' */}
+                    <FaTimes />
                 </button>
             </div>
         </div>
