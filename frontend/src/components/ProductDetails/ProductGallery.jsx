@@ -1,7 +1,7 @@
 // src/components/ProductDetails/ProductGallery.jsx
 
 import React, { useState, useEffect } from 'react'; // NOVO: Importa useState, useEffect
-import '../../styles/ProductDetails.css';
+//import '../../styles/ProductDetails.css';
 
 const ProductGallery = ({ product }) => {
     // 1. Decodifica a string JSON de URLs

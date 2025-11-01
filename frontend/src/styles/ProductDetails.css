@@ -1,87 +1,104 @@
-/* Força a exibição dos botões de ação.
-  O !important é usado para "vencer" o reset do Tailwind 
-*/
+/* src/styles/ProductDetails.css */
 
-.product-info-section .product-actions {
-    display: flex !important;
-    gap: 15px !important;
-    margin: 30px 0 !important;
+/* --- Título --- */
+.product-info-section .product-title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 10px;
 }
 
-.product-info-section .add-to-cart-btn,
-.product-info-section .add-to-wishlist-btn {
-    /* Garante que eles sejam visíveis */
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-    padding: 12px 24px !important;
-    border-radius: 5px !important;
-    border: 1px solid #5d7a7b !important;
-    cursor: pointer !important;
-    font-size: 1rem !important;
-    font-weight: bold !important;
-    transition: all 0.2s ease !important;
+/* --- Preços --- */
+.product-info-section .product-prices {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
-/* --- Botão Principal (Carrinho) --- */
-.product-info-section .add-to-cart-btn {
-    background-color: #5d7a7b !important;
-    color: white !important;
+.product-info-section .old-price {
+  text-decoration: line-through;
+  color: #aaa;
+  font-size: 1rem;
 }
 
-.product-info-section .add-to-cart-btn svg {
-    fill: white !important;
+.product-info-section .current-price {
+  font-size: 1.8rem;
+  color: #5d7a7b;
+  font-weight: 700;
 }
 
-.product-info-section .add-to-cart-btn:hover {
-    background-color: #4a6162 !important;
-    border-color: #4a6162 !important;
+/* --- Ações --- */
+.product-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
 }
 
-/* --- Botão Secundário (Wishlist) --- */
-.product-info-section .add-to-wishlist-btn {
-    background-color: transparent !important;
-    color: #5d7a7b !important;
-    padding: 12px !important;
+.add-to-cart-btn {
+  flex: 1;
+  background-color: #5d7a7b;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 14px 20px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: 0.3s;
 }
 
-.product-info-section .add-to-wishlist-btn svg {
-    fill: #5d7a7b !important;
+.add-to-cart-btn:hover {
+  background-color: #4a6162;
+  transform: translateY(-2px);
 }
 
-.product-info-section .add-to-wishlist-btn:hover {
-    background-color: #f0f0f0 !important;
+.add-to-wishlist-btn {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
-/* --- Seção de Compartilhar --- */
-.product-info-section .share-section {
-    display: flex !important;
-    align-items: center !important;
-    gap: 10px !important;
-    color: #666 !important;
+.add-to-wishlist-btn:hover {
+  background-color: #f9f9f9;
+  border-color: #5d7a7b;
 }
 
-.product-info-section .share-btn {
-    background: transparent !important;
-    border: none !important;
-    cursor: pointer !important;
-    padding: 5px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    border-radius: 50% !important;
-    transition: all 0.2s ease !important;
+/* --- Compartilhar --- */
+.share-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #666;
+  border-top: 1px solid #eee;
+  padding-top: 20px;
 }
 
-.product-info-section .share-btn svg {
-    fill: #666 !important;
-    font-size: 1.5rem !important;
+.share-btn {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
-.product-info-section .share-btn:hover {
-    background-color: #f0f0f0 !important;
-}
-
-.product-info-section .share-btn:hover svg {
-    fill: #333 !important;
+.share-btn:hover {
+  background-color: #f3f3f3;
+  border-color: #5d7a7b;
 }
