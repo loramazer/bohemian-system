@@ -57,6 +57,8 @@ const Header = () => {
                                     <div className="admin-dropdown" onMouseLeave={() => setAdminOpen(false)}>
                                         <Link to="/dashboard">Dashboard</Link>
                                         <Link to="/admin/products/add">Criar Produto</Link>
+                                        {/* LINHA ADICIONADA CONFORME SOLICITADO */}
+                                        <Link to="/admin/products">Ver Produtos</Link>
                                         <Link to="/admin/orders">Ver Pedidos</Link>
                                     </div>
                                 )}

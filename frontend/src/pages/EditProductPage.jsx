@@ -8,8 +8,12 @@ import apiClient from '../api.js';
 import { FeedbackContext } from '../context/FeedbackContext.jsx';
 import { AuthContext } from '../context/AuthContext.jsx';
 
-// Reutiliza o CSS da página de Adicionar
-import '../styles/AddProductPage.css';
+// --- ALTERAÇÃO AQUI ---
+// Removemos a importação direta do 'AddProductPage.css'
+// import '../styles/AddProductPage.css'; 
+// E importamos o 'EditProductPage.css', que já contém o @import e as correções
+import '../styles/EditProductPage.css';
+// --- FIM DA ALTERAÇÃO ---
 
 const EditProductPage = () => {
     const { productId } = useParams();
@@ -25,6 +29,7 @@ const EditProductPage = () => {
         precoRegular: '',
         precoPromocao: ''
     });
+    // ... (o resto do arquivo permanece exatamente igual) ...
     const [uploadedFiles, setUploadedFiles] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -162,11 +167,7 @@ const EditProductPage = () => {
 
     return (
         <ContentWrapper>
-            <div className="add-product-page"> 
-                
-                <div className="admin-breadcrumbs" style={{ marginBottom: '10px' }}>
-                    <Link to="/dashboard">Painel</Link> &gt; <Link to="/admin/products">Produtos</Link> &gt; <span>Editar Produto</span>
-                </div>
+            <div className="add-product-page edit-page-styles"> 
                 
                 <h2 className="page-title">Editar Produto</h2>
                 

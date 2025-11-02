@@ -129,10 +129,6 @@ const AllProductsPage = () => {
 
             {/* ANTES: <main className="admin-products-main"> */}
             <div className="admin-products-main">
-                <div className="admin-breadcrumbs">
-                    <Link to="/dashboard">Painel</Link> &gt; <span>Produtos</span>
-                </div>
-
                 <div className="admin-page-header">
                     <h2 className="admin-page-title">Todos os Produtos ({totalProducts})</h2>
                     <Link to="/admin/products/add" className="add-product-btn">
