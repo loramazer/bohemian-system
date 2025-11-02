@@ -92,7 +92,7 @@ async function register(req, res) {
 async function forgotPassword(req, res) {
   const { email } = req.body;
   try {
-    const usuario= await usuarioModel.findByEmail(email);
+    const usuario = await usuarioModel.findByEmail(email);
     if (!usuario){
         return res.status(200).json({ message: 'Se as informações estiverem corretas, você receberá um e-mail com as instruções para redefinir sua senha.' });
     }
@@ -120,7 +120,8 @@ async function forgotPassword(req, res) {
                     <td style="padding: 40px; text-align: center;">
                       <img src="cid:bohemianLogo" alt="Bohemian Home" style="width: 150px; margin-bottom: 20px;">
                       <h1 style="color: #333333;">Redefina Sua Senha</h1>
-                      <p style="color: #555555;">Olá, ${cliente.nome}.</p>
+                      {/* --- CORREÇÃO AQUI --- */}
+                      <p style="color: #555555;">Olá, ${usuario.nome}.</p>
                       <a href="${resetUrl}" style="background-color: #5d7a7b; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;">Redefinir Senha</a>
                     </td>
                   </tr>
@@ -159,6 +160,10 @@ async function resetPassword(req, res) {
     if (!resetToken) {
         return res.status(400).json({ message: 'Token inválido ou expirado.' });
     }
+    
+    // --- CORREÇÃO AQUI ---
+    // 2. Definir o usuarioId a partir do token
+    const usuarioId = resetToken.fk_usuario_id;
 
     const newPasswordHash = await bcrypt.hash(newPassword, saltRounds);
     

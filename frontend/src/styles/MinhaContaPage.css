@@ -1,0 +1,171 @@
+/* frontend/src/styles/MinhaContaPage.css */
+
+.account-main-content {
+    padding: 40px 0;
+    background-color: #f8f7fa; /* Fundo suave */
+    min-height: 70vh;
+}
+
+.account-breadcrumbs {
+    max-width: 1000px;
+    margin: -20px auto 30px auto;
+    padding: 0 20px;
+    font-size: 0.9rem;
+    color: #888;
+}
+
+.account-breadcrumbs a {
+    color: #5d7a7b;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.account-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.account-card {
+    background-color: #fff;
+    padding: 30px 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid #eee;
+}
+
+.account-card h2 {
+    font-size: 1.8rem;
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 25px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+}
+
+.account-form .form-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.account-form .form-group label {
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #555;
+    font-size: 0.9rem;
+}
+
+.account-form .form-group input {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.account-form .form-group input:disabled {
+    background-color: #f5f5f5;
+    color: #999;
+}
+
+.account-form .save-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #5d7a7b;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.account-form .save-btn:hover {
+    background-color: #4a6263;
+}
+
+.password-change-section {
+    margin-top: 30px;
+    border-top: 1px dashed #ddd;
+    padding-top: 25px;
+}
+
+.password-change-section h3 {
+    font-size: 1.2rem;
+    color: #555;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+/* --- Seção de Endereços --- */
+.address-list-account {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.address-card-account {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 15px;
+    background-color: #fdfdfd;
+}
+
+.address-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.address-card-header strong {
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.address-delete-btn {
+    background: none;
+    border: none;
+    color: #e74c3c;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 5px;
+}
+.address-delete-btn:hover {
+    color: #c0392b;
+}
+
+.address-card-account p {
+    margin: 4px 0;
+    font-size: 0.95rem;
+    color: #666;
+}
+
+.add-address-btn-account {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #5d7a7b;
+    background-color: #f0f8ff;
+    border: 1px dashed #5d7a7b;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.add-address-btn-account:hover {
+    background-color: #e6f2ff;
+}
+
+/* Responsividade */
+@media (max-width: 900px) {
+    .account-container {
+        grid-template-columns: 1fr;
+    }
+}

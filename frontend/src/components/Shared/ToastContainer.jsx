@@ -1,17 +1,18 @@
 // loramazer/bohemian-system/bohemian-system-refatorar-organizacao/frontend/src/components/Shared/ToastContainer.jsx
 
 import React from 'react';
-// *** CORREÇÃO AQUI: Adicionar FaExclamationTriangle ***
-import { FaCheckCircle, FaHeart, FaShoppingCart, FaTimes, FaExclamationTriangle } from 'react-icons/fa';
+// *** MUDANÇA AQUI: Adicionar FaTrash ***
+import { FaCheckCircle, FaHeart, FaShoppingCart, FaTimes, FaExclamationTriangle, FaTrash } from 'react-icons/fa';
 import '../../styles/ToastContainer.css';
 
-// *** CORREÇÃO AQUI: Adicionar o novo ícone ao map ***
+// *** MUDANÇA AQUI: Adicionar o novo ícone ao map ***
 const IconMap = {
     success: FaCheckCircle,
     cart: FaShoppingCart,
     wishlist: FaHeart,
     'wishlist-removed': FaHeart,
-    'warning': FaExclamationTriangle // <-- NOVO TIPO
+    'warning': FaExclamationTriangle,
+    'trash-removed': FaTrash // <-- NOVO TIPO
 };
 
 const ToastContainer = ({ toast, onClose }) => {
@@ -20,13 +21,13 @@ const ToastContainer = ({ toast, onClose }) => {
         return null;
     }
 
+    // Agora IconComponent vai encontrar 'trash-removed' e usar FaTrash
     const IconComponent = IconMap[toast.type] || IconMap.success;
 
     return (
         <div className="toast-container-wrapper">
             <div
                 key={toast.id}
-                // *** CORREÇÃO AQUI: O CSS usará 'toast-warning' ***
                 className={`toast-notification toast-${toast.type}`} 
             >
                 <IconComponent className="toast-icon" />

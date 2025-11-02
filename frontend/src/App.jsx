@@ -27,6 +27,7 @@ import ContactPage from './pages/ContactPage.jsx';
 import WishlistPage from './pages/WishlistPage.jsx';
 import ScrollToTop from './components/Shared/ScrollToTop.jsx';
 import UserOrderPage from './pages/UserOrderPage.jsx'; 
+import MinhaContaPage from './pages/MinhaContaPage.jsx'; // <-- NOVO
 
 
 import './styles/App.css';
@@ -58,6 +59,7 @@ function App() {
             <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
             <Route path="/wishlist" element={<WishlistPage />} />
             <Route path="/meus-pedidos" element={<UserOrderPage />} />
+            <Route path="/minha-conta" element={<MinhaContaPage />} />
 
         </Routes>
         <Footer />

@@ -65,3 +65,28 @@ exports.getEnderecosUsuario = async (req, res) => {
         res.status(500).json({ message: "Erro ao buscar endereços." });
     }
 };
+
+exports.deleteEndereco = async (req, res) => {
+    try {
+        const id_usuario = req.user.id;
+        const { id } = req.params; // ID do endereço
+
+        if (!id_usuario) {
+            return res.status(401).json({ message: "Usuário não autenticado." });
+        }
+
+        const affectedRows = await Endereco.remove(id, id_usuario);
+
+        if (affectedRows === 0) {
+            return res.status(404).json({ message: "Endereço não encontrado ou não pertence a este usuário." });
+        }
+        
+        // Retorna a lista atualizada de endereços
+        const enderecos = await Endereco.findByUserId(id_usuario);
+        res.status(200).json({ message: "Endereço removido com sucesso.", enderecos });
+
+    } catch (error) {
+        console.error("Erro ao deletar endereço:", error);
+        res.status(500).json({ message: "Erro ao deletar endereço." });
+    }
+};

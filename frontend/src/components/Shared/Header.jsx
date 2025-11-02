@@ -10,11 +10,11 @@ import logoImage from '../../assets/bohemian-logo.png';
 
 const Header = () => {
     const [adminOpen, setAdminOpen] = useState(false);
+    const [userOpen, setUserOpen] = useState(false); // NOVO: Estado para dropdown do usuário
     const { user, logout } = useContext(AuthContext);
     const { cartItems } = useContext(CartContext);
-    const navigate = useNavigate(); // Hook para navegação
+    const navigate = useNavigate(); 
 
-    // NOVO: Estado para o termo de busca
     const [searchTerm, setSearchTerm] = useState('');
 
     const cartCount = cartItems.reduce((total, item) => total + item.quantidade, 0);
@@ -24,21 +24,17 @@ const Header = () => {
         navigate('/');
     };
 
-    // NOVO: Função para lidar com a busca
     const handleSearch = (e) => {
-        e.preventDefault(); // Previne o recarregamento da página se estiver em um form
+        e.preventDefault(); 
         if (searchTerm.trim()) {
-            // Navega para a página de produtos com o parâmetro de busca
             navigate(`/products?search=${encodeURIComponent(searchTerm.trim())}`);
         } else {
-             // Se a busca estiver vazia, vai para a página de produtos sem filtro
              navigate('/products');
         }
     };
 
     return (
         <header className="main-header">
-            {/* ... (header-top permanece o mesmo) ... */}
              <div className="header-top">
                 <div className="contact-info">
                     <span>(42)999854-3532</span>
@@ -48,16 +44,17 @@ const Header = () => {
                 <div className="user-actions-group">
                     {user ? (
                         <>
+                            {/* Mensagem de Olá (visível para admin e comum) */}
                             <span className="welcome-message">Olá, {user.nome}</span>
 
-                        {/* SEÇÃO DO ADMIN (sem alteração) */}
+                        {/* SEÇÃO DO ADMIN */}
                         {user.admin === 1 && ( 
                             <div className="admin-menu-toggle">
                                 <span className="admin-link" onClick={() => setAdminOpen(!adminOpen)}>
                                     Admin <FaChevronDown size={10} />
                                 </span>
                                 {adminOpen && (
-                                    <div className="admin-dropdown">
+                                    <div className="admin-dropdown" onMouseLeave={() => setAdminOpen(false)}>
                                         <Link to="/dashboard">Dashboard</Link>
                                         <Link to="/admin/products/add">Criar Produto</Link>
                                         <Link to="/admin/orders">Ver Pedidos</Link>
@@ -66,25 +63,33 @@ const Header = () => {
                             </div>
                         )}
 
-                        {/* SEÇÃO DO USUÁRIO COMUM */}
+                        {/* --- NOVO: SEÇÃO DO USUÁRIO COMUM --- */}
                         {user.admin !== 1 && (
-                            <Link to="/meus-pedidos" className="admin-link">Meus Pedidos</Link>
-                        )}
-                        {user.admin !== 1 && (
-                            /* CORREÇÃO: Remova o 'size' prop. Deixe apenas o componente. */
-                            <Link to="/wishlist" className="icon-link"><FaHeart /></Link>
-                        )}
-                        {user.admin !== 1 && (
-                            <Link to="/cart" className="icon-link cart-icon-container">
-                                {/* CORREÇÃO: Remova o 'size={20}' prop. */}
-                                <FaShoppingCart /> 
-                                {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
-                            </Link>
+                            <>
+                                {/* Dropdown "Minha Conta" */}
+                                <div className="user-menu-toggle">
+                                    <span className="user-link" onClick={() => setUserOpen(!userOpen)}>
+                                        Minha Conta <FaChevronDown size={10} />
+                                    </span>
+                                    {userOpen && (
+                                        <div className="user-dropdown" onMouseLeave={() => setUserOpen(false)}>
+                                            <Link to="/minha-conta">Meus Dados</Link>
+                                            <Link to="/meus-pedidos">Meus Pedidos</Link>
+                                        </div>
+                                    )}
+                                </div>
+                            
+                                {/* Ícones de Desejos e Carrinho */}
+                                <Link to="/wishlist" className="icon-link"><FaHeart /></Link>
+                                <Link to="/cart" className="icon-link cart-icon-container">
+                                    <FaShoppingCart /> 
+                                    {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
+                                </Link>
+                            </>
                         )}
                             
                             {/* Botão de Sair (comum a ambos) */}
                             <button onClick={handleLogout} className="logout-btn">
-                                {/* CORREÇÃO: Remova o 'size={14}' prop. */}
                                 Sair <FaSignOutAlt />
                             </button>
                         </>
@@ -112,22 +117,18 @@ const Header = () => {
                     </ul>
                 </nav>
 
-                {/* --- Formulário de Busca --- */}
-                {/* Envolvemos em um <form> para lidar com Enter */}
                 <form className="search-container" onSubmit={handleSearch}>
                     <input
                         type="text"
                         placeholder="Pesquisar..."
                         className="search-input"
                         value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)} // Atualiza o estado
+                        onChange={(e) => setSearchTerm(e.target.value)} 
                     />
-                    {/* O botão agora é do tipo submit */}
                     <button type="submit" className="search-button">
                         <FaSearch size={16} />
                     </button>
                 </form>
-                 {/* --- Fim do Formulário --- */}
             </div>
         </header>
     );

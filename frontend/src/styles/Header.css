@@ -30,6 +30,7 @@
 /* Estilos para textos de usuário logado (welcome-message, admin-link, logout-btn) */
 .user-actions-group .welcome-message,
 .user-actions-group .admin-link,
+.user-actions-group .user-link, /* NOVO: Estilo para o link "Minha Conta" */
 .user-actions-group .logout-btn {
     text-decoration: none;
     color: inherit;
@@ -38,6 +39,15 @@
     padding: 5px 0;
     transition: opacity 0.2s;
 }
+
+/* --- NOVO: Ajuste para o link do usuário comum ficar igual ao de admin --- */
+.user-actions-group .user-link {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+/* --- FIM NOVO --- */
+
 
 /* CRÍTICO: NOVO ESTILO PARA BOTÃO LOGIN DESLOGADO */
 .user-actions-group .login-btn-final-style {
@@ -89,25 +99,17 @@
 /* Badge de contagem do carrinho */
 /* frontend/src/styles/Header.css */
 
-/* ... (todos os estilos anteriores, como .main-header, .header-top, .user-actions-group, etc.) ... */
-
-
-/* Badge de contagem do carrinho */
 .cart-icon-container {
     position: relative;
-    /* CORREÇÃO: Removidas as margens que quebravam o layout */
-    /* margin-left: 3px; <-- REMOVIDO */
-    /* margin-right: -41px; <-- REMOVIDO */
     margin-right: -20px;
 }
 
 .cart-badge {
     position: absolute;
-    /* CORREÇÃO: Posicionado no canto superior direito do ícone */
     top: -8px;
-    right: -8px; /* <--- MUDANÇA (antes era 'left: 13px') */
+    right: -8px; 
     
-    background-color: #a4d4c5; /* Cor de destaque (Verde-azulado) */
+    background-color: #a4d4c5; 
     color: white;
     border-radius: 50%;
     padding: 1px 3px;
@@ -119,14 +121,15 @@
     font-size: 0.8rem;
 }
 
-/* ... (restante dos seus estilos .admin-dropdown, .header-bottom, etc.) ... */
 
-/* --- ADMIN DROPDOWN --- */
-.admin-menu-toggle {
+/* --- ADMIN DROPDOWN (E O NOVO USER DROPDOWN) --- */
+.admin-menu-toggle,
+.user-menu-toggle { /* NOVO: Aplicando mesmo estilo */
     position: relative;
 }
 
-.admin-dropdown {
+.admin-dropdown,
+.user-dropdown { /* NOVO: Aplicando mesmo estilo */
     position: absolute;
     top: 30px;
     right: 0;
@@ -143,7 +146,8 @@
     border-radius: 5px;
 }
 
-.admin-dropdown a {
+.admin-dropdown a,
+.user-dropdown a { /* NOVO: Aplicando mesmo estilo */
     text-decoration: none;
     color: #555;
     font-weight: normal;
@@ -158,7 +162,7 @@
 }
 
 .logo-container .logo {
-    height: 100px; /* Reduzido para melhor proporção */
+    height: 100px; 
 }
 
 .main-nav ul {
@@ -166,7 +170,7 @@
     margin: 0;
     padding: 0;
     display: flex;
-    gap: 30px; /* Mais espaçamento entre os links de navegação */
+    gap: 30px; 
 }
 
 .main-nav ul li a {
@@ -178,7 +182,7 @@
 }
 
 .main-nav ul li a:hover {
-    color: #5d7a7b; /* Cor de destaque ao passar o mouse */
+    color: #5d7a7b;
 }
 
 /* --- PESQUISA --- */

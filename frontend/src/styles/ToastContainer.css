@@ -79,6 +79,14 @@
     color: #ecf0f1;
 }
 
+.toast-trash-removed {
+    background-color: #7f8c8d; /* Mesmo cinza */
+    color: white;
+}
+.toast-trash-removed .toast-icon {
+    color: #ecf0f1; /* Mesmo ícone claro */
+}
+
 /* *** CORREÇÃO AQUI: Adicionar o novo estilo de aviso (Amarelo) *** */
 .toast-warning {
     background-color: #fff3cd; /* Amarelo 'warning' claro */

@@ -14,7 +14,7 @@ const enderecoRoutes = require('./routes/enderecoRoutes');
 const pagamentoRoutes = require('./routes/pagamentoRoutes');
 const favoritoRoutes = require('./routes/favoritoRoutes');
 const pedidoRoutes = require('./routes/pedidoRoutes');
-
+const usuarioRoutes = require('./routes/usuarioRoutes');
 
 
 const app = express();
@@ -36,6 +36,7 @@ apiRouter.use('/carrinho', carrinhoRoutes);
 apiRouter.use('/enderecos', enderecoRoutes);
 apiRouter.use('/favoritos', favoritoRoutes);
 apiRouter.use('/pedidos', pedidoRoutes);
+apiRouter.use('/usuario', usuarioRoutes);
 
 
 // 4. Use o prefixo /api para o roteador principal
