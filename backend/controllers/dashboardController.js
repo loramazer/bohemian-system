@@ -1,32 +1,39 @@
 // backend/controllers/dashboardController.js
 const db = require('../config/db');
-// 1. IMPORTAR O PEDIDO MODEL
 const pedidoModel = require('../models/pedidoModel');
 
+// Função auxiliar para pegar a primeira imagem do JSON
+function parseImageUrl(imageUrlString) {
+    if (!imageUrlString) return null;
+    try {
+        const parsed = JSON.parse(imageUrlString);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+            return parsed[0];
+        }
+    } catch (e) {
+        // Ignora o erro se for uma string de URL simples
+    }
+    // Retorna a string original se não for JSON array ou se falhar
+    return imageUrlString.startsWith('http') ? imageUrlString : null;
+}
+
+// ... (Funções getKpiData, getBestSellers, getMonthlyRevenue, getRecentOrders permanecem iguais) ...
 async function getKpiData(req, res) {
   try {
     const [totalPedidosResult] = await db.execute('SELECT COUNT(*) AS total FROM pedido');
-    
-    // Total de pedidos com data de entrega futura (Ativos)
     const [pedidosAtivosResult] = await db.execute('SELECT COUNT(*) AS total FROM pedido WHERE data_entrega >= CURDATE()'); 
-    
-    // Total de pedidos com data de entrega passada (Fechados/Concluídos)
     const [pedidosFechadosResult] = await db.execute('SELECT COUNT(*) AS total FROM pedido WHERE data_entrega < CURDATE()');
-    
-    // CORREÇÃO: Pedidos Previstos (entrega nos próximos 7 dias). Substitui a VIEW.
     const [pedidosPrevistosResult] = await db.execute(`
       SELECT COUNT(*) AS total 
       FROM pedido 
       WHERE data_entrega BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)
     `);
-
     res.json({
       totalPedidos: totalPedidosResult[0].total,
       pedidosAtivos: pedidosAtivosResult[0].total,
       pedidosFechados: pedidosFechadosResult[0].total,
       pedidosPrevistos: pedidosPrevistosResult[0].total
     });
-
   } catch (error) {
     console.error('Erro ao buscar dados de KPIs:', error);
     res.status(500).json({ message: 'Erro interno do servidor' });
@@ -35,7 +42,6 @@ async function getKpiData(req, res) {
 
 async function getBestSellers(req, res) {
     try {
-        // CORREÇÃO: SQL explícito para substituir a view 'vw_produtos_mais_vendidos'
         const query = `
             SELECT 
                 pr.nome, 
@@ -58,7 +64,6 @@ async function getMonthlyRevenue(req, res) {
     try {
         const { period } = req.query;
         let query = '';
-
         if (period === 'semiannual') {
             query = `
                 SELECT 
@@ -93,7 +98,6 @@ async function getMonthlyRevenue(req, res) {
                 ORDER BY mes ASC;
             `;
         }
-
         const [rows] = await db.execute(query);
         res.json(rows);
     } catch (error) {
@@ -104,8 +108,6 @@ async function getMonthlyRevenue(req, res) {
 
 async function getRecentOrders(req, res) {
     try {
-        // CORREÇÃO: Uso de LEFT JOIN para evitar que pedidos sejam excluídos se o cliente ou produto estiver faltando (inconsistência de seed)
-        // CORREÇÃO 2: Seu dump usa 'cliente' e 'usuario' de forma intercambiável. Vamos usar 'usuario' (u)
         const query = `
             SELECT 
                 p.id_pedido, 
@@ -131,29 +133,34 @@ async function getRecentOrders(req, res) {
     }
 }
 
+// --- FUNÇÃO GETORDERDETAILS ATUALIZADA ---
 async function getOrderDetails(req, res) {
     try {
         const { id } = req.params;
-         // CORREÇÃO: Uso de LEFT JOIN para robustez nos detalhes
-         // CORREÇÃO 2: Trocado 'cliente c' por 'usuario u'
+        
+        // Query atualizada para buscar todos os campos necessários
         const query = `
             SELECT
                 p.id_pedido,
                 p.dataPedido,
                 p.data_entrega,
-                u.nome AS cliente,
-                u.login AS email_cliente,
+                u.nome AS cliente_nome,
+                u.login AS cliente_email,
+                u.telefone AS cliente_telefone,
                 fp.descricao AS forma_pagamento,
                 fp.status_transacao AS status_pagamento,
-                e.nome AS nome_endereco,
-                e.numero AS numero_endereco,
-                e.complemento AS complemento_endereco,
-                cid.nome AS nome_cidade,
-                cid.sigla_UF AS uf,
+                e.nome AS endereco_nome,
+                e.numero AS endereco_numero,
+                e.complemento AS endereco_complemento,
+                e.cep AS endereco_cep,
+                cid.nome AS cidade_nome,
+                cid.sigla_UF AS cidade_uf,
                 ip.quantidade,
                 ip.precoUnitario,
+                pr.id_produto,
                 pr.nome AS nome_produto,
-                pr.descricao AS descricao_produto
+                pr.descricao AS descricao_produto,
+                pr.imagem_url AS produto_imagem_url
             FROM pedido p
             LEFT JOIN usuario u ON p.fk_cliente_id_cliente = u.id_usuario
             LEFT JOIN forma_pagamento fp ON p.fk_forma_pagamento_id_forma_pagamento = fp.id_forma_pagamento
@@ -165,41 +172,83 @@ async function getOrderDetails(req, res) {
         `;
         const [rows] = await db.execute(query, [id]);
         
-        if (rows.length > 0) {
-            const orderDetails = {
-                id_pedido: rows[0].id_pedido,
-                dataPedido: rows[0].dataPedido,
-                data_entrega: rows[0].data_entrega,
-                cliente: rows[0].cliente,
-                email_cliente: rows[0].email_cliente,
-                forma_pagamento: rows[0].forma_pagamento,
-                status_pagamento: rows[0].status_pagamento,
-                endereco: {
-                    nome: rows[0].nome_endereco,
-                    numero: rows[0].numero_endereco,
-                    complemento: rows[0].complemento_endereco,
-                    cidade: rows[0].nome_cidade,
-                    uf: rows[0].uf
-                },
-                itens: rows.map(row => ({
-                    nome_produto: row.nome_produto,
-                    descricao_produto: row.descricao_produto,
-                    quantidade: row.quantidade,
-                    precoUnitario: row.precoUnitario
-                }))
-            };
-            res.json(orderDetails);
-        } else {
-            res.status(404).json({ message: 'Pedido não encontrado.' });
+        if (rows.length === 0) {
+            return res.status(404).json({ message: 'Pedido não encontrado.' });
         }
+
+        // --- FORMATAR DADOS PARA O FRONTEND ---
+        const firstRow = rows[0];
+        let subtotal = 0;
+
+        // Formata os produtos
+        const products = rows.map(row => {
+            const totalItem = parseFloat(row.precoUnitario) * row.quantidade;
+            subtotal += totalItem;
+            return {
+                id: row.id_produto, // Usado pelo 'key'
+                name: row.nome_produto,
+                idProduto: `#${row.id_produto}`,
+                quantity: row.quantidade,
+                total: totalItem,
+                image: parseImageUrl(row.produto_imagem_url) || 'https://via.placeholder.com/60x60' // Usa a função auxiliar
+            };
+        });
+        
+        // Simula dados fixos (pois não estão no banco)
+        const tax = subtotal * 0.20; 
+        const discount = 20.00;
+        const shipping = 50.00;
+        const total = subtotal + tax - discount + shipping;
+
+        // Monta o objeto final no formato que os componentes do frontend esperam
+        const orderDetails = {
+            id: `#${firstRow.id_pedido}`,
+            date: new Date(firstRow.dataPedido).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }),
+            status: firstRow.status_pagamento, // O select usará este
+            
+            client: {
+                name: firstRow.cliente_nome,
+                email: firstRow.cliente_email,
+                phone: firstRow.cliente_telefone || '(Telefone não cadastrado)',
+                address: firstRow.endereco_nome,
+                city: `${firstRow.cidade_nome}, ${firstRow.cidade_uf}`,
+                zip: firstRow.endereco_cep,
+            },
+            
+            paymentInfo: { // Simulado para o card de "Informações"
+                method: firstRow.forma_pagamento,
+                name: firstRow.cliente_nome,
+                phone: firstRow.cliente_telefone || '(N/A)',
+            },
+
+            shippingInfo: { // Simulado para o card de "Informações"
+                method: 'Next express', // Estático, como no original
+                status: firstRow.status_pagamento, // 'Pending', 'Approved', etc.
+                payment: firstRow.forma_pagamento, // 'Paypal', 'Master Card', etc.
+            },
+            
+            products: products,
+            
+            prices: {
+                subtotal: subtotal,
+                tax: tax,
+                discount: discount,
+                shipping: shipping,
+                total: total,
+            }
+        };
+        
+        res.json(orderDetails);
 
     } catch (error) {
         console.error("Erro ao buscar detalhes do pedido:", error);
         res.status(500).json({ message: "Erro interno do servidor" });
     }
 }
+// --- FIM DA FUNÇÃO ATUALIZADA ---
 
-// --- FUNÇÃO NOVA ADICIONADA ---
+
+// ... (Funções getAllPedidosAdmin e updatePedidoStatus permanecem iguais) ...
 async function getAllPedidosAdmin(req, res) {
     try {
         const {
@@ -210,7 +259,6 @@ async function getAllPedidosAdmin(req, res) {
             startDate,
             endDate
         } = req.query;
-
         const options = {
             page: parseInt(page),
             limit: parseInt(limit),
@@ -219,50 +267,38 @@ async function getAllPedidosAdmin(req, res) {
             startDate: startDate || null,
             endDate: endDate || null,
         };
-        
-        // Usa a nova função do model
         const result = await pedidoModel.findAllAdmin(options);
         res.status(200).json(result);
-
     } catch (error) {
         console.error("Erro ao buscar todos os pedidos (Admin):", error);
         res.status(500).json({ message: "Erro interno do servidor" });
     }
 }
 
-// --- FUNÇÃO NOVA ADICIONADA ---
 async function updatePedidoStatus(req, res) {
     try {
         const { id } = req.params; 
         const { status } = req.body; 
-
         if (!status) {
             return res.status(400).json({ message: 'Status é obrigatório.' });
         }
-
-        // Usa a nova função do model
         const affectedRows = await pedidoModel.updateStatus(id, status);
-
         if (affectedRows === 0) {
             return res.status(404).json({ message: 'Pedido não encontrado.' });
         }
-
         res.status(200).json({ message: 'Status do pedido atualizado com sucesso.' });
-
     } catch (error) {
         console.error("Erro ao atualizar status do pedido:", error);
         res.status(500).json({ message: "Erro interno do servidor" });
     }
 }
 
-
-// 2. ATUALIZAR O MODULE.EXPORTS
 module.exports = {
   getKpiData,
   getBestSellers,
   getMonthlyRevenue,
   getRecentOrders,
   getOrderDetails,
-  getAllPedidosAdmin,  // <-- ADICIONADO
-  updatePedidoStatus   // <-- ADICIONADO
+  getAllPedidosAdmin,
+  updatePedidoStatus
 };

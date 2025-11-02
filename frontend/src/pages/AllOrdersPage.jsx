@@ -13,10 +13,10 @@ const statusMap = {
     'pending': 'Pendente',
     'approved': 'Aprovado',
     'in_process': 'Em Processamento',
-    'authorized': 'Autorizado',
-    'rejected': 'Rejeitado',
-    'cancelled': 'Cancelado',
-    'failure': 'Falha'
+    'authorized': 'Enviado',      // Alterado de 'Autorizado'
+    'delivered': 'Entregue',     // Adicionado
+    'cancelled': 'Cancelado'
+    // 'rejected' e 'failure' removidos
 };
 
 // Opções para o <select> de filtro e atualização

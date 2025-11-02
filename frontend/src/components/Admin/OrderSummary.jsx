@@ -10,7 +10,8 @@ const OrderSummary = ({ prices }) => {
                 <span>R${prices.subtotal.toFixed(2)}</span>
             </div>
             <div className="summary-line">
-                <span>Tax (20%)</span>
+                {/* --- Texto traduzido (Task 3) --- */}
+                <span>Taxa (20%)</span>
                 <span>R${prices.tax.toFixed(2)}</span>
             </div>
             <div className="summary-line">

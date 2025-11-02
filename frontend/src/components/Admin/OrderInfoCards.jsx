@@ -9,31 +9,34 @@ const OrderInfoCards = ({ order }) => {
                 <FaUser />
                 <div className="card-content">
                     <h4>Cliente</h4>
-                    <p>Name: {order.client.name}</p>
+                    {/* --- Textos traduzidos --- */}
+                    <p>Nome: {order.client.name}</p>
                     <p>Email: {order.client.email}</p>
-                    <p>Phone: {order.client.phone}</p>
+                    <p>Telefone: {order.client.phone}</p>
                 </div>
-                <button className="card-btn">Ver Perfil</button>
+                {/* --- Botão removido (Task 2) --- */}
             </div>
             <div className="info-card">
                 <FaInfoCircle />
                 <div className="card-content">
                     <h4>Informações</h4>
-                    <p>Shipping: {order.shippingInfo.method}</p>
-                    <p>Methodo de pagamento: {order.shippingInfo.payment}</p>
+                    {/* --- Textos traduzidos e typo corrigido --- */}
+                    <p>Envio: {order.shippingInfo.method}</p>
+                    <p>Método de pagamento: {order.shippingInfo.payment}</p>
                     <p>Status: {order.shippingInfo.status}</p>
                 </div>
-                <button className="card-btn">Download Info</button>
+                {/* --- Botão removido (Task 2) --- */}
             </div>
             <div className="info-card">
                 <FaMapMarkerAlt />
                 <div className="card-content">
                     <h4>Endereço</h4>
+                    {/* --- Textos traduzidos --- */}
                     <p>Endereço: {order.client.address}</p>
                     <p>Cidade: {order.client.city}</p>
                     <p>CEP: {order.client.zip}</p>
                 </div>
-                <button className="card-btn">View profile</button>
+                {/* --- Botão removido (Task 2) --- */}
             </div>
         </div>
     );

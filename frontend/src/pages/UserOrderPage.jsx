@@ -8,18 +8,21 @@ import '../styles/UserOrderPage.css';
 
 // --- INÍCIO DA CORREÇÃO ---
 
-// NOVO: Função para traduzir o status
+// ATUALIZADO: Função para traduzir o status com as novas regras
 const formatStatus = (status) => {
     if (!status) return 'Indefinido';
+    
+    // Mapa de status atualizado
     const statusMap = {
-        'approved': 'Aprovado',
-        'authorized': 'Autorizado',
-        'in_process': 'Em Processamento',
         'pending': 'Pendente',
-        'rejected': 'Rejeitado',
-        'cancelled': 'Cancelado',
-        'failure': 'Falha'
+        'approved': 'Aprovado',
+        'in_process': 'Em Processamento',
+        'authorized': 'Enviado',      // Alterado
+        'delivered': 'Entregue',     // Adicionado
+        'cancelled': 'Cancelado'
+        // 'rejected' e 'failure' removidos
     };
+
     // Retorna o texto mapeado ou o status original (capitalizado) se não encontrar
     return statusMap[status.toLowerCase()] || status.charAt(0).toUpperCase() + status.slice(1);
 };
@@ -75,7 +78,7 @@ const PurchaseDetail = ({ order, onProductClick }) => {
                  {/* ATUALIZADO: Usando a função formatStatus e a classe CSS correta */}
                  <p>Status: <span className={`order-status status-${order.status.toLowerCase().replace(/_|-/g, '-')}`}>
                     {formatStatus(order.status)}
-                 </span></p>
+                </span></p>
                 <p>Enviado para: {address}</p> 
             </div>
         </div>
