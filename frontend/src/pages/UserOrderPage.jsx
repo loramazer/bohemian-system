@@ -1,54 +1,91 @@
-import React, { useState } from 'react';
+// frontend/src/pages/UserOrderPage.jsx
+import React, { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
-import '../styles/UserOrderPage.css';
+import apiClient from '../api.js'; 
 import { AuthContext } from '../context/AuthContext.jsx';
+import '../styles/UserOrderPage.css'; 
 
-import img1 from '../assets/1.png';
-import img2 from '../assets/2.png';
-import img3 from '../assets/3.png';
-import img4 from '../assets/4.png';
-import img5 from '../assets/5.png';
+// --- INÍCIO DA CORREÇÃO ---
+
+// NOVO: Função para traduzir o status
+const formatStatus = (status) => {
+    if (!status) return 'Indefinido';
+    const statusMap = {
+        'approved': 'Aprovado',
+        'authorized': 'Autorizado',
+        'in_process': 'Em Processamento',
+        'pending': 'Pendente',
+        'rejected': 'Rejeitado',
+        'cancelled': 'Cancelado',
+        'failure': 'Falha'
+    };
+    // Retorna o texto mapeado ou o status original (capitalizado) se não encontrar
+    return statusMap[status.toLowerCase()] || status.charAt(0).toUpperCase() + status.slice(1);
+};
+// --- FIM DA CORREÇÃO ---
 
 
-// --- Dados Mock (Simulação de Pedidos) ---
-const mockOrders = [
-    { 
-        id: 'BH20251025-001', date: '2025-10-25', status: 'Em Preparação', 
-        items: [
-            { productId: 'P001', name: 'Buquê "Bohemian Sunrise"', quantity: 1, img: img1, price: 189.90 },
-            { productId: 'P002', name: 'Vinho Tinto Artesanal', quantity: 1, img: img2, price: 89.00 }
-        ],
-        shipping: 'R. das Flores, 123', total: 278.90
-    },
-    { 
-        id: 'BH20250915-002', date: '2025-09-15', status: 'Entregue', 
-        items: [
-            { productId: 'P003', name: 'Arranjo de Mesa "Lavanda Dream"', quantity: 2, img: img3, price: 120.00 }
-        ],
-        shipping: 'Av. Brasil, 456', total: 240.00
-    },
-    { 
-        id: 'BH20250810-003', date: '2025-08-10', status: 'Entregue', 
-        items: [
-            { productId: 'P004', name: 'Cesta Gourmet Premium', quantity: 1, img: img4, price: 350.00 },
-            { productId: 'P005', name: 'Cartão Exclusivo', quantity: 1, img: img5, price: 15.00 }
-        ],
-        shipping: 'R. Central, 789', total: 365.00
-    },
-    { 
-        id: 'BH20250701-004', date: '2025-07-01', status: 'Cancelado', 
-        items: [
-            { productId: 'P001', name: 'Buquê "Bohemian Sunrise"', quantity: 1, img: img1, price: 189.90 }
-        ],
-        shipping: 'Av. Principal, 10', total: 189.90
-    },
-];
+// Componente para o Detalhe da Compra (Renderiza dados reais)
+const PurchaseDetail = ({ order, onProductClick }) => {
+    
+    const address = `${order.rua}, ${order.numero}${order.complemento ? ' - ' + order.complemento : ''}, ${order.cidade}/${order.estado}`;
 
-// Função para agrupar pedidos por mês/ano
+    return (
+        <div className="purchase-detail-card">
+            <h4 className="detail-title">Detalhes da Compra <span className="order-id">#{order.id_pedido}</span></h4>
+            <div className="detail-grid">
+                
+                {/* Itens do Pedido */}
+                <div className="detail-items">
+                    {order.itens.map(item => (
+                        <div key={item.id_produto} className="detail-item-row">
+                            <img src={item.imagem_url} alt={item.nome_produto} className="detail-item-img" /> 
+                            <div className="detail-item-info">
+                                <p className="item-name">{item.nome_produto}</p>
+                                <p className="item-qty">{item.quantidade} unidade(s)</p>
+                                <button onClick={() => onProductClick(item.id_produto)} className="product-link-btn">
+                                    Ver descrição do produto
+                                </button>
+                            </div>
+                            <p className="item-price">R$ {parseFloat(item.precoUnitario).toFixed(2).replace('.', ',')}</p>
+                        </div>
+                    ))}
+                </div>
+
+                {/* Resumo da Compra */}
+                <div className="detail-summary">
+                    <h5 className="summary-heading">Resumo Financeiro</h5>
+                    <div className="summary-row">
+                        <span>Subtotal:</span>
+                        <span>R$ {parseFloat(order.total_pedido).toFixed(2).replace('.', ',')}</span>
+                    </div>
+                    <div className="summary-row">
+                        <span>Frete:</span>
+                        <span className="shipping-cost">Grátis</span>
+                    </div>
+                    <div className="summary-row summary-total">
+                        <span>Total:</span>
+                        <span>R$ {parseFloat(order.total_pedido).toFixed(2).replace('.', ',')}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div className="detail-shipping-info">
+                 {/* ATUALIZADO: Usando a função formatStatus e a classe CSS correta */}
+                 <p>Status: <span className={`order-status status-${order.status.toLowerCase().replace(/_|-/g, '-')}`}>
+                    {formatStatus(order.status)}
+                 </span></p>
+                <p>Enviado para: {address}</p> 
+            </div>
+        </div>
+    );
+};
+
+// ... (Função groupOrdersByMonth - sem alteração) ...
 const groupOrdersByMonth = (orders) => {
     return orders.reduce((groups, order) => {
-        const month = new Date(order.date).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+        const month = new Date(order.dataPedido).toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
         if (!groups[month]) {
             groups[month] = [];
         }
@@ -57,79 +94,72 @@ const groupOrdersByMonth = (orders) => {
     }, {});
 };
 
-// Componente para o Detalhe da Compra (simulando a segunda tela)
-const PurchaseDetail = ({ order, onProductClick }) => {
-    return (
-        <div className="purchase-detail-card">
-            <h4 className="detail-title">Detalhes da Compra <span className="order-id">#{order.id}</span></h4>
-            <div className="detail-grid">
-                
-                {/* Itens do Pedido */}
-                <div className="detail-items">
-                    {order.items.map(item => (
-                        <div key={item.productId} className="detail-item-row">
-                            {/* IMAGEM: Adicionada classe 'product-detail-img' para controle de tamanho */}
-                            <img src={item.img} alt={item.name} className="detail-item-img product-detail-img" /> 
-                            <div className="detail-item-info">
-                                <p className="item-name">{item.name}</p>
-                                <p className="item-qty">{item.quantity} unidade(s)</p>
-                                <button onClick={() => onProductClick(item.productId)} className="product-link-btn">
-                                    Ver descrição do produto
-                                </button>
-                            </div>
-                            <p className="item-price">R$ {item.price.toFixed(2).replace('.', ',')}</p>
-                        </div>
-                    ))}
-                </div>
-
-                {/* Resumo da Compra */}
-                <div className="detail-summary">
-                    <h5 className="summary-heading">Resumo Financeiro</h5>
-                    <div className="summary-row"><span>Subtotal:</span><span>R$ {order.total.toFixed(2).replace('.', ',')}</span></div>
-                    <div className="summary-row"><span>Frete:</span><span className="shipping-cost">Grátis</span></div>
-                    <div className="summary-row summary-total"><span>Total:</span><span>R$ {order.total.toFixed(2).replace('.', ',')}</span></div>
-                </div>
-            </div>
-            
-            <div className="detail-shipping-info">
-                <p>Status: <span className={`order-status status-${order.status.toLowerCase().replace(' ', '-')}`}>{order.status}</span></p>
-                <p>Enviado para: {order.shipping}</p>
-            </div>
-            
-            <Link to={`/help/${order.id}`} className="help-link">Precisa de Ajuda com este pedido?</Link>
-        </div>
-    );
-};
 
 // Componente Principal
 const UserOrdersPage = () => {
+    // ... (toda a lógica de hooks: navigate, user, states, useEffect - sem alteração) ...
     const navigate = useNavigate(); 
+    const { user, loading: authLoading } = useContext(AuthContext); 
+    
+    const [orders, setOrders] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    
     const [selectedOrderId, setSelectedOrderId] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const ordersPerPage = 4;
+    const ordersPerPage = 4; 
 
-    const filteredOrders = mockOrders; 
+    useEffect(() => {
+        if (!authLoading && user) {
+            const fetchOrders = async () => {
+                setLoading(true);
+                setError(null);
+                try {
+                    const response = await apiClient.get('/pedidos/meus-pedidos');
+                    setOrders(response.data);
+                } catch (err) {
+                    console.error("Erro ao buscar pedidos:", err);
+                    setError("Não foi possível carregar seus pedidos.");
+                } finally {
+                    setLoading(false);
+                }
+            };
+            fetchOrders();
+        } else if (!authLoading && !user) {
+            navigate('/login', { state: { from: '/meus-pedidos' } });
+        }
+    }, [user, authLoading, navigate]); 
 
-    const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
-    const startIndex = (currentPage - 1) * ordersPerPage;
-    const paginatedOrders = filteredOrders.slice(startIndex, startIndex + ordersPerPage);
     
-    const groupedOrders = groupOrdersByMonth(paginatedOrders);
-
     const handleViewPurchase = (orderId) => {
         setSelectedOrderId(selectedOrderId === orderId ? null : orderId);
     };
 
     const handleProductClick = (productId) => {
-        navigate(`/product/${productId}`);
+        navigate(`/product/${productId}`); 
     };
     
     const handlePageChange = (page) => {
         if (page >= 1 && page <= totalPages) {
             setCurrentPage(page);
-            setSelectedOrderId(null);
+            setSelectedOrderId(null); 
         }
     };
+    
+    const totalOrders = orders.length;
+    const totalPages = Math.ceil(totalOrders / ordersPerPage);
+    const startIndex = (currentPage - 1) * ordersPerPage;
+    const paginatedOrders = orders.slice(startIndex, startIndex + ordersPerPage);
+    const groupedOrders = groupOrdersByMonth(paginatedOrders);
+
+
+    if (loading || authLoading) {
+        return <ContentWrapper><div className="loader">Carregando seus pedidos...</div></ContentWrapper>;
+    }
+
+    if (error) {
+        return <ContentWrapper><div className="error-message">{error}</div></ContentWrapper>;
+    }
 
     return (
         <ContentWrapper>
@@ -138,49 +168,55 @@ const UserOrdersPage = () => {
 
                 <section className="orders-list-section">
                     
-                    {Object.keys(groupedOrders).length === 0 ? (
-                        <p className="no-results">Nenhum pedido encontrado.</p>
+                    {totalOrders === 0 ? (
+                        <p className="no-results">Você ainda não fez nenhum pedido.</p>
                     ) : (
                         Object.keys(groupedOrders).map(month => (
                             <div key={month} className="month-group">
                                 <h2 className="month-title">{month}</h2>
-                                {groupedOrders[month].map(order => (
-                                    <div key={order.id} className="order-item-card">
-                                        
-                                        <div className="order-header">
-                                            <span className={`order-status status-${order.status.toLowerCase().replace(' ', '-')}`}>{order.status}</span>
-                                            <span className="order-date">Pedido em: {new Date(order.date).toLocaleDateString('pt-BR')}</span>
-                                        </div>
-                                        
-                                        <div className="order-summary-row">
-                                            <div className="product-info-summary">
-                                                <img src={order.items[0].img} alt={order.items[0].name} className="product-summary-img" />
-                                                <div className="product-details">
-                                                    <p className="product-name">{order.items[0].name}</p>
-                                                    {order.items.length > 1 && (
-                                                        <p className="more-items-count"> + {order.items.length - 1} item(s) no total</p>
-                                                    )}
+                                {groupedOrders[month].map(order => {
+                                    const firstItemImage = order.itens[0]?.imagem_url || ''; 
+
+                                    return (
+                                        <div key={order.id_pedido} className="order-item-card">
+                                            
+                                            <div className="order-header">
+                                                {/* ATUALIZADO: Usando a função formatStatus e a classe CSS correta */}
+                                                <span className={`order-status status-${order.status.toLowerCase().replace(/_|-/g, '-')}`}>
+                                                    {formatStatus(order.status)}
+                                                </span>
+                                                <span className="order-date">
+                                                    Pedido em: {new Date(order.dataPedido).toLocaleDateString('pt-BR')}
+                                                </span>
+                                            </div>
+                                            
+                                            <div className="order-summary-row">
+                                                <div className="product-info-summary">
+                                                    <img src={firstItemImage} alt={order.itens[0].nome_produto} className="product-summary-img" />
+                                                    <div className="product-details">
+                                                        <p className="product-name">{order.itens[0].nome_produto}</p>
+                                                        {order.itens.length > 1 && (
+                                                            <p className="more-items-count"> + {order.itens.length - 1} item(s) no total</p>
+                                                        )}
+                                                    </div>
+                                                </div>
+
+                                                <div className="order-actions single-action">
+                                                    <button 
+                                                        onClick={() => handleViewPurchase(order.id_pedido)} 
+                                                        className={`action-btn view-btn ${selectedOrderId === order.id_pedido ? 'active' : ''}`}
+                                                    >
+                                                        {selectedOrderId === order.id_pedido ? 'Fechar Detalhes' : 'Ver Compra'}
+                                                    </button>
                                                 </div>
                                             </div>
-
-                                            {/* BOTÕES DE AÇÃO: APENAS 'Ver Compra' */}
-                                            <div className="order-actions single-action">
-                                                <button 
-                                                    onClick={() => handleViewPurchase(order.id)} 
-                                                    className={`action-btn view-btn ${selectedOrderId === order.id ? 'active' : ''}`}
-                                                >
-                                                    {selectedOrderId === order.id ? 'Fechar Detalhes' : 'Ver Compra'}
-                                                </button>
-                                                {/* Botão 'Comprar Novamente' REMOVIDO */}
-                                            </div>
+                                            
+                                            {selectedOrderId === order.id_pedido && (
+                                                <PurchaseDetail order={order} onProductClick={handleProductClick} />
+                                            )}
                                         </div>
-                                        
-                                        {/* DETALHE DA COMPRA (Toggle) */}
-                                        {selectedOrderId === order.id && (
-                                            <PurchaseDetail order={order} onProductClick={handleProductClick} />
-                                        )}
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         ))
                     )}
