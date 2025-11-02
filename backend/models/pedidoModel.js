@@ -10,7 +10,7 @@ async function findByUsuarioId(usuarioId) {
             p.data_entrega,
             fp.status_transacao AS status,
             
-            -- CORREÇÃO: Trocado 'e.rua' por 'e.nome' e 'e.bairro' foi removido
+            -- CORREÇÃO: Trocado 'e.rua' por 'e.nome' (como no seu dump)
             e.nome AS rua, 
             e.numero,
             e.complemento,
@@ -40,11 +40,10 @@ async function findByUsuarioId(usuarioId) {
         JOIN endereco e ON p.fk_endereco_id_endereco = e.id_endereco
         JOIN cidade cid ON e.id_cidade = cid.id_cidade
 
-        -- Assumindo que 'fk_cliente_id_cliente' na tabela 'pedido' 
-        -- é a chave estrangeira para 'usuario.id_usuario'
+        -- O ID do cliente está na tabela 'pedido'
         WHERE p.fk_cliente_id_cliente = ? 
 
-        -- CORREÇÃO: Removido 'e.bairro' e 'e.rua' do GROUP BY
+        -- CORREÇÃO: Agrupando pelos campos corretos
         GROUP BY p.id_pedido, p.dataPedido, p.data_entrega, fp.status_transacao, 
                  e.nome, e.numero, e.complemento, cid.nome, cid.sigla_UF
                  
@@ -54,7 +53,6 @@ async function findByUsuarioId(usuarioId) {
     try {
         const [rows] = await db.execute(query, [usuarioId]);
         
-        // O MySQL pode retornar strings JSON para imagem_url. Vamos parseá-las.
         return rows.map(order => ({
             ...order,
             itens: order.itens.map(item => ({
@@ -72,16 +70,117 @@ async function findByUsuarioId(usuarioId) {
 // Função auxiliar para pegar a primeira imagem do JSON
 function parseImageUrl(imageUrlString) {
     try {
-        // Tenta parsear, caso a URL esteja salva como um array JSON (ex: '["url1.jpg", "url2.jpg"]')
         const parsed = JSON.parse(imageUrlString);
         if (Array.isArray(parsed) && parsed.length > 0) {
-            return parsed[0]; // Retorna a primeira imagem
+            return parsed[0];
         }
     } catch (e) {
-        // Se não for um JSON (ou seja, já é uma URL de texto simples), ignora o erro
+        // Ignora o erro
     }
-    // Retorna a string original (seja ela a URL única ou o JSON que falhou no parse)
     return imageUrlString; 
 }
 
-module.exports = { findByUsuarioId };
+// --- FUNÇÃO NOVA ADICIONADA ---
+async function findAllAdmin(options) {
+    const {
+        page = 1,
+        limit = 10,
+        status,
+        search, // Para buscar nome do cliente
+        startDate,
+        endDate
+    } = options;
+
+    let params = [];
+    let countParams = [];
+    let whereClauses = [];
+
+    // CORREÇÃO: Trocado 'cliente c' por 'usuario u'
+    let baseSql = `
+        FROM pedido p
+        JOIN usuario u ON p.fk_cliente_id_cliente = u.id_usuario
+        JOIN forma_pagamento fp ON p.fk_forma_pagamento_id_forma_pagamento = fp.id_forma_pagamento
+        LEFT JOIN itempedido ip ON p.id_pedido = ip.fk_pedido_id_pedido
+    `;
+
+    // --- Filtros Dinâmicos ---
+    if (status) {
+        whereClauses.push(`fp.status_transacao = ?`);
+        params.push(status);
+        countParams.push(status);
+    }
+    if (search) {
+        whereClauses.push(`u.nome LIKE ?`);
+        const searchParam = `%${search}%`;
+        params.push(searchParam);
+        countParams.push(searchParam);
+    }
+    if (startDate) {
+        whereClauses.push(`p.dataPedido >= ?`);
+        params.push(startDate);
+        countParams.push(startDate);
+    }
+    if (endDate) {
+        whereClauses.push(`p.dataPedido <= ?`);
+        params.push(endDate);
+        countParams.push(endDate);
+    }
+
+    const whereSql = whereClauses.length > 0 ? ` WHERE ${whereClauses.join(' AND ')}` : '';
+
+    // --- Query de Contagem (Total de Pedidos) ---
+    const countSql = `SELECT COUNT(DISTINCT p.id_pedido) as totalPedidos ${baseSql} ${whereSql}`;
+    
+    const [countResult] = await db.execute(countSql, countParams);
+    const totalPedidos = countResult[0].totalPedidos;
+    const totalPages = Math.ceil(totalPedidos / limit);
+
+    // --- Query de Busca (Pedidos Paginados) ---
+    // CORREÇÃO: Trocado 'c.nome' por 'u.nome'
+    let sql = `
+        SELECT 
+            p.id_pedido,
+            p.dataPedido,
+            u.nome AS cliente_nome,
+            fp.status_transacao AS status,
+            (SELECT SUM(ip_inner.precoUnitario * ip_inner.quantidade)
+             FROM itempedido ip_inner
+             WHERE ip_inner.fk_pedido_id_pedido = p.id_pedido) AS total_pedido
+        ${baseSql}
+        ${whereSql}
+        GROUP BY p.id_pedido, p.dataPedido, u.nome, fp.status_transacao
+        ORDER BY p.dataPedido DESC
+    `;
+
+    const offset = (page - 1) * limit;
+    sql += ` LIMIT ${parseInt(limit)} OFFSET ${parseInt(offset)}`;
+
+    const [pedidos] = await db.execute(sql, params);
+
+    return {
+        pedidos,
+        totalPages,
+        totalPedidos,
+        currentPage: parseInt(page)
+    };
+}
+
+// --- FUNÇÃO NOVA ADICIONADA ---
+async function updateStatus(pedidoId, status) {
+    const sql = `
+        UPDATE forma_pagamento fp
+        JOIN pedido p ON fp.id_forma_pagamento = p.fk_forma_pagamento_id_forma_pagamento
+        SET fp.status_transacao = ?
+        WHERE p.id_pedido = ?
+    `;
+    const [result] = await db.execute(sql, [status, pedidoId]);
+    return result.affectedRows;
+}
+
+
+// 3. ATUALIZAR O MODULE.EXPORTS
+module.exports = { 
+    findByUsuarioId,
+    findAllAdmin, // <-- ADICIONADO
+    updateStatus  // <-- ADICIONADO
+};

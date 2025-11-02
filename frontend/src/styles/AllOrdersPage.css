@@ -1,23 +1,13 @@
 .all-orders-main {
+    margin-top: -60px;
     padding: 40px 0;
-}
-
-.admin-breadcrumbs {
-    margin-bottom: 20px;
-    font-size: 0.9rem;
-    color: #888;
-}
-
-.admin-breadcrumbs a {
-    color: #888;
-    text-decoration: none;
 }
 
 .admin-page-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
+    margin-bottom: 10px;
 }
 
 .admin-page-title {
@@ -92,4 +82,105 @@
     padding: 4px 8px;
     border-radius: 4px;
     font-size: 0.8rem;
+}
+
+/* ... (Seus estilos existentes de .orders-table, .status-aprovado, etc. permanecem aqui) ... */
+
+/* --- NOVO: Estilos para a Barra de Filtros --- */
+.orders-filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+
+.filter-input,
+.filter-select {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    color: #333;
+    flex: 1;
+    min-width: 150px; /* Garante que os campos não fiquem muito pequenos */
+}
+
+.filter-btn {
+    padding: 8px 15px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+}
+
+.filter-btn.primary {
+    background-color: #5d7a7b;
+    color: white;
+}
+.filter-btn.primary:hover {
+    background-color: #4a6263;
+}
+
+.filter-btn.secondary {
+    background-color: #f1f1f1;
+    color: #555;
+    border: 1px solid #ddd;
+}
+.filter-btn.secondary:hover {
+    background-color: #e0e0e0;
+}
+
+/* --- NOVO: Estilos para o Select na Tabela --- */
+.status-select {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 1px solid transparent;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-position: right 8px center;
+    background-repeat: no-repeat;
+    background-size: 0.65em auto;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23333333' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    padding-right: 25px; /* Espaço para a seta */
+}
+
+/* Colore o select baseado no status (reutilizando suas classes de status) */
+.status-select.status-approved,
+.status-select.status-entregue {
+    background-color: #d1e7dd;
+    color: #0f5132;
+    border-color: #b1dfc4;
+}
+
+.status-select.status-pending,
+.status-select.status-in_process {
+    background-color: #fff3cd;
+    color: #664d03;
+    border-color: #ffe69c;
+}
+
+.status-select.status-rejected,
+.status-select.status-cancelled {
+    background-color: #ffebee;
+    color: #d32f2f;
+    border-color: #f5c6cb;
+}
+
+.action-view-btn {
+    font-size: 0.9rem;
+    color: #5d7a7b;
+    font-weight: 600;
+    text-decoration: none;
+}
+.action-view-btn:hover {
+    text-decoration: underline;
 }

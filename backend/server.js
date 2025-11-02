@@ -42,13 +42,20 @@ apiRouter.use('/usuario', usuarioRoutes);
 // 4. Use o prefixo /api para o roteador principal
 app.use('/api', apiRouter);
 
+console.log("--- ROTAS DO DASHBOARD CARREGADAS COM SUCESSO ---");
+
 
 // Rota inicial de teste
 app.get('/', (req, res) => {
     res.send('Servidor principal está rodando!');
 });
 
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Servidor do backend rodando na porta ${PORT}`);
+  console.log(`Servidor do backend rodando na porta ${PORT}`);
+  // VERIFIQUE SE O MYSQL ESTÁ CONECTADO
+  require('./config/db').query('SELECT 1')
+    .then(() => console.log('MySQL conectado com sucesso!'))
+    .catch(err => console.error('Falha na conexão com MySQL:', err));
 });

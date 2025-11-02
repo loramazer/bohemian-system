@@ -1,5 +1,7 @@
 // backend/controllers/dashboardController.js
 const db = require('../config/db');
+// 1. IMPORTAR O PEDIDO MODEL
+const pedidoModel = require('../models/pedidoModel');
 
 async function getKpiData(req, res) {
   try {
@@ -103,20 +105,21 @@ async function getMonthlyRevenue(req, res) {
 async function getRecentOrders(req, res) {
     try {
         // CORREÇÃO: Uso de LEFT JOIN para evitar que pedidos sejam excluídos se o cliente ou produto estiver faltando (inconsistência de seed)
+        // CORREÇÃO 2: Seu dump usa 'cliente' e 'usuario' de forma intercambiável. Vamos usar 'usuario' (u)
         const query = `
             SELECT 
                 p.id_pedido, 
                 p.dataPedido, 
-                c.nome AS cliente, 
+                u.nome AS cliente, 
                 fp.status_transacao AS status,
                 SUM(ip.precoUnitario * ip.quantidade) AS valor_total_pedido,
                 GROUP_CONCAT(pr.nome SEPARATOR ', ') AS nome_produtos
             FROM pedido p
-            LEFT JOIN cliente c ON p.fk_cliente_id_cliente = c.id_cliente
+            LEFT JOIN usuario u ON p.fk_cliente_id_cliente = u.id_usuario
             LEFT JOIN forma_pagamento fp ON p.fk_forma_pagamento_id_forma_pagamento = fp.id_forma_pagamento
             LEFT JOIN itempedido ip ON p.id_pedido = ip.fk_pedido_id_pedido
             LEFT JOIN produto pr ON ip.fk_produto_id_produto = pr.id_produto
-            GROUP BY p.id_pedido, p.dataPedido, c.nome, fp.status_transacao
+            GROUP BY p.id_pedido, p.dataPedido, u.nome, fp.status_transacao
             ORDER BY p.dataPedido DESC
             LIMIT 6;
         `;
@@ -132,13 +135,14 @@ async function getOrderDetails(req, res) {
     try {
         const { id } = req.params;
          // CORREÇÃO: Uso de LEFT JOIN para robustez nos detalhes
+         // CORREÇÃO 2: Trocado 'cliente c' por 'usuario u'
         const query = `
             SELECT
                 p.id_pedido,
                 p.dataPedido,
                 p.data_entrega,
-                c.nome AS cliente,
-                c.email AS email_cliente,
+                u.nome AS cliente,
+                u.login AS email_cliente,
                 fp.descricao AS forma_pagamento,
                 fp.status_transacao AS status_pagamento,
                 e.nome AS nome_endereco,
@@ -151,7 +155,7 @@ async function getOrderDetails(req, res) {
                 pr.nome AS nome_produto,
                 pr.descricao AS descricao_produto
             FROM pedido p
-            LEFT JOIN cliente c ON p.fk_cliente_id_cliente = c.id_cliente
+            LEFT JOIN usuario u ON p.fk_cliente_id_cliente = u.id_usuario
             LEFT JOIN forma_pagamento fp ON p.fk_forma_pagamento_id_forma_pagamento = fp.id_forma_pagamento
             LEFT JOIN endereco e ON p.fk_endereco_id_endereco = e.id_endereco
             LEFT JOIN cidade cid ON e.id_cidade = cid.id_cidade
@@ -195,10 +199,70 @@ async function getOrderDetails(req, res) {
     }
 }
 
+// --- FUNÇÃO NOVA ADICIONADA ---
+async function getAllPedidosAdmin(req, res) {
+    try {
+        const {
+            page = 1,
+            limit = 10,
+            status,
+            search,
+            startDate,
+            endDate
+        } = req.query;
+
+        const options = {
+            page: parseInt(page),
+            limit: parseInt(limit),
+            status: status || null,
+            search: search || null,
+            startDate: startDate || null,
+            endDate: endDate || null,
+        };
+        
+        // Usa a nova função do model
+        const result = await pedidoModel.findAllAdmin(options);
+        res.status(200).json(result);
+
+    } catch (error) {
+        console.error("Erro ao buscar todos os pedidos (Admin):", error);
+        res.status(500).json({ message: "Erro interno do servidor" });
+    }
+}
+
+// --- FUNÇÃO NOVA ADICIONADA ---
+async function updatePedidoStatus(req, res) {
+    try {
+        const { id } = req.params; 
+        const { status } = req.body; 
+
+        if (!status) {
+            return res.status(400).json({ message: 'Status é obrigatório.' });
+        }
+
+        // Usa a nova função do model
+        const affectedRows = await pedidoModel.updateStatus(id, status);
+
+        if (affectedRows === 0) {
+            return res.status(404).json({ message: 'Pedido não encontrado.' });
+        }
+
+        res.status(200).json({ message: 'Status do pedido atualizado com sucesso.' });
+
+    } catch (error) {
+        console.error("Erro ao atualizar status do pedido:", error);
+        res.status(500).json({ message: "Erro interno do servidor" });
+    }
+}
+
+
+// 2. ATUALIZAR O MODULE.EXPORTS
 module.exports = {
   getKpiData,
   getBestSellers,
   getMonthlyRevenue,
   getRecentOrders,
-  getOrderDetails
+  getOrderDetails,
+  getAllPedidosAdmin,  // <-- ADICIONADO
+  updatePedidoStatus   // <-- ADICIONADO
 };
