@@ -82,6 +82,12 @@ const OrderDetailPage = () => {
 
     // Lida com o clique no botão "Salvar"
     const handleStatusSave = async () => {
+        // Verifica a permissão antes de salvar
+        if (!isEditable) {
+            showToast('A edição do status do pedido só é permitida após a aprovação do pagamento.', 'warning');
+            return;
+        }
+        
         // currentStatusLogistico é o código ENUM que será salvo
         try {
             // Usa o endpoint que atualiza o status_pedido
@@ -114,6 +120,10 @@ const OrderDetailPage = () => {
         return status.toLowerCase();
     };
 
+    // --- LÓGICA DE HABILITAÇÃO ---
+    // O select e o botão SALVAR só serão editáveis se o status de pagamento for 'approved'
+    const isEditable = order && order.status === 'approved';
+
 
     if (loading || authLoading) {
         return <ContentWrapper><div>Carregando detalhes do pedido...</div></ContentWrapper>;
@@ -133,16 +143,12 @@ const OrderDetailPage = () => {
 
                     <div className="order-actions">
                         
-                        {/* BADGE DE STATUS DE PAGAMENTO (order.status) */}
-                        <span className={`order-status-badge status-${order.status}`}>
-                            {formatPaymentStatus(order.status)}
-                        </span>
-
                         {/* SELECT: Permite mudar o status LOGÍSTICO */}
                         <select 
                             value={currentStatusLogistico} 
                             onChange={handleStatusSelectChange}
                             className={`status-select status-${getLogisticStatusClass(currentStatusLogistico)}`} 
+                            disabled={!isEditable} /* Desabilitado se não for APROVADO */
                         >
                             <option value="">Mudar Status Logístico</option>
                             {orderStatusOptions.map(status => (
@@ -156,14 +162,15 @@ const OrderDetailPage = () => {
                         <button 
                             className="save-btn" 
                             onClick={handleStatusSave}
-                            // Desabilita se o status selecionado for o mesmo do atual
-                            disabled={currentStatusLogistico === order.status_pedido}
+                            // Desabilita se o status selecionado for o mesmo OU se a edição não for permitida
+                            disabled={currentStatusLogistico === order.status_pedido || !isEditable}
                         >
                             Salvar
                         </button>
                     </div>
                 </div>
                 
+                {/* O OrderInfoCards.jsx foi modificado para refletir Pagamento */}
                 <OrderInfoCards order={order} />
                 
                 <div className="products-summary-section">

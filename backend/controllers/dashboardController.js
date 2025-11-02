@@ -17,17 +17,33 @@ function parseImageUrl(imageUrlString) {
     return imageUrlString.startsWith('http') ? imageUrlString : null;
 }
 
-// ... (Funções getKpiData, getBestSellers, getMonthlyRevenue, getRecentOrders permanecem iguais) ...
 async function getKpiData(req, res) {
   try {
     const [totalPedidosResult] = await db.execute('SELECT COUNT(*) AS total FROM pedido');
-    const [pedidosAtivosResult] = await db.execute('SELECT COUNT(*) AS total FROM pedido WHERE data_entrega >= CURDATE()'); 
-    const [pedidosFechadosResult] = await db.execute('SELECT COUNT(*) AS total FROM pedido WHERE data_entrega < CURDATE()');
-    const [pedidosPrevistosResult] = await db.execute(`
+    
+    // 1. Pedidos Ativos: status_transacao = 'approved' E status_pedido != 'delivered'
+    const [pedidosAtivosResult] = await db.execute(`
+      SELECT COUNT(p.id_pedido) AS total 
+      FROM pedido p
+      JOIN forma_pagamento fp ON p.fk_forma_pagamento_id_forma_pagamento = fp.id_forma_pagamento
+      WHERE fp.status_transacao = 'approved' AND p.status_pedido != 'delivered'
+    `); 
+    
+    // 2. Pedidos Fechados: status_pedido = 'delivered'
+    const [pedidosFechadosResult] = await db.execute(`
       SELECT COUNT(*) AS total 
       FROM pedido 
-      WHERE data_entrega BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)
+      WHERE status_pedido = 'delivered'
     `);
+    
+    // 3. Pedidos Previstos (Pagamento Pendente): status_transacao = 'pending'
+    const [pedidosPrevistosResult] = await db.execute(`
+      SELECT COUNT(p.id_pedido) AS total 
+      FROM pedido p
+      JOIN forma_pagamento fp ON p.fk_forma_pagamento_id_forma_pagamento = fp.id_forma_pagamento
+      WHERE fp.status_transacao = 'pending'
+    `);
+
     res.json({
       totalPedidos: totalPedidosResult[0].total,
       pedidosAtivos: pedidosAtivosResult[0].total,
@@ -40,6 +56,7 @@ async function getKpiData(req, res) {
   }
 }
 
+// ... (Restante do arquivo) ...
 async function getBestSellers(req, res) {
     try {
         const query = `
@@ -108,25 +125,49 @@ async function getMonthlyRevenue(req, res) {
 
 async function getRecentOrders(req, res) {
     try {
+        const FRETE_FIXO = 15.00; // Define o frete fixo de R$ 15,00
+        
         const query = `
             SELECT 
                 p.id_pedido, 
                 p.dataPedido, 
                 u.nome AS cliente, 
-                fp.status_transacao AS status,
-                SUM(ip.precoUnitario * ip.quantidade) AS valor_total_pedido,
+                -- ADICIONADO: status_pedido (Status Logístico)
+                p.status_pedido AS status_pedido, 
+                
+                -- REMOVIDO status_transacao (Pagamento)
+                -- fp.status_transacao AS status, 
+                
+                -- CÁLCULO: Subtotal + Frete Fixo
+                (SUM(ip.precoUnitario * ip.quantidade) + ?) AS valor_total_com_frete, 
+                SUM(ip.precoUnitario * ip.quantidade) AS valor_subtotal, -- Mantido para referência
+                
                 GROUP_CONCAT(pr.nome SEPARATOR ', ') AS nome_produtos
             FROM pedido p
             LEFT JOIN usuario u ON p.fk_cliente_id_cliente = u.id_usuario
             LEFT JOIN forma_pagamento fp ON p.fk_forma_pagamento_id_forma_pagamento = fp.id_forma_pagamento
             LEFT JOIN itempedido ip ON p.id_pedido = ip.fk_pedido_id_pedido
             LEFT JOIN produto pr ON ip.fk_produto_id_produto = pr.id_produto
-            GROUP BY p.id_pedido, p.dataPedido, u.nome, fp.status_transacao
+            GROUP BY p.id_pedido, p.dataPedido, u.nome, p.status_pedido
             ORDER BY p.dataPedido DESC
             LIMIT 6;
         `;
-        const [rows] = await db.execute(query);
-        res.json(rows);
+        // O parâmetro do frete fixo é passado na execução da query
+        const [rows] = await db.execute(query, [FRETE_FIXO]); 
+        
+        // Mapeia os resultados para injetar as novas chaves
+        const formattedRows = rows.map(order => ({
+            id_pedido: order.id_pedido,
+            dataPedido: order.dataPedido,
+            cliente: order.cliente,
+            // ATUALIZADO: status agora é o status_pedido
+            status: order.status_pedido, 
+            // ATUALIZADO: Usando o total calculado
+            valor_total_pedido: parseFloat(order.valor_total_com_frete).toFixed(2), 
+            nome_produtos: order.nome_produtos
+        }));
+
+        res.json(formattedRows);
     } catch (error) {
         console.error('Erro ao buscar pedidos recentes:', error);
         res.status(500).json({ message: 'Erro interno do servidor' });
@@ -143,12 +184,12 @@ async function getOrderDetails(req, res) {
                 p.id_pedido,
                 p.dataPedido,
                 p.data_entrega,
-                p.status_pedido,                 -- <--- ADICIONADO: Status Logístico
+                p.status_pedido,                 
                 u.nome AS cliente_nome,
                 u.login AS cliente_email,
                 u.telefone AS cliente_telefone,
                 fp.descricao AS forma_pagamento,
-                fp.status_transacao AS status_pagamento, -- <--- Status de Pagamento
+                fp.status_transacao AS status_pagamento, 
                 e.nome AS endereco_nome,
                 e.numero AS endereco_numero,
                 e.complemento AS endereco_complemento,

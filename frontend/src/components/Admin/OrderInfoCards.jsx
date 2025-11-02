@@ -2,6 +2,25 @@ import React from 'react';
 import '../../styles/OrderDetail.css';
 import { FaUser, FaInfoCircle, FaMapMarkerAlt } from 'react-icons/fa';
 
+// Mapeamento de status de PAGAMENTO (apenas para exibição do badge)
+const paymentStatusMap = {
+    'pending': 'Pendente',
+    'approved': 'Aprovado',
+    'in_process': 'Em Processamento',
+    'authorized': 'Autorizado',      
+    'delivered': 'Entregue',     
+    'cancelled': 'Cancelado',
+    'rejected': 'Rejeitado',
+    'failure': 'Falhou'
+};
+
+// Função para formatar o status de PAGAMENTO (para o badge)
+const formatPaymentStatus = (status) => {
+    if (!status) return 'Indefinido';
+    return paymentStatusMap[status.toLowerCase()] || status;
+};
+
+
 const OrderInfoCards = ({ order }) => {
     return (
         <div className="info-cards-grid">
@@ -19,11 +38,11 @@ const OrderInfoCards = ({ order }) => {
             <div className="info-card">
                 <FaInfoCircle />
                 <div className="card-content">
-                    <h4>Informações</h4>
-                    {/* --- Textos traduzidos e typo corrigido --- */}
-                    <p>Envio: {order.shippingInfo.method}</p>
-                    <p>Método de pagamento: {order.shippingInfo.payment}</p>
-                    <p>Status: {order.shippingInfo.status}</p>
+                    <h4>Pagamento</h4> {/* Título atualizado para Pagamento */}
+                    {/* Informações traduzidas e reorganizadas */}
+                    <p>Método: {order.shippingInfo.payment || 'N/A'}</p>
+                    <p>Status: {formatPaymentStatus(order.shippingInfo.status)}</p>
+                    <p>Cliente Pagador: {order.client.name}</p>
                 </div>
                 {/* --- Botão removido (Task 2) --- */}
             </div>

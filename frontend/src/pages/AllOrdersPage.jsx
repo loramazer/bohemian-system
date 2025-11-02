@@ -133,7 +133,14 @@ const AllOrdersPage = () => {
     };
 
     // ATUALIZADO: Esta função agora lida com a mudança do STATUS DO PEDIDO (Logístico)
-    const handleStatusChange = async (pedidoId, newStatusPedido) => {
+    const handleStatusChange = async (pedidoId, newStatusPedido, currentPaymentStatus) => {
+        
+        // 1. VERIFICAÇÃO DE PAGAMENTO APROVADO
+        if (currentPaymentStatus !== 'approved') {
+            showToast('A edição do status do pedido só é permitida após a aprovação do pagamento.', 'warning');
+            return;
+        }
+
         try {
             // newStatusPedido é o código ENUM (ex: 'authorized')
             // Chama a API para atualizar o status do pedido (Logístico)
@@ -286,8 +293,10 @@ const AllOrdersPage = () => {
                                                 className={`status-select status-${getOrderStatusClass(pedido.status_pedido)}`} 
                                                 // O valor é o código ENUM/DB (ex: 'authorized')
                                                 value={pedido.status_pedido || 'pending'} 
+                                                // Desabilita se o status de pagamento NÃO for 'approved'
+                                                disabled={pedido.status !== 'approved'} 
                                                 // O onChange envia o código ENUM/DB para o backend
-                                                onChange={(e) => handleStatusChange(pedido.id_pedido, e.target.value)}
+                                                onChange={(e) => handleStatusChange(pedido.id_pedido, e.target.value, pedido.status)}
                                             >
                                                 {orderStatusOptions.map(status => (
                                                     <option key={status} value={status}>

@@ -13,11 +13,13 @@ const mapStatusToLabel = (status) => {
       case 'pending':
         return 'Pendente';
       case 'in_process':
-        return 'Em Processo';
+        return 'Em Preparação'; // Mapeando in_process para Em Preparação
       case 'rejected':
         return 'Rejeitado';
       case 'cancelled':
         return 'Cancelado';
+      case 'delivered':
+        return 'Entregue'; // Mapeando delivered
       default:
         return status.charAt(0).toUpperCase() + status.slice(1);
     }
@@ -43,6 +45,7 @@ const OrderDetailsModal = ({ order, onClose }) => {
     return null;
   }
 
+  // Garante que o valor total é um número para toFixed
   const totalValue = order.prices ? order.prices.total : 0;
 
   // Função utilitária para formatar datas, tratando null/inválido
@@ -75,21 +78,13 @@ const OrderDetailsModal = ({ order, onClose }) => {
           <p><strong>Data de Entrega:</strong> {formatDate(order.data_entrega)}</p>
           <p><strong>Forma de Pagamento:</strong> {order.paymentInfo?.method || 'N/A'}</p>
           
-          {/* Status do Pedido (Logístico) - CORRIGIDO: Adicionado espaço */}
-          <p><strong>Status do Pedido:</strong>&nbsp;
-             <span style={{ fontWeight: 'bold' }}>
-                 {order.status_pedido || 'N/A'}
-             </span>
-          </p>
+          {/* Status do Pedido (Logístico) - CORRIGIDO: Usa a função de mapeamento e remove o estilo inline, garantindo a mesma fonte/formatação dos demais campos */}
+          <p><strong>Status do Pedido:</strong> {mapStatusToLabel(order.status_pedido)}</p>
 
-          {/* Status do Pagamento (Financeiro) - CORRIGIDO: Adicionado espaço */}
-          <p><strong>Status do Pagamento:</strong>&nbsp;
-             <span style={{ fontWeight: 'bold' }}>
-                 {mapStatusToLabel(order.status)}
-             </span>
-          </p>
+          {/* Status do Pagamento (Financeiro) - CORRIGIDO: Usa a função de mapeamento e remove o estilo inline */}
+          <p><strong>Status do Pagamento:</strong> {mapStatusToLabel(order.status)}</p>
           
-          <p><strong>Valor Total:</strong> {`R$${totalValue.toFixed(2)}`}</p>
+          <p><strong>Valor Total:</strong> {`R$${totalValue.toFixed(2).replace('.', ',')}`}</p>
         </div>
 
         <div className="details-section">
@@ -98,7 +93,7 @@ const OrderDetailsModal = ({ order, onClose }) => {
             {order.products && order.products.length > 0 ? (
                 order.products.map((item, index) => (
                   <li key={item.id || index}>
-                    {item.name} - {item.quantity}x ({`R$${parseFloat(item.total).toFixed(2)}`})
+                    {item.name} - {item.quantity}x ({`R$${parseFloat(item.total).toFixed(2).replace('.', ',')}`})
                   </li>
                 ))
             ) : (

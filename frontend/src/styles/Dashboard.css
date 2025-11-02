@@ -174,7 +174,7 @@
   padding: 5px 10px;
   border-radius: 12px;
   font-size: 0.8rem;
-  color: #fff; /* FIX DEFINITIVO: Garante cor da fonte branca */
+  color: #fff !important; /* FIX DEFINITIVO: Garante cor da fonte branca */
   align-items: center;
 }
 

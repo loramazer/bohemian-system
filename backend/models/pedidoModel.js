@@ -93,6 +93,9 @@ async function findAllAdmin(options) {
         startDate,
         endDate
     } = options;
+    
+    // NOVO: Definir Frete Fixo
+    const FRETE_FIXO = 15.00;
 
     let params = [];
     let countParams = [];
@@ -139,7 +142,6 @@ async function findAllAdmin(options) {
     const totalPages = Math.ceil(totalPedidos / limit);
 
     // --- Query de Busca (Pedidos Paginados) ---
-    // ADICIONADO: p.status_pedido AS status_pedido
     let sql = `
         SELECT 
             p.id_pedido,
@@ -147,9 +149,10 @@ async function findAllAdmin(options) {
             u.nome AS cliente_nome,
             fp.status_transacao AS status,
             p.status_pedido AS status_pedido, 
+            -- CORREÇÃO CRÍTICA: Adicionando o frete de R$ 15,00
             (SELECT SUM(ip_inner.precoUnitario * ip_inner.quantidade)
              FROM itempedido ip_inner
-             WHERE ip_inner.fk_pedido_id_pedido = p.id_pedido) AS total_pedido
+             WHERE ip_inner.fk_pedido_id_pedido = p.id_pedido) + ${FRETE_FIXO} AS total_pedido
         ${baseSql}
         ${whereSql}
         GROUP BY p.id_pedido, p.dataPedido, u.nome, fp.status_transacao, p.status_pedido
@@ -162,7 +165,11 @@ async function findAllAdmin(options) {
     const [pedidos] = await db.execute(sql, params);
 
     return {
-        pedidos,
+        // Mapeia para garantir que total_pedido seja string com 2 casas decimais
+        pedidos: pedidos.map(p => ({
+            ...p,
+            total_pedido: p.total_pedido ? parseFloat(p.total_pedido).toFixed(2) : '0.00'
+        })),
         totalPages,
         totalPedidos,
         currentPage: parseInt(page)

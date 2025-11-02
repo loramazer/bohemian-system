@@ -55,36 +55,35 @@
 }
 
 /* Estilos de Status */
-.status-aprovado {
-    color: #0f5132;
-    background-color: #d1e7dd;
+.status-badge {
+    /* Garante um estilo base para o span de status de pagamento */
     padding: 4px 8px;
     border-radius: 4px;
     font-size: 0.8rem;
+    font-weight: 600;
+    /* FIX CRÍTICO: Garante cor escura para textos legíveis no fundo claro */
+    color: #333 !important; 
 }
-.status-pendente {
-    color: #664d03;
+/* Status de Pagamento/Pedido APROVADO, AUTORIZADO, ENTREGUE (Verde) */
+.status-badge.status-approved,
+.status-badge.status-authorized,
+.status-badge.status-delivered {
+    color: #0f5132 !important; /* Verde Escuro */
+    background-color: #d1e7dd;
+}
+/* Status de Pagamento/Pedido PENDENTE, EM PROCESSO (Amarelo/Laranja) */
+.status-badge.status-pending,
+.status-badge.status-in_process {
+    color: #664d03 !important; /* Laranja/Marrom Escuro */
     background-color: #fff3cd;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 0.8rem;
 }
-.status-enviado {
-    color: #0c5460;
-    background-color: #d1ecf1;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 0.8rem;
+/* Status de Pagamento/Pedido REJEITADO, CANCELADO, FALHOU (Vermelho) */
+.status-badge.status-rejected,
+.status-badge.status-cancelled,
+.status-badge.status-failure {
+    color: #721c24 !important; /* Vermelho Escuro */
+    background-color: #f8d7da; /* Vermelho Claro */
 }
-.status-entregue {
-    color: #0f5132;
-    background-color: #d1e7dd;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 0.8rem;
-}
-
-/* ... (Seus estilos existentes de .orders-table, .status-aprovado, etc. permanecem aqui) ... */
 
 /* --- NOVO: Estilos para a Barra de Filtros --- */
 .orders-filter-bar {
@@ -153,9 +152,10 @@
     padding-right: 25px; /* Espaço para a seta */
 }
 
-/* Colore o select baseado no status (reutilizando suas classes de status) */
+/* Colore o select baseado no status (reutilizando as classes de pagamento) */
 .status-select.status-approved,
-.status-select.status-entregue {
+.status-select.status-delivered, /* <--- ATENÇÃO: Adicionado .status-delivered aqui */
+.status-select.status-authorized {
     background-color: #d1e7dd;
     color: #0f5132;
     border-color: #b1dfc4;

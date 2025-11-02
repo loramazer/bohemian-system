@@ -128,7 +128,8 @@
 
 .order-products-table-header {
     display: grid;
-    grid-template-columns: 30px 2fr 1fr 1fr 1fr;
+    /* CORREÇÃO: Removido o espaço para o checkbox (de 5 colunas para 4) */
+    grid-template-columns: 2fr 1fr 1fr 1fr;
     gap: 10px;
     font-weight: bold;
     border-bottom: 2px solid #ddd;
@@ -137,7 +138,8 @@
 
 .order-product-row {
     display: grid;
-    grid-template-columns: 30px 2fr 1fr 1fr 1fr;
+    /* CORREÇÃO: Removido o espaço para o checkbox (de 5 colunas para 4) */
+    grid-template-columns: 2fr 1fr 1fr 1fr;
     gap: 10px;
     align-items: center;
     padding: 20px 0;
