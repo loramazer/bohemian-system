@@ -12,5 +12,13 @@ server: {
         changeOrigin: true, // Necessário para evitar erros de CORS
       },
     },
+    host: true, // Permite que o servidor seja acessado externamente
+    hmr: {
+      host: 'denis-unwelcoming-candida.ngrok-free.dev',
+      protocol: 'wss', // Necessário para o Hot Module Replacement funcionar
+    },
+    // Adiciona o seu host do ngrok à lista de permissões
+    allowedHosts: ['denis-unwelcoming-candida.ngrok-free.dev'], 
   },
-  })
+  },
+  )

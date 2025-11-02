@@ -87,35 +87,38 @@ const CheckoutPage = () => {
 
     const total = subtotal + shippingCost;
 
-    // 5. FUNÇÃO PARA LIDAR COM O PAGAMENTO
     const handleGoToPayment = async () => {
         setPaymentError('');
 
-        // Validação: Se for entrega, precisa ter um endereço selecionado
         if (deliveryOption === 'entrega' && !selectedAddressId) {
-            setPaymentError('Por favor, selecione um endereço de entrega ou adicione um novo.');
+            setPaymentError('Por favor, selecione um endereço de entrega...');
             return;
         }
+        if (cartItems.length === 0) { /* ... */ }
 
-        // Validação: Carrinho não pode estar vazio
-        if (cartItems.length === 0) {
-            setPaymentError('Seu carrinho está vazio.');
+        // --- MUDANÇA: Verifique se o 'user' está carregado ---
+        if (!user || !user.id) {
+            setPaymentError('Erro: Usuário não autenticado.');
             return;
         }
 
         setIsCreatingPreference(true);
         try {
-            // Envia os dados para o backend
+            // --- MUDANÇA: Enviar o 'clienteId' aqui ---
+            const enderecoParaSalvar = deliveryOption === 'retirada' ? null : selectedAddressId;
+
             const response = await apiClient.post('/pagamentos/criar-preferencia', {
                 cartItems: cartItems,
                 shippingCost: shippingCost,
                 deliveryOption: deliveryOption,
-                selectedAddressId: selectedAddressId, // Envia o ID do endereço
+                selectedAddressId: enderecoParaSalvar, // Já estávamos enviando o ID ou null
+                clienteId: user.id, // A NOVA LINHA IMPORTANTE
             });
 
-            // 6. REDIRECIONA PARA O MERCADO PAGO
-            // O backend nos devolveu o link de pagamento
             if (response.data.init_point) {
+                // --- MUDANÇA: Remover TODO o 'localStorage' ---
+                // localStorage.setItem('dadosConfirmacaoPedido', ...); // REMOVA ISSO
+
                 window.location.href = response.data.init_point;
             }
 

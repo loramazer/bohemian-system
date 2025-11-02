@@ -10,6 +10,8 @@ router.post(
     pagamentoController.criarPreferencia
 );
 
+router.post('/webhook', pagamentoController.receberWebhook);
+
 // Rotas
 router.post('/confirmar-pedido', pagamentoController.confirmarPedido);
 
