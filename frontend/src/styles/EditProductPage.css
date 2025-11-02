@@ -1,0 +1,6 @@
+/* loramazer/bohemian-system/bohemian-system-refatorar-organizacao/frontend/src/styles/EditProductPage.css */
+
+/* Reutiliza 100% dos estilos da página de Adicionar Produto */
+@import './AddProductPage.css';
+
+/* (Você pode adicionar estilos específicos de override para a página de edição aqui, se necessário) */

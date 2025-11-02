@@ -143,7 +143,10 @@ async function update(id, { nome, preco_venda, descricao = null, ativo = 1, imag
 }
 
 async function remove(id) {
-  await db.execute('DELETE FROM produto WHERE id_produto = ?', [id]);
+    await db.execute(
+    'UPDATE produto SET ativo = 0 WHERE id_produto = ?', 
+    [id]
+  );
 }
 
 async function getCategoryIdByName(categoryName) {
@@ -170,4 +173,45 @@ async function addCategoryToProduct(productId, categoryName) {
     return false;
 }
 
-module.exports = { getAll, getById, create, update, remove, addCategoryToProduct };
+async function updateProductCategory(productId, categoryName) {
+    const categoryId = await getCategoryIdByName(categoryName);
+    
+    if (!categoryId) {
+        console.warn(`Categoria "${categoryName}" não encontrada para atualização.`);
+        return false;
+    }
+    
+    const connection = await db.getConnection();
+    try {
+        await connection.beginTransaction();
+        
+        // 1. Remove todas as associações de categoria *antigas* deste produto
+        await connection.execute('DELETE FROM produtocategoria WHERE fk_produto_id_produto = ?', [productId]);
+        
+        // 2. Adiciona a *nova* associação
+        await connection.execute(
+            'INSERT INTO produtocategoria (fk_produto_id_produto, fk_categoria_id_categoria) VALUES (?, ?)',
+            [productId, categoryId]
+        );
+        
+        await connection.commit();
+        return true;
+    } catch (error) {
+        await connection.rollback();
+        console.error("Erro ao atualizar categoria do produto:", error);
+        throw error; // Lança o erro para o controller
+    } finally {
+        connection.release();
+    }
+}
+
+
+module.exports = { 
+    getAll, 
+    getById, 
+    create, 
+    update, 
+    remove, 
+    addCategoryToProduct,
+    updateProductCategory // <-- ADICIONE ESTA EXPORTAÇÃO
+};

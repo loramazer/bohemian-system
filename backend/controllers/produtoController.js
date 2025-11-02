@@ -103,28 +103,55 @@ async function getById(req, res) {
 }
 
 async function update(req, res) {
-    try {
-        let { nome, preco_venda, descricao, ativo } = req.body;
+    const { id } = req.params;
+    // Agora o req.body funcionará:
+    let { nome, preco_venda, descricao, ativo, categoria, imagens } = req.body;
 
-        // Converte o preço para decimal
+    try {
         preco_venda = formatarPreco(preco_venda);
 
-        // Busca o produto atual
-        const produtoAtual = await produtoModel.getById(req.params.id);
-        if (!produtoAtual) return res.status(404).json({ message: 'Produto não encontrado' });
-
-        let imagem_url = produtoAtual.imagem_url; // mantém a existente
-        if (req.file) {
-            const result = await cloudinary.uploader.upload(req.file.path);
-            imagem_url = result.secure_url;
-            fs.unlinkSync(req.file.path);
+        let existingImageUrls = [];
+        
+        // 1. Coleta imagens existentes (que vêm como strings de URL)
+        if (imagens) {
+            const imagesArray = Array.isArray(imagens) ? imagens : [imagens];
+            existingImageUrls = imagesArray.filter(img => typeof img === 'string');
         }
 
-        const produtoAtualizado = await produtoModel.update(req.params.id, { nome, preco_venda, descricao, ativo, imagem_url });
-        res.json({ message: 'Produto atualizado com sucesso', produto: produtoAtualizado });
+        // 2. Coleta imagens novas (que vêm via req.files)
+        let newImageUrls = [];
+        if (req.files && req.files.length > 0) {
+            // Reutiliza a lógica de processamento de imagens do Cloudinary
+            // (Assumindo que sua função processarImagens lida com 'req.files')
+            const newUrlsJson = await processarImagens(req.files);
+            newImageUrls = JSON.parse(newUrlsJson);
+        }
+
+        // 3. Combina as listas e salva no formato JSON
+        const allImageUrls = [...existingImageUrls, ...newImageUrls];
+        const imagem_url_json = JSON.stringify(allImageUrls);
+
+        // 4. Atualiza os dados principais do produto (usando 'ativo = 1' como no seu model)
+        const produtoAtualizado = await produtoModel.update(id, {
+            nome,
+            preco_venda,
+            descricao,
+            ativo: ativo || 1,
+            imagem_url: imagem_url_json
+        });
+
+        // 5. Atualiza a categoria
+        if (categoria) {
+            // Esta função (que vamos criar na Etapa 3) limpa as categorias antigas
+            // e adiciona a nova, evitando duplicatas.
+            await produtoModel.updateProductCategory(id, categoria);
+        }
+        
+        res.status(200).json({ message: 'Produto atualizado com sucesso', produto: produtoAtualizado });
+
     } catch (error) {
-        console.error('Erro ao atualizar produto:', error);
-        res.status(500).json({ message: 'Erro interno do servidor' });
+        console.error('Erro ao atualizar produto:', error); 
+        res.status(500).json({ message: 'Erro interno no servidor' });
     }
 }
 
