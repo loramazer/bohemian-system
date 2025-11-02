@@ -120,7 +120,7 @@ async function forgotPassword(req, res) {
                     <td style="padding: 40px; text-align: center;">
                       <img src="cid:bohemianLogo" alt="Bohemian Home" style="width: 150px; margin-bottom: 20px;">
                       <h1 style="color: #333333;">Redefina Sua Senha</h1>
-                      <p style="color: #555555;">Olá, ${cliente.nome}.</p>
+                      <p style="color: #555555;">Olá, ${usuario.nome}.</p>
                       <a href="${resetUrl}" style="background-color: #5d7a7b; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;">Redefinir Senha</a>
                     </td>
                   </tr>

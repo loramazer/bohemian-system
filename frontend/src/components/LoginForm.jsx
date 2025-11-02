@@ -3,9 +3,12 @@ import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from "../context/AuthContext.jsx";
 import '../styles/LoginForm.css';
 
+import { FiEye, FiEyeOff } from 'react-icons/fi';
+
 const LoginForm = () => {
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
+    const [isSenhaVisivel, setIsSenhaVisivel] = useState(false);
     const [error, setError] = useState('');
     const { login } = useContext(AuthContext);
     const navigate = useNavigate();
@@ -15,20 +18,17 @@ const LoginForm = () => {
         setError('');
         try {
             await login(email, senha);
-            navigate('/'); // Redireciona para a home page após o login
+            navigate('/');
         } catch (err) {
             setError('Falha no login. Verifique seu e-mail e senha.');
         }
     };
 
     return (
-        // Adicionado um contêiner para centralizar o formulário na página
         <div className="login-container">
             <form className="login-form" onSubmit={handleSubmit}>
-                {/* --- Elementos Adicionados --- */}
                 <h2 className="login-title">Bem-vindo de volta!</h2>
                 <p className="login-subtitle">Faça login para continuar</p>
-                {/* --------------------------- */}
 
                 <div className="form-group">
                     <label htmlFor="email">E-mail</label>
@@ -40,18 +40,27 @@ const LoginForm = () => {
                         required
                     />
                 </div>
+
                 <div className="form-group">
                     <label htmlFor="senha">Senha</label>
-                    <input
-                        type="password"
-                        id="senha"
-                        value={senha}
-                        onChange={(e) => setSenha(e.target.value)}
-                        required
-                    />
-                </div>
+                    <div className="password-wrapper">
+                        <input
+                            type={isSenhaVisivel ? "text" : "password"}
+                            id="senha"
+                            value={senha}
+                            onChange={(e) => setSenha(e.target.value)}
+                            required
+                        />
+                        <button
+                            type="button"
+                            className="toggle-password-btn"
+                            onClick={() => setIsSenhaVisivel(!isSenhaVisivel)}
+                        >
+                            {isSenhaVisivel ? <FiEyeOff /> : <FiEye />}
+                        </button>
+                    </div>
+                    </div>
 
-                {/* --- Estrutura dos links ajustada --- */}
                 <div className="forgot-password">
                     <Link to="/forgot-password">Esqueceu a senha?</Link>
                 </div>
@@ -63,7 +72,6 @@ const LoginForm = () => {
                 <div className="signup-link">
                     <p>Não tem uma conta? <Link to="/register">Cadastre-se</Link></p>
                 </div>
-                {/* ------------------------------------ */}
             </form>
         </div>
     );

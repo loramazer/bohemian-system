@@ -76,3 +76,65 @@
     text-decoration: none;
     font-weight: bold;
 }
+
+/* Wrapper continua igual */
+.password-wrapper {
+    position: relative;
+}
+
+/* Para garantir que o input da senha tenha o mesmo visual dos outros */
+.form-group input {
+    /* Garante que padding e border sejam incluídos na largura e altura total */
+    box-sizing: border-box;
+    width: 100%;
+    /* Garante que todos os inputs ocupem a largura total disponível */
+    padding: 10px;
+    /* Adapte ao padding dos outros inputs, se houver */
+    border: 1px solid #ccc;
+    /* Adapte à borda dos outros inputs, se houver */
+    border-radius: 4px;
+    /* Adapte ao arredondamento dos outros inputs */
+}
+
+
+.password-wrapper {
+    position: relative;
+    /* Removido qualquer margin/padding aqui que pudesse causar o traço */
+}
+
+/* O input dentro do password-wrapper precisa de padding à direita */
+.password-wrapper input {
+    /* Mantém o padding base do input e adiciona mais à direita para o ícone */
+    padding-right: 40px;
+    /* Ajuste se o ícone for maior ou menor */
+}
+
+.toggle-password-btn {
+    position: absolute;
+    right: 10px;
+    /* Posição do ícone dentro do input */
+    top: 50%;
+    transform: translateY(-50%);
+    /* Centraliza verticalmente */
+
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #555;
+    font-size: 1.25rem;
+    /* Tamanho do ícone */
+
+    /* Removido o display:flex e padding:0 para simplificar,
+    já que o transform: translateY(-50%) faz a maior parte do trabalho.
+    O traço era provavelmente causado por margin/padding implícito no botão
+    ou por um box-sizing inconsistente.
+  */
+    margin: 0;
+    /* Garante que não haja margens extras */
+    padding: 0;
+    /* Garante que não haja paddings extras */
+}
+
+.toggle-password-btn:hover {
+    color: #000;
+}
