@@ -169,37 +169,36 @@
   border-bottom: 1px solid #eee;
 }
 
+/* O Status Badge principal */
 .status-badge {
   padding: 5px 10px;
   border-radius: 12px;
   font-size: 0.8rem;
-  color: #fff;
+  color: #fff; /* FIX DEFINITIVO: Garante cor da fonte branca */
   align-items: center;
 }
 
-/* Estilos para os status do backend */
-.status-badge.status-approved {
-  background-color: #4CAF50;
+/* Estilos de Cores para Pagamento/Status Logístico */
+.status-badge.status-approved, 
+.status-badge.status-authorized {
+  background-color: #4CAF50; /* Verde */
 }
 
 .status-badge.status-pending {
-  background-color: #ff9800;
+  background-color: #ff9800; /* Laranja */
 }
 
 .status-badge.status-in_process {
-  background-color: #2196f3;
+  background-color: #2196f3; /* Azul */
 }
 
-.status-badge.status-rejected {
-  background-color: #f44336;
-}
-
+.status-badge.status-rejected, 
 .status-badge.status-cancelled {
-  background-color: #f44336;
+  background-color: #f44336; /* Vermelho */
 }
 
 .status-badge.status-desconhecido {
-  background-color: #607d8b;
+  background-color: #607d8b; /* Cinza */
 }
 
 .orders-table tbody tr {

@@ -1,4 +1,4 @@
-// backend/controllers/dashboardController.js
+// loramazer/bohemian-system/bohemian-system-refatorar-organizacao/backend/controllers/dashboardController.js
 const db = require('../config/db');
 const pedidoModel = require('../models/pedidoModel');
 
@@ -133,7 +133,6 @@ async function getRecentOrders(req, res) {
     }
 }
 
-// --- FUNÇÃO GETORDERDETAILS ATUALIZADA ---
 async function getOrderDetails(req, res) {
     try {
         const { id } = req.params;
@@ -144,11 +143,12 @@ async function getOrderDetails(req, res) {
                 p.id_pedido,
                 p.dataPedido,
                 p.data_entrega,
+                p.status_pedido,                 -- <--- ADICIONADO: Status Logístico
                 u.nome AS cliente_nome,
                 u.login AS cliente_email,
                 u.telefone AS cliente_telefone,
                 fp.descricao AS forma_pagamento,
-                fp.status_transacao AS status_pagamento,
+                fp.status_transacao AS status_pagamento, -- <--- Status de Pagamento
                 e.nome AS endereco_nome,
                 e.numero AS endereco_numero,
                 e.complemento AS endereco_complemento,
@@ -176,36 +176,35 @@ async function getOrderDetails(req, res) {
             return res.status(404).json({ message: 'Pedido não encontrado.' });
         }
 
-        // --- FORMATAR DADOS PARA O FRONTEND ---
         const firstRow = rows[0];
         let subtotal = 0;
 
-        // Formata os produtos
         const products = rows.map(row => {
             const totalItem = parseFloat(row.precoUnitario) * row.quantidade;
             subtotal += totalItem;
             return {
-                id: row.id_produto, // Usado pelo 'key'
+                id: row.id_produto, 
                 name: row.nome_produto,
                 idProduto: `#${row.id_produto}`,
                 quantity: row.quantidade,
                 total: totalItem,
-                image: parseImageUrl(row.produto_imagem_url) || 'https://via.placeholder.com/60x60' // Usa a função auxiliar
+                image: parseImageUrl(row.produto_imagem_url) || 'https://via.placeholder.com/60x60'
             };
         });
         
-        // Simula dados fixos (pois não estão no banco)
-        const tax = subtotal * 0.20; 
-        const discount = 20.00;
-        const shipping = 50.00;
-        const total = subtotal + tax - discount + shipping;
+        const tax = 0.00;
+        const discount = 0.00;
+        const shipping = firstRow.endereco_nome ? 15.00 : 0.00;
+        const total = subtotal + shipping;
 
-        // Monta o objeto final no formato que os componentes do frontend esperam
         const orderDetails = {
             id: `#${firstRow.id_pedido}`,
             date: new Date(firstRow.dataPedido).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }),
-            status: firstRow.status_pagamento, // O select usará este
+            status: firstRow.status_pagamento, // Status de Pagamento (usado na tabela AllOrdersPage)
             
+            // NOVO: Adicionado status_pedido
+            status_pedido: firstRow.status_pedido, // <--- Status Logístico
+
             client: {
                 name: firstRow.cliente_nome,
                 email: firstRow.cliente_email,
@@ -215,16 +214,16 @@ async function getOrderDetails(req, res) {
                 zip: firstRow.endereco_cep,
             },
             
-            paymentInfo: { // Simulado para o card de "Informações"
+            paymentInfo: { 
                 method: firstRow.forma_pagamento,
                 name: firstRow.cliente_nome,
                 phone: firstRow.cliente_telefone || '(N/A)',
             },
 
-            shippingInfo: { // Simulado para o card de "Informações"
-                method: 'Next express', // Estático, como no original
-                status: firstRow.status_pagamento, // 'Pending', 'Approved', etc.
-                payment: firstRow.forma_pagamento, // 'Paypal', 'Master Card', etc.
+            shippingInfo: { 
+                method: 'Next express', 
+                status: firstRow.status_pagamento, 
+                payment: firstRow.forma_pagamento,
             },
             
             products: products,

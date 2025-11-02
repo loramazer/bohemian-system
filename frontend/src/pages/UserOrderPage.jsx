@@ -1,4 +1,4 @@
-// frontend/src/pages/UserOrderPage.jsx
+// loramazer/bohemian-system/bohemian-system-refatorar-organizacao/frontend/src/pages/UserOrderPage.jsx
 import React, { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
@@ -6,33 +6,54 @@ import apiClient from '../api.js';
 import { AuthContext } from '../context/AuthContext.jsx';
 import '../styles/UserOrderPage.css'; 
 
-// --- INÍCIO DA CORREÇÃO ---
+// --- FUNÇÕES DE STATUS ---
 
-// ATUALIZADO: Função para traduzir o status com as novas regras
-const formatStatus = (status) => {
+// FUNÇÃO 1: Formata o status do PAGAMENTO (Vem da forma_pagamento)
+const formatPaymentStatus = (status) => {
     if (!status) return 'Indefinido';
     
-    // Mapa de status atualizado
     const statusMap = {
         'pending': 'Pendente',
         'approved': 'Aprovado',
         'in_process': 'Em Processamento',
-        'authorized': 'Enviado',      // Alterado
-        'delivered': 'Entregue',     // Adicionado
-        'cancelled': 'Cancelado'
-        // 'rejected' e 'failure' removidos
+        'authorized': 'Autorizado',
+        'delivered': 'Entregue',     
+        'cancelled': 'Cancelado',
+        'rejected': 'Rejeitado'
     };
 
-    // Retorna o texto mapeado ou o status original (capitalizado) se não encontrar
     return statusMap[status.toLowerCase()] || status.charAt(0).toUpperCase() + status.slice(1);
 };
-// --- FIM DA CORREÇÃO ---
 
+// FUNÇÃO 2: Formata o status do PEDIDO (Vem do pedido)
+const formatOrderStatus = (status) => {
+    return status || 'Indefinido';
+};
+
+// FUNÇÃO 3: Mapeia o Status do Pedido para uma classe CSS
+const getOrderStatusClass = (status) => {
+    if (!status) return 'indefinido';
+    const s = status.toLowerCase();
+    
+    // Mapeia seus status logísticos para as classes de estilo existentes
+    if (s === 'em preparação') return 'in-process'; 
+    if (s === 'pendente') return 'pending'; 
+    if (s === 'cancelado') return 'cancelled'; 
+    if (s === 'enviado') return 'authorized'; 
+    if (s === 'entregue') return 'approved'; 
+    
+    return 'indefinido'; // Fallback
+};
 
 // Componente para o Detalhe da Compra (Renderiza dados reais)
 const PurchaseDetail = ({ order, onProductClick }) => {
     
     const address = `${order.rua}, ${order.numero}${order.complemento ? ' - ' + order.complemento : ''}, ${order.cidade}/${order.estado}`;
+
+    // Define o frete fixo
+    const frete = 15.00;
+    // Calcula o total real
+    const totalComFrete = parseFloat(order.total_pedido) + frete;
 
     return (
         <div className="purchase-detail-card">
@@ -65,19 +86,22 @@ const PurchaseDetail = ({ order, onProductClick }) => {
                     </div>
                     <div className="summary-row">
                         <span>Frete:</span>
-                        <span className="shipping-cost">Grátis</span>
+                        <span className="shipping-cost">R$ {frete.toFixed(2).replace('.', ',')}</span>
                     </div>
                     <div className="summary-row summary-total">
                         <span>Total:</span>
-                        <span>R$ {parseFloat(order.total_pedido).toFixed(2).replace('.', ',')}</span>
+                        <span>R$ {totalComFrete.toFixed(2).replace('.', ',')}</span>
                     </div>
                 </div>
             </div>
             
             <div className="detail-shipping-info">
-                 {/* ATUALIZADO: Usando a função formatStatus e a classe CSS correta */}
-                 <p>Status: <span className={`order-status status-${order.status.toLowerCase().replace(/_|-/g, '-')}`}>
-                    {formatStatus(order.status)}
+                 <p>Status do Pagamento: <span className={`order-status status-${order.status.toLowerCase().replace(/_|-/g, '-')}`}>
+                    {formatPaymentStatus(order.status)}
+                </span></p>
+                {/* CORREÇÃO AQUI: Usa a mesma lógica de classes para cores do Status do Pedido */}
+                <p>Status do Pedido: <span className={`order-status status-${getOrderStatusClass(order.status_pedido)}`}>
+                    {formatOrderStatus(order.status_pedido)}
                 </span></p>
                 <p>Enviado para: {address}</p> 
             </div>
@@ -85,7 +109,7 @@ const PurchaseDetail = ({ order, onProductClick }) => {
     );
 };
 
-// ... (Função groupOrdersByMonth - sem alteração) ...
+// Função groupOrdersByMonth (inalterada)
 const groupOrdersByMonth = (orders) => {
     return orders.reduce((groups, order) => {
         const month = new Date(order.dataPedido).toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
@@ -100,7 +124,6 @@ const groupOrdersByMonth = (orders) => {
 
 // Componente Principal
 const UserOrdersPage = () => {
-    // ... (toda a lógica de hooks: navigate, user, states, useEffect - sem alteração) ...
     const navigate = useNavigate(); 
     const { user, loading: authLoading } = useContext(AuthContext); 
     
@@ -184,9 +207,9 @@ const UserOrdersPage = () => {
                                         <div key={order.id_pedido} className="order-item-card">
                                             
                                             <div className="order-header">
-                                                {/* ATUALIZADO: Usando a função formatStatus e a classe CSS correta */}
-                                                <span className={`order-status status-${order.status.toLowerCase().replace(/_|-/g, '-')}`}>
-                                                    {formatStatus(order.status)}
+                                                {/* Status do Pedido (logístico) no resumo */}
+                                                <span className={`order-status status-${getOrderStatusClass(order.status_pedido)}`}>
+                                                    {formatOrderStatus(order.status_pedido)}
                                                 </span>
                                                 <span className="order-date">
                                                     Pedido em: {new Date(order.dataPedido).toLocaleDateString('pt-BR')}

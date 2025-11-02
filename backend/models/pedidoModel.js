@@ -10,6 +10,8 @@ async function findByUsuarioId(usuarioId) {
             p.data_entrega,
             fp.status_transacao AS status,
             
+            p.status_pedido, -- <-- ADICIONADO: Busca o status logístico do pedido
+
             -- CORREÇÃO: Trocado 'e.rua' por 'e.nome' (como no seu dump)
             e.nome AS rua, 
             e.numero,
@@ -45,7 +47,8 @@ async function findByUsuarioId(usuarioId) {
 
         -- CORREÇÃO: Agrupando pelos campos corretos
         GROUP BY p.id_pedido, p.dataPedido, p.data_entrega, fp.status_transacao, 
-                 e.nome, e.numero, e.complemento, cid.nome, cid.sigla_UF
+                 e.nome, e.numero, e.complemento, cid.nome, cid.sigla_UF,
+                 p.status_pedido -- <-- ADICIONADO: Agrupa pelo novo campo
                  
         ORDER BY p.dataPedido DESC;
     `;

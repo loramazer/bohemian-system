@@ -1,3 +1,4 @@
+// loramazer/bohemian-system/bohemian-system-refatorar-organizacao/frontend/src/components/Admin/OrderSummary.jsx
 import React from 'react';
 import '../../styles/OrderDetail.css';
 
@@ -9,15 +10,8 @@ const OrderSummary = ({ prices }) => {
                 <span>Subtotal</span>
                 <span>R${prices.subtotal.toFixed(2)}</span>
             </div>
-            <div className="summary-line">
-                {/* --- Texto traduzido (Task 3) --- */}
-                <span>Taxa (20%)</span>
-                <span>R${prices.tax.toFixed(2)}</span>
-            </div>
-            <div className="summary-line">
-                <span>Desconto</span>
-                <span>R${prices.discount.toFixed(2)}</span>
-            </div>
+            {/* Linha de Taxa Removida */}
+            {/* Linha de Desconto Removida */}
             <div className="summary-line">
                 <span>Frete</span>
                 <span>R${prices.shipping.toFixed(2)}</span>

@@ -1,7 +1,3 @@
-/* frontend/src/styles/UserOrderPage.css */
-
-/* Paleta de Cores Bohemian: #516A6A (Primária) | #D0B88F (Secundária) | #fcfcfc (Fundo) */
-
 .orders-main-content {
     background-color: #fcfcfc;
     padding: 40px 0 80px;
@@ -64,15 +60,20 @@
     text-transform: uppercase;
 }
 
-/* Status */
-.status-approved, .status-authorized, .status-aprovado {
+/* Status: APROVADO, ENTREGUE (Verde) */
+.status-approved, .status-authorized, .status-aprovado, .status-entregue {
     background-color: #e8f5e9;
     color: #2e7d32;
 }
-.status-in_process, .status-pending, .status-em-processamento, .status-pendente {
+
+/* Status: EM PREPARAÇÃO, PENDENTE (Amarelo/Laranja) */
+/* CORREÇÃO: Adicionado .status-in-process para alinhar com o mapeamento logístico "Em Preparação" */
+.status-in_process, .status-pending, .status-em-processamento, .status-pendente, .status-in-process {
     background-color: #fffde7;
     color: #ffb300;
 }
+
+/* Status: REJEITADO, CANCELADO (Vermelho) */
 .status-rejected, .status-cancelled, .status-failure, .status-rejeitado, .status-cancelado {
     background-color: #ffebee;
     color: #d32f2f;
@@ -87,7 +88,7 @@
 /* --- Resumo Fechado --- */
 .order-summary-row {
     display: flex;
-    align-items: center;
+    align-items: center; /* Isso centraliza a imagem e o bloco de texto verticalmente */
     gap: 20px;
 }
 
@@ -451,4 +452,11 @@
     .detail-item-row {
         align-items: flex-start;
     }
+}
+
+/* Adicione isso ao final de frontend/src/styles/UserOrderPage.css */
+.detail-shipping-info p {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }

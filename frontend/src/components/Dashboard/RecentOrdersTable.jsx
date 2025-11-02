@@ -1,3 +1,4 @@
+// loramazer/bohemian-system/bohemian-system-refatorar-organizacao/frontend/src/components/Dashboard/RecentOrdersTable.jsx
 import React, { useState } from 'react';
 import '../../styles/Dashboard.css';
 
@@ -10,8 +11,10 @@ const RecentOrdersTable = ({ orders, onSelectOrder }) => {
     if (!status) {
       return 'N/A';
     }
-    switch (status) {
+    switch (status.toLowerCase()) { // Usar toLowerCase para segurança
       case 'approved':
+        return 'Aprovado';
+      case 'authorized': // Enviado
         return 'Enviado';
       case 'pending':
         return 'Pendente';
@@ -45,9 +48,6 @@ const RecentOrdersTable = ({ orders, onSelectOrder }) => {
       </div>
       <table className="orders-table">
         <thead>
-          {/* CORREÇÃO: Colocar a tag <tr> e a primeira tag <th> na mesma linha 
-             para eliminar o nó de texto vazio (whitespace) que causa o aviso de hidratação. 
-          */}
           <tr><th></th>{/* Mantém a coluna para o checkbox */}
             <th>Produto</th>
             <th>ID do Pedido</th>
