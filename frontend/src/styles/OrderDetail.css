@@ -23,6 +23,8 @@
     display: flex;
     align-items: center;
     gap: 15px; /* Aumentado o espaço */
+    /* NOVO: Permite quebrar linha em telas pequenas */
+    flex-wrap: wrap; 
 }
 
 /* --- CORREÇÃO (Tamanho dos Controles) --- */
@@ -39,12 +41,17 @@
 
 .order-actions .order-status-badge {
     line-height: 1.2; /* Alinha o texto do badge verticalmente */
+    /* NOVO: Garante o alinhamento com os controles */
+    display: flex; 
+    align-items: center;
 }
 
 .order-actions select {
     border: 1px solid #ccc;
     background-color: #fff;
     color: #333;
+    /* NOVO: Define largura mínima para o select */
+    min-width: 150px; 
 }
 
 .save-btn {
@@ -59,6 +66,7 @@
 
 /* --- NOVAS CLASSES DE STATUS (para o badge) --- */
 .order-status-badge.status-approved,
+.order-status-badge.status-delivered, /* Adicionado Delivered (Logístico) */
 .order-status-badge.status-authorized {
     background-color: #d1e7dd;
     color: #0f5132;
@@ -186,5 +194,11 @@
     }
     .products-summary-section {
         flex-direction: column;
+    }
+    
+    .order-actions {
+        /* Garante que os botões/selects fiquem em linha cheia ou lado a lado */
+        width: 100%;
+        justify-content: space-between;
     }
 }

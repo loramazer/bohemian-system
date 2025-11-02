@@ -11,17 +11,29 @@ import { FeedbackContext } from '../context/FeedbackContext.jsx';
 
 import '../styles/OrderDetail.css';
 
-// Mapeamento de status (igual ao de AllOrdersPage)
-const statusMap = {
+// Mapeamento de status de PAGAMENTO (apenas para exibição do badge)
+const paymentStatusMap = {
     'pending': 'Pendente',
     'approved': 'Aprovado',
     'in_process': 'Em Processamento',
-    'authorized': 'Enviado',      // Alterado de 'Autorizado'
-    'delivered': 'Entregue',     // Adicionado
-    'cancelled': 'Cancelado'
-    // 'rejected' e 'failure' removidos
+    'authorized': 'Autorizado',      
+    'delivered': 'Entregue',     
+    'cancelled': 'Cancelado',
+    'rejected': 'Rejeitado',
+    'failure': 'Falhou'
 };
-const statusOptions = Object.keys(statusMap);
+
+// Mapeamento de status do PEDIDO (Logístico) - Alinha com os códigos ENUM
+const orderStatusLogisticoMap = {
+    'in_process': 'Em Preparação', 
+    'pending': 'Pendente', 
+    'cancelled': 'Cancelado', 
+    'authorized': 'Enviado', 
+    'delivered': 'Entregue' 
+};
+
+// Opções para o select (os códigos ENUM do status logístico)
+const orderStatusOptions = Object.keys(orderStatusLogisticoMap);
 
 const OrderDetailPage = () => {
     const { orderId } = useParams();
@@ -31,7 +43,8 @@ const OrderDetailPage = () => {
 
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [currentStatus, setCurrentStatus] = useState('');
+    // currentStatusLogistico armazena o código ENUM do status logístico
+    const [currentStatusLogistico, setCurrentStatusLogistico] = useState(''); 
 
     // Hook de segurança e busca de dados
     useEffect(() => {
@@ -46,7 +59,8 @@ const OrderDetailPage = () => {
                 setLoading(true);
                 const response = await apiClient.get(`/dashboard/orders/${orderId}`);
                 setOrder(response.data);
-                setCurrentStatus(response.data.status); // Define o status atual
+                // Usa o status LOGÍSTICO (status_pedido) do DB
+                setCurrentStatusLogistico(response.data.status_pedido || 'pending'); 
             } catch (error) {
                 console.error('Erro ao buscar detalhes do pedido:', error);
                 showToast('Erro ao carregar pedido.', 'warning');
@@ -62,34 +76,49 @@ const OrderDetailPage = () => {
 
     // Lida com a mudança no <select>
     const handleStatusSelectChange = (e) => {
-        setCurrentStatus(e.target.value);
+        // Recebe o código ENUM do select
+        setCurrentStatusLogistico(e.target.value); 
     };
 
     // Lida com o clique no botão "Salvar"
     const handleStatusSave = async () => {
+        // currentStatusLogistico é o código ENUM que será salvo
         try {
-            await apiClient.put(`/dashboard/orders/status/${orderId}`, { status: currentStatus });
-            // Atualiza o status no objeto local para refletir a mudança
-            setOrder(prevOrder => ({ ...prevOrder, status: currentStatus }));
-            showToast('Status atualizado com sucesso!', 'success');
+            // Usa o endpoint que atualiza o status_pedido
+            await apiClient.put(`/dashboard/orders/status/${orderId}`, { status: currentStatusLogistico });
+            // Atualiza o status LOGÍSTICO (status_pedido) no objeto local para refletir a mudança
+            setOrder(prevOrder => ({ ...prevOrder, status_pedido: currentStatusLogistico }));
+            showToast('Status logístico atualizado com sucesso!', 'success');
         } catch (error) {
             console.error('Erro ao salvar status:', error);
-            showToast('Falha ao salvar status.', 'warning');
+            showToast('Falha ao salvar status logístico.', 'warning');
         }
     };
     
-    // Função para formatar o status (baseado na sua UserOrderPage)
-    const formatStatus = (status) => {
+    // Função para formatar o status de PAGAMENTO (para o badge)
+    const formatPaymentStatus = (status) => {
         if (!status) return 'Indefinido';
-        return statusMap[status.toLowerCase()] || status;
+        return paymentStatusMap[status.toLowerCase()] || status;
+    };
+    
+    // Função para formatar o status LOGÍSTICO (para o select e exibição)
+    const formatLogisticStatus = (status) => {
+        if (!status) return 'Indefinido';
+        // Procura o texto de exibição pelo código ENUM/DB
+        return orderStatusLogisticoMap[status] || status;
+    };
+    
+    // Função para mapear status logístico para classes CSS (usa as classes de pagamento)
+    const getLogisticStatusClass = (status) => {
+        if (!status) return 'indefinido';
+        return status.toLowerCase();
     };
 
-    // Exibe "Carregando..." enquanto busca os dados
+
     if (loading || authLoading) {
         return <ContentWrapper><div>Carregando detalhes do pedido...</div></ContentWrapper>;
     }
 
-    // Exibe se o pedido não for encontrado
     if (!order) {
         return <ContentWrapper><div>Pedido não encontrado.</div></ContentWrapper>;
     }
@@ -100,25 +129,41 @@ const OrderDetailPage = () => {
             <main className="order-detail-main">
                 <div className="order-detail-header">
                     
-                    {/* --- CORREÇÃO DE LAYOUT (Task 1) --- 
-                       Colocado o ID dentro do H2 para ficar lado a lado */}
                     <h2>Pedido ID: {order.id}</h2>
 
                     <div className="order-actions">
+                        
+                        {/* BADGE DE STATUS DE PAGAMENTO (order.status) */}
                         <span className={`order-status-badge status-${order.status}`}>
-                            {formatStatus(order.status)}
+                            {formatPaymentStatus(order.status)}
                         </span>
-                        <select value={currentStatus} onChange={handleStatusSelectChange}>
-                            <option value="">Mudar Status</option>
-                            {statusOptions.map(status => (
-                                <option key={status} value={status}>{formatStatus(status)}</option>
+
+                        {/* SELECT: Permite mudar o status LOGÍSTICO */}
+                        <select 
+                            value={currentStatusLogistico} 
+                            onChange={handleStatusSelectChange}
+                            className={`status-select status-${getLogisticStatusClass(currentStatusLogistico)}`} 
+                        >
+                            <option value="">Mudar Status Logístico</option>
+                            {orderStatusOptions.map(status => (
+                                // value é o código ENUM (ex: 'authorized')
+                                <option key={status} value={status}>
+                                    {formatLogisticStatus(status)}
+                                </option>
                             ))}
                         </select>
-                        <button className="save-btn" onClick={handleStatusSave}>Salvar</button>
+                        
+                        <button 
+                            className="save-btn" 
+                            onClick={handleStatusSave}
+                            // Desabilita se o status selecionado for o mesmo do atual
+                            disabled={currentStatusLogistico === order.status_pedido}
+                        >
+                            Salvar
+                        </button>
                     </div>
                 </div>
                 
-                {/* Os componentes filhos agora recebem os dados reais da API */}
                 <OrderInfoCards order={order} />
                 
                 <div className="products-summary-section">

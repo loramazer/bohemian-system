@@ -83,7 +83,7 @@ function parseImageUrl(imageUrlString) {
     return imageUrlString; 
 }
 
-// --- FUNÇÃO NOVA ADICIONADA ---
+// --- FUNÇÃO ATUALIZADA: findAllAdmin (Inclui status_pedido) ---
 async function findAllAdmin(options) {
     const {
         page = 1,
@@ -139,19 +139,20 @@ async function findAllAdmin(options) {
     const totalPages = Math.ceil(totalPedidos / limit);
 
     // --- Query de Busca (Pedidos Paginados) ---
-    // CORREÇÃO: Trocado 'c.nome' por 'u.nome'
+    // ADICIONADO: p.status_pedido AS status_pedido
     let sql = `
         SELECT 
             p.id_pedido,
             p.dataPedido,
             u.nome AS cliente_nome,
             fp.status_transacao AS status,
+            p.status_pedido AS status_pedido, 
             (SELECT SUM(ip_inner.precoUnitario * ip_inner.quantidade)
              FROM itempedido ip_inner
              WHERE ip_inner.fk_pedido_id_pedido = p.id_pedido) AS total_pedido
         ${baseSql}
         ${whereSql}
-        GROUP BY p.id_pedido, p.dataPedido, u.nome, fp.status_transacao
+        GROUP BY p.id_pedido, p.dataPedido, u.nome, fp.status_transacao, p.status_pedido
         ORDER BY p.dataPedido DESC
     `;
 
@@ -168,8 +169,8 @@ async function findAllAdmin(options) {
     };
 }
 
-// --- FUNÇÃO NOVA ADICIONADA ---
-async function updateStatus(pedidoId, status) {
+// --- FUNÇÃO RENOMEADA: updatePaymentStatus (Atualiza Status de Pagamento) ---
+async function updatePaymentStatus(pedidoId, status) {
     const sql = `
         UPDATE forma_pagamento fp
         JOIN pedido p ON fp.id_forma_pagamento = p.fk_forma_pagamento_id_forma_pagamento
@@ -180,10 +181,22 @@ async function updateStatus(pedidoId, status) {
     return result.affectedRows;
 }
 
+// --- FUNÇÃO NOVA: updateOrderStatus (Atualiza Status Logístico) ---
+async function updateOrderStatus(pedidoId, statusPedido) {
+    const sql = `
+        UPDATE pedido
+        SET status_pedido = ?
+        WHERE id_pedido = ?
+    `;
+    const [result] = await db.execute(sql, [statusPedido, pedidoId]);
+    return result.affectedRows;
+}
+
 
 // 3. ATUALIZAR O MODULE.EXPORTS
 module.exports = { 
     findByUsuarioId,
     findAllAdmin, // <-- ADICIONADO
-    updateStatus  // <-- ADICIONADO
+    updatePaymentStatus, // <-- RENOMEADO
+    updateOrderStatus  // <-- NOVO
 };

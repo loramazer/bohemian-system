@@ -247,7 +247,7 @@ async function getOrderDetails(req, res) {
 // --- FIM DA FUNÇÃO ATUALIZADA ---
 
 
-// ... (Funções getAllPedidosAdmin e updatePedidoStatus permanecem iguais) ...
+// ... (Funções getAllPedidosAdmin permanecem iguais) ...
 async function getAllPedidosAdmin(req, res) {
     try {
         const {
@@ -266,6 +266,7 @@ async function getAllPedidosAdmin(req, res) {
             startDate: startDate || null,
             endDate: endDate || null,
         };
+        // A função findAllAdmin foi atualizada para incluir status_pedido
         const result = await pedidoModel.findAllAdmin(options);
         res.status(200).json(result);
     } catch (error) {
@@ -274,14 +275,20 @@ async function getAllPedidosAdmin(req, res) {
     }
 }
 
+// ATUALIZADO: Esta função agora atualiza o STATUS DO PEDIDO (Logístico)
 async function updatePedidoStatus(req, res) {
     try {
         const { id } = req.params; 
+        // O frontend envia o novo status no campo 'status', mas usaremos ele para status_pedido
         const { status } = req.body; 
+        
         if (!status) {
             return res.status(400).json({ message: 'Status é obrigatório.' });
         }
-        const affectedRows = await pedidoModel.updateStatus(id, status);
+        
+        // CHAMA A FUNÇÃO QUE ATUALIZA O STATUS LOGÍSTICO (NOVO)
+        const affectedRows = await pedidoModel.updateOrderStatus(id, status);
+
         if (affectedRows === 0) {
             return res.status(404).json({ message: 'Pedido não encontrado.' });
         }
