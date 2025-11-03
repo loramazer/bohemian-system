@@ -3,7 +3,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom'; 
 import '../styles/HeroSection.css'; 
-import mainImage from '../assets/bohemian-floral.png'; 
+import mainImage from '../../public/bohemian-floral.png'; 
 
 const HeroSection = () => {
     return (

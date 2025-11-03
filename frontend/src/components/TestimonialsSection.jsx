@@ -2,7 +2,7 @@
 
 import React from 'react'; 
 import TestimonialCard from './Shared/TestimonialCard.jsx';
-import placeholderImage from '../assets/imagemc1.jpg'; 
+import placeholderImage from '../../public/imagemc1.jpg'; 
 
 // Importamos apenas o CSS da seção e do card. O CSS do carrossel será ajustado.
 import '../styles/TestimonialsSection.css';

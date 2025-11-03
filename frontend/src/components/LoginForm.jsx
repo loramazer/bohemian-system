@@ -1,9 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from "../context/AuthContext.jsx";
-import React, { useState, useContext } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { AuthContext } from "../context/AuthContext.jsx";
 import '../styles/LoginForm.css';
 
 import { FiEye, FiEyeOff } from 'react-icons/fi';
@@ -16,7 +13,7 @@ const LoginForm = () => {
     const { login } = useContext(AuthContext);
     const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
+    // Corrigido: Removida a declaração duplicada
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
@@ -42,15 +39,8 @@ const LoginForm = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
-                    />
-                    <label htmlFor="email">E-mail</label>
-                    <input
-                        type="email"
-                        id="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                    />
+                        />
+                    {/* Corrigido: Removido o input de email duplicado */}
                 </div>
 
                 <div className="form-group">
@@ -66,37 +56,28 @@ const LoginForm = () => {
                         <button
                             type="button"
                             className="toggle-password-btn"
-                            onClick={() => setIsSenhaVisivel(!isSenhaVisivel)}
+                            _ onClick={() => setIsSenhaVisivel(!isSenhaVisivel)}
                         >
                             {isSenhaVisivel ? <FiEyeOff /> : <FiEye />}
                         </button>
                     </div>
-                    </div>
+                </div>
 
                 <div className="forgot-password">
                     <Link to="/forgot-password">Esqueceu a senha?</Link>
                 </div>
 
-                {error && <p className="error-message">{error}</p>}
-
-                <button type="submit" className="login-button">Entrar</button>
-
-                <div className="signup-link">
-                    <p>Não tem uma conta? <Link to="/register">Cadastre-se</Link></p>
-                    <Link to="/forgot-password">Esqueceu a senha?</Link>
-                </div>
-
-                {error && <p className="error-message">{error}</p>}
-
-                <button type="submit" className="login-button">Entrar</button>
+                {error && <p className="error-message">{error}</p>};           <button type="submit" className="login-button">Entrar</button>
 
                 <div className="signup-link">
                     <p>Não tem uma conta? <Link to="/register">Cadastre-se</Link></p>
                 </div>
+
+                {/* Corrigido: Removidos os blocos duplicados */}
+
             </form>
         </div>
     );
-};
-}
+}; // Corrigido: Removida a chave '}' extra que estava aqui
 
 export default LoginForm;

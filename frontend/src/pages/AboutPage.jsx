@@ -4,10 +4,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import ContentWrapper from '../components/Shared/ContentWrapper.jsx'; 
 
-// Importa todas as imagens necessárias que você tem na pasta assets
-import heroImage from '../assets/bohemian-home-hero.jpeg'; 
-import destaque1Image from '../assets/bohemian-destaque-1.jpeg';
-import destaque2Image from '../assets/bohemian-destaque-2.jpeg';
+import heroImage from '../../public/bohemian-home-hero.jpeg'; 
+import destaque1Image from '../../public/bohemian-destaque-1.jpeg';
+import destaque2Image from '../../public/bohemian-destaque-2.jpeg';
 
 import '../styles/AboutPage.css';
 

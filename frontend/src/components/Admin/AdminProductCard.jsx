@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { FaEllipsisV, FaPencilAlt, FaTrash } from 'react-icons/fa';
 import '../../styles/AdminProductCard.css';
-import placeholderImage from '../../assets/5.png'; // Imagem placeholder
+import placeholderImage from '../../../public/5.png'; // Imagem placeholder
 
 // Componente de menu dropdown
 const ActionMenu = ({ onEdit, onDelete }) => (

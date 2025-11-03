@@ -4,7 +4,7 @@ import React, { useContext } from 'react';
 // CORREÇÃO: Importa FaHeart (coração preenchido)
 import { FaShoppingCart, FaRegHeart, FaHeart } from 'react-icons/fa';
 import '../../styles/ProductCard.css';
-import placeholderImage from '../../assets/5.png';
+import placeholderImage from '../../../public/5.png';
 import { Link } from 'react-router-dom';
 // CORREÇÃO: Usa o WishlistContext para verificar o status
 import { WishlistContext } from '../../context/WishlistContext.jsx'; 

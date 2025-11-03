@@ -66,7 +66,7 @@ const CategoriesSection = () => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await apiClient.get('/categorias');
+                const response = await apiClient.get('/api/categorias');
 
                 if (Array.isArray(response.data)) {
                     // Apenas utiliza os dados vindos do banco de dados.

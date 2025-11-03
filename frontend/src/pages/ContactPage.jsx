@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
 import { FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaClock } from 'react-icons/fa'; 
-import heroImage from '../assets/bohemian-home-hero.jpeg'; 
+import heroImage from '../../public/bohemian-home-hero.jpeg'; 
 import '../styles/ContactPage.css';
 
 // Componente ContactPage

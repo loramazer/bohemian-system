@@ -1,8 +1,6 @@
 import React from 'react';
 import '../../styles/Footer.css';
-// 🔑 CORREÇÃO CRÍTICA 1: Importe a imagem como um módulo.
-// Assumindo que a logo está no caminho 'src/assets/bohemian-logo.png'
-import logo from '../../assets/bohemian-logo.png'; 
+import logo from '../../../public/bohemian-logo.png'; 
 
 const Footer = () => {
     const whatsappNumber = '5542999583432';

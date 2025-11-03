@@ -21,7 +21,7 @@ const FeaturedProductsSection = () => {
         const fetchProducts = async () => {
             try {
                 // CORREÇÃO 1: Pede especificamente 8 produtos para a API
-                const response = await apiClient.get('/produtos', { params: { limit: 8 } });
+                const response = await apiClient.get('/api/produtos', { params: { limit: 8 } });
                 
                 // CORREÇÃO 2: Verifica 'response.data.products' (o objeto) em vez de 'response.data' (o array)
                 if (response.data && Array.isArray(response.data.products)) {

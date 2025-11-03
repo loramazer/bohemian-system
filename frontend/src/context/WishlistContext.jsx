@@ -28,7 +28,7 @@ export const WishlistProvider = ({ children }) => {
             return;
         }
         try {
-            const response = await apiClient.get('/favoritos');
+            const response = await apiClient.get('/api/favoritos');
             updateWishlistState(response.data || []);
         } catch (err) {
             console.error("Erro ao buscar favoritos:", err);
@@ -44,7 +44,7 @@ export const WishlistProvider = ({ children }) => {
         if (!user) return; 
         
         try {
-            const response = await apiClient.post('/favoritos', { id_produto: product.id_produto });
+            const response = await apiClient.post('/api/favoritos', { id_produto: product.id_produto });
             updateWishlistState(response.data); 
             showWishlistSuccess(); // Mostra "Adicionado!"
         } catch (err) {
@@ -56,7 +56,7 @@ export const WishlistProvider = ({ children }) => {
         if (!user) return;
         
         try {
-            const response = await apiClient.delete(`/favoritos/${id_produto}`);
+            const response = await apiClient.delete(`/api/favoritos/${id_produto}`);
             updateWishlistState(response.data); // Atualiza o estado com a nova lista
             showWishlistRemoved();
         } catch (err) {

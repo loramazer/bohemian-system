@@ -1,7 +1,9 @@
 // frontend/src/context/CartContext.jsx
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react'; // Adicionado useCallback
 import apiClient from '../api';
+import { toast } from 'react-toastify';
 import { AuthContext } from "./AuthContext.jsx";
+
 import { FeedbackContext } from "./FeedbackContext.jsx"; // Assumindo que este arquivo foi criado
 
 export const CartContext = createContext();
@@ -19,7 +21,7 @@ export const CartProvider = ({ children }) => {
             return;
         }
         try {
-            const response = await apiClient.get('/carrinho');
+            const response = await apiClient.get('/api/carrinho');
             setCartItems(response.data.itens || []);
         } catch (err) {
             console.error("Erro ao buscar carrinho:", err);
@@ -29,7 +31,7 @@ export const CartProvider = ({ children }) => {
     const ensureCartExists = async () => {
         if (!user) return false;
         try {
-            await apiClient.post('/carrinho/iniciar'); 
+            await apiClient.post('/api/carrinho/iniciar'); 
             return true;
         } catch (error) {
             console.error("Falha ao iniciar ou criar o carrinho:", error);
@@ -46,7 +48,7 @@ const addItem = async (produto) => {
         // Garante que o carrinho existe antes de adicionar itens
         const cartReady = await ensureCartExists();
         if (!cartReady) {
-            alert('Falha ao preparar o carrinho. Tente fazer login novamente.');
+            toast.error('Falha ao preparar o carrinho. Tente fazer login novamente.');
             return;
         }
 
@@ -68,7 +70,7 @@ const addItem = async (produto) => {
 
 
         try {
-            const response = await apiClient.post('/carrinho/adicionar', {
+            const response = await apiClient.post('/api/carrinho/adicionar', {
                 produto_id: produto.id_produto,
                 quantidade: 1, 
                 // Usa o preço unitário validado
@@ -86,7 +88,7 @@ const addItem = async (produto) => {
     const esvaziarCarrinho = async () => {
         if (!user) return;
         try {
-            await apiClient.delete('/carrinho/esvaziar');
+            await apiClient.delete('/api/carrinho/esvaziar');
             setCartItems([]); // Limpa o estado local
         } catch (error) {
             console.error("Erro ao esvaziar o carrinho:", error);
@@ -95,7 +97,7 @@ const addItem = async (produto) => {
 
     const removerItemCarrinho = async (itemId) => {
         try {
-                        await apiClient.delete(`/carrinho/item/${itemId}`);
+                        await apiClient.delete(`/api/carrinho/item/${itemId}`);
 
                   setCartItems(currentItems =>
                 currentItems.filter(item => item.id_item_carrinho !== itemId)
@@ -108,7 +110,7 @@ const addItem = async (produto) => {
 
     const atualizarQuantidadeItem = async (itemId, newQuantity) => {
         try {
-            await apiClient.put(`/carrinho/item/${itemId}`, { quantidade: newQuantity });
+            await apiClient.put(`/api/carrinho/item/${itemId}`, { quantidade: newQuantity });
 
             setCartItems(currentItems =>
                 currentItems.map(item =>

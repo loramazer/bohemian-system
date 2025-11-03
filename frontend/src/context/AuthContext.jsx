@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, senha) => {
     try {
-      const response = await apiClient.post('/auth/login', { email, senha });
+      const response = await apiClient.post('/api/auth/login', { email, senha });
       const { token } = response.data;
       localStorage.setItem('token', token);
       const decoded = jwtDecode(token);

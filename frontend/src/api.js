@@ -30,7 +30,7 @@ export const getProducts = async (params) => {
   try {
     // O Axios transforma o objeto 'params' em query string
     // ex: /produtos?page=1&limit=9&sort=price_asc
-    const response = await apiClient.get('/produtos', { params });
+    const response = await apiClient.get('/api/produtos', { params });
     return response.data; // Retorna os dados da resposta (ex: { products: [...], pages: 5 })
   } catch (error) {
     console.error('Erro ao buscar produtos:', error);
@@ -45,7 +45,7 @@ export const getProducts = async (params) => {
  */
 export const getCategories = async () => {
   try {
-    const response = await apiClient.get('/categorias');
+    const response = await apiClient.get('/api/categorias');
     return response.data; // Retorna o array de categorias
   } catch (error) {
     console.error('Erro ao buscar categorias:', error);

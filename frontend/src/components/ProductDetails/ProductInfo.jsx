@@ -1,8 +1,7 @@
 import React, { useContext } from 'react';
-//import '../../styles/ProductDetails.css';
+
 import { FaHeart, FaShareAlt, FaShoppingCart, FaRegHeart } from 'react-icons/fa'; // NOVO: FaRegHeart
 import { CartContext } from '../../context/CartContext.jsx'; 
-import { FeedbackContext } from '../../context/FeedbackContext.jsx'; 
 // NOVO: Importar WishlistContext
 import { WishlistContext } from '../../context/WishlistContext.jsx'; 
 

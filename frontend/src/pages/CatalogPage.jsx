@@ -51,11 +51,24 @@ function CatalogPage() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        // CORREÇÃO: Usar a função importada
-        const data = await getCategories();
-        setCategories(data);
+        // 1. A 'response' do axios (ou api.js) é um objeto
+        const response = await getCategories();
+
+        // 2. Extraia o array de dentro de 'response.data'
+        //    (Se 'getCategories' já extrai 'data', talvez o array esteja em 'response' direto)
+        const categoriesData = response.data || response;
+
+        // 3. VERIFICAÇÃO DE SEGURANÇA: Só atualiza o estado se for um array
+        if (Array.isArray(categoriesData)) {
+          setCategories(categoriesData);
+        } else {
+          console.error("Erro: A API getCategories() não retornou um array.", categoriesData);
+          setCategories([]); // Define como vazio para não quebrar
+        }
+
       } catch (err) {
         console.error('Erro ao buscar categorias:', err);
+        setCategories([]); // Define como vazio em caso de falha na API
       }
     };
     fetchCategories();

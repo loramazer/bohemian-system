@@ -6,7 +6,7 @@ import { FaHeart, FaShoppingCart, FaSearch, FaChevronDown, FaSignOutAlt } from '
 import '../../styles/Header.css';
 import { AuthContext } from "../../context/AuthContext.jsx";
 import { CartContext } from "../../context/CartContext.jsx";
-import logoImage from '../../assets/bohemian-logo.png';
+import logoImage from '../../../public/bohemian-logo.png';
 
 const Header = () => {
     const [adminOpen, setAdminOpen] = useState(false);
