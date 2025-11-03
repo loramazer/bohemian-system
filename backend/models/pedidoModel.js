@@ -66,11 +66,7 @@ async function findAllAdmin(options) {
     let whereClauses = [];
 
     // --- CORREÇÃO 2: O JOIN ON foi corrigido ---
-    let baseSql = `FROM pedido p
-        JOIN usuario u ON p.fk_id_usuario = u.id_usuario 
-        JOIN forma_pagamento fp ON p.fk_forma_pagamento_id_forma_pagamento = fp.id_forma_pagamento
-        LEFT JOIN itempedido ip ON p.id_pedido = ip.fk_pedido_id_pedido
-    `;
+    let baseSql = `FROM pedido p JOIN usuario u ON p.fk_id_usuario = u.id_usuario JOIN forma_pagamento fp ON p.fk_forma_pagamento_id_forma_pagamento = fp.id_forma_pagamento LEFT JOIN itempedido ip ON p.id_pedido = ip.fk_pedido_id_pedido`;
     // --- MUDANÇA BEM AQUI ^^^ (de 'fk_cliente_id_cliente' para 'fk_id_usuario') ---
 
     // --- Filtros Dinâmicos ---
@@ -125,17 +121,27 @@ async function findAllAdmin(options) {
     };
 }
 
-// ... (O resto do seu arquivo: updatePaymentStatus, updateOrderStatus) ...
-async function updatePaymentStatus(pedidoId, status) {
-    const sql = `UPDATE forma_pagamento fp JOIN pedido p ON fp.id_forma_pagamento = p.fk_forma_pagamento_id_forma_pagamento SET fp.status_transacao = ? WHERE p.id_pedido = ?`;
-    const [result] = await db.execute(sql, [status, pedidoId]);
-    return result.affectedRows;
-}
-
 async function updateOrderStatus(pedidoId, statusPedido) {
     const sql = `UPDATE pedido SET status_pedido = ? WHERE id_pedido = ?`;
     const [result] = await db.execute(sql, [statusPedido, pedidoId]);
 return result.affectedRows;
+}
+async function atualizarStatusPagamento(paymentId, statusPagamento, statusPedido, dataPagamento) { // <-- 1. NOVO PARÂMETRO 'dataPagamento'
+    
+    // 2. Atualiza a 'forma_pagamento' (Query Achatada E com data_pagamento)
+    const sqlUpdateFormaPagamento = `UPDATE forma_pagamento fp JOIN pedido p ON fp.id_forma_pagamento = p.fk_forma_pagamento_id_forma_pagamento SET fp.status_transacao = ?, fp.data_pagamento = ? WHERE p.id_pedido = ?`;
+    
+    // 3. Passa a data de pagamento para a query
+    await db.execute(sqlUpdateFormaPagamento, [statusPagamento, dataPagamento, paymentId]);
+    console.log(`[pedidoModel] Status do pagamento (forma_pagamento) atualizado para ${statusPagamento} para o pedido ${paymentId}.`);
+
+    // 4. Atualiza a 'pedido' (Query Achatada)
+    const sqlUpdatePedido = `UPDATE pedido SET status_pedido = ? WHERE id_pedido = ?`;
+    
+    const [result] = await db.execute(sqlUpdatePedido, [statusPedido, paymentId]);
+    console.log(`[pedidoModel] Status do pedido (pedido) atualizado para ${statusPedido} para o pedido ${paymentId}.`);
+
+    return result.affectedRows;
 }
 
 
@@ -143,6 +149,5 @@ return result.affectedRows;
 module.exports = { 
     findByUsuarioId,
     findAllAdmin,
-    updatePaymentStatus, 
-    updateOrderStatus 
+    atualizarStatusPagamento
 };

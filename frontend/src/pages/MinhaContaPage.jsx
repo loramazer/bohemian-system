@@ -116,7 +116,7 @@ const MinhaContaPage = () => {
             showToast('Endereço salvo com sucesso!', 'success');
             setShowAddForm(false);
             // Re-busca os dados para atualizar a lista
-            const response = await apiClient.get('/usuario/me');
+            const response = await apiClient.get('/api/usuario/me');
             setAddresses(response.data.enderecos || []);
         } catch (error) {
             console.error("Erro ao salvar endereço:", error);

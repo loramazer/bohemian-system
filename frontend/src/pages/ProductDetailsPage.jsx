@@ -26,7 +26,7 @@ const ProductDetailsPage = () => {
         const fetchProduct = async () => {
             try {
                 // Vamos usar a rota da API configurada no seu vite.config.js
-                const response = await apiClient.get(`/produtos/${productId}`);
+                const response = await apiClient.get(`/api/produtos/${productId}`);
                 
                 if (response.status !== 200) {
                     throw new Error('Erro ao buscar o produto');

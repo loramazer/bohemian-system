@@ -67,7 +67,7 @@ const LoginForm = () => {
                     <Link to="/forgot-password">Esqueceu a senha?</Link>
                 </div>
 
-                {error && <p className="error-message">{error}</p>};           <button type="submit" className="login-button">Entrar</button>
+                {error && <p className="error-message">{error}</p>}           <button type="submit" className="login-button">Entrar</button>
 
                 <div className="signup-link">
                     <p>Não tem uma conta? <Link to="/register">Cadastre-se</Link></p>

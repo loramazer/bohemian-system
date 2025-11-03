@@ -47,11 +47,11 @@ const EditProductPage = () => {
             try {
                 setLoading(true);
                 // Busca de Categorias (sem /api/, pois apiClient já o tem)
-                const catResponse = await apiClient.get('/categorias');
+                const catResponse = await apiClient.get('/api/categorias');
                 setCategories(catResponse.data);
 
                 // Busca do Produto (sem /api/, pois apiClient já o tem)
-                const prodResponse = await apiClient.get(`/produtos/${productId}`);
+                const prodResponse = await apiClient.get(`/api/produtos/${productId}`);
                 const product = prodResponse.data;
 
                 setFormData({

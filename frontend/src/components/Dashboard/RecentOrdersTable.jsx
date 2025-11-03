@@ -6,7 +6,7 @@ import '../../styles/Dashboard.css';
 const RecentOrdersTable = ({ orders, onSelectOrder }) => {
   const [selectedOrderId, setSelectedOrderId] = useState(null);
 
-  // Mapeamento de status do PEDIDO (Logístico)
+ 
   const orderStatusLogisticoMap = {
     'in_process': 'Em Preparação', 
     'pending': 'Pendente', 
@@ -23,9 +23,9 @@ const RecentOrdersTable = ({ orders, onSelectOrder }) => {
     return orderStatusLogisticoMap[lowerStatus] || lowerStatus.charAt(0).toUpperCase() + lowerStatus.slice(1);
   };
   
-  // Função para formatação de moeda
+  
   const formatCurrency = (value) => {
-    // Garante que o valor é um número antes de formatar
+   
     const numericValue = parseFloat(value);
     if (isNaN(numericValue)) return 'R$ 0,00';
     
@@ -51,16 +51,13 @@ const RecentOrdersTable = ({ orders, onSelectOrder }) => {
       </div>
       <table className="orders-table">
         <thead>
-          {/* CORREÇÃO: Colocar a tag <tr> e a primeira tag <th> na mesma linha 
-             para eliminar o nó de texto vazio (whitespace) que causa o aviso de hidratação. 
-          */}
-          <tr><th></th>{/* Mantém a coluna para o checkbox */}
+          <tr><th></th>
             <th>Produto</th>
             <th>ID do Pedido</th>
             <th>Data</th>
             <th>Cliente</th>
-            <th>Status</th> {/* Agora é Status do Pedido (Logístico) */}
-            <th>Valor</th> {/* Agora é Valor Total (com frete) */}
+            <th>Status</th> 
+            <th>Valor</th> 
           </tr>
         </thead>
         <tbody>
@@ -82,12 +79,12 @@ const RecentOrdersTable = ({ orders, onSelectOrder }) => {
               <td>{new Date(order.dataPedido).toLocaleDateString()}</td>
               <td>{order.cliente}</td>
               <td>
-                {/* Status é agora o status_pedido, e a classe usa o status em minúsculo */}
+                
                 <span className={`status-badge status-${order.status.toLowerCase()}`}>
                   {mapStatusToLabel(order.status)}
                 </span>
               </td>
-              {/* Usa a formatação robusta */}
+             
               <td>{formatCurrency(order.valor_total_pedido)}</td>
             </tr>
           ))}

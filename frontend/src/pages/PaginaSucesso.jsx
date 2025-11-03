@@ -7,66 +7,59 @@ function PaginaSucesso() {
     const [searchParams] = useSearchParams();
     const [mensagem, setMensagem] = useState('Processando seu pagamento...');
 
+    // --- CORREÇÃO AQUI ---
     useEffect(() => {
-        console.log("--- PÁGINA DE SUCESSO CARREGADA ---");
+        console.log("--- PÁGINA DE STATUS CARREGADA ---");
 
-        try {
-            const paymentId = searchParams.get('payment_id');
-            const status = searchParams.get('status');
-            console.log("[DEBUG] payment_id:", paymentId, "status:", status);
+        const paymentId = searchParams.get('payment_id');
+        const status = searchParams.get('status');
+        console.log("[DEBUG] payment_id:", paymentId, "status:", status);
 
-            // --- MUDANÇA: Não precisamos mais do localStorage ---
-            // const dadosSalvosString = localStorage.getItem(...); // REMOVA ISSO
+        // Agora, chamamos o backend para 'approved' E 'pending'
+        if (paymentId && (status === 'approved' || status === 'pending')) {
+            console.log(`[DEBUG] Status ${status}. Chamando backend para registrar...`);
+            // A função 'confirmarPedido' no backend agora vai registrar
+            // tanto pedidos aprovados quanto pendentes.
+            registrarPedidoNoBackend(paymentId, status);
 
-            if (paymentId && status === 'approved') {
-                console.log("[DEBUG] Condição IF passou. Chamando backend...");
+        } else if (status === 'failure' || status === 'rejected') {
+            console.error("[DEBUG] Pagamento falhou ou foi rejeitado.");
+            setMensagem('Houve um problema ao processar seu pagamento. Tente novamente.');
 
-                // --- MUDANÇA: Enviar apenas o paymentId ---
-                confirmarPagamentoNoBackend(paymentId);
-
-                // localStorage.removeItem(...); // REMOVA ISSO
-
-            } else if (status === 'pending') {
-                console.log("[DEBUG] Pagamento pendente (PIX/Boleto). Aguardando webhook.");
-                setMensagem('Seu pagamento está pendente. Você receberá a confirmação assim que for aprovado.');
-            } else {
-                console.error("[DEBUG] Condição IF FALHOU. Status:", status);
-                setMensagem('Houve um problema ao processar seu pagamento. (Código: URL_DADOS_INVALIDOS)');
-                // localStorage.removeItem(...); // REMOVA ISSO
-            }
-
-        } catch (error) {
-            console.error("--- ERRO FATAL NO USEEFFECT ---", error);
-            setMensagem('Erro crítico ao ler dados da página.');
+        } else {
+            console.error("[DEBUG] Condição IF FALHOU. (paymentId ou status inválidos)");
+            setMensagem('Não foi possível processar seu pagamento. (Código: URL_DADOS_INVALIDOS)');
         }
-
     }, [searchParams]);
 
-    // --- MUDANÇA: Receber apenas 'paymentId' ---
-    const confirmarPagamentoNoBackend = async (paymentId) => {
+    const registrarPedidoNoBackend = async (paymentId, status) => {
         console.log("[DEBUG] Chamando fetch() para /api/pagamentos/confirmar-pedido...");
 
         try {
             const response = await fetch('http://localhost:3000/api/pagamentos/confirmar-pedido', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                // --- MUDANÇA: Enviar apenas 'paymentId' ---
-                body: JSON.stringify({ paymentId }),
+                body: JSON.stringify({ paymentId }), // Só precisamos enviar o paymentId
             });
 
             console.log("[DEBUG] Resposta do fetch:", response);
 
             if (!response.ok) {
-                throw new Error('Falha na confirmação do backend');
+                throw new Error('Falha no registro do pedido no backend');
             }
 
             const dadosPedido = await response.json();
-            console.log("[DEBUG] Pedido confirmado! Resposta:", dadosPedido);
-            setMensagem(`Pedido #${dadosPedido.id_pedido || dadosPedido.id} confirmado com sucesso!`);
+
+            // Mensagem de sucesso baseada no status
+            if (status === 'approved') {
+                setMensagem(`Pedido #${dadosPedido.id_pedido} confirmado com sucesso!`);
+            } else if (status === 'pending') {
+                setMensagem(`Pedido #${dadosPedido.id_pedido} registrado. Aguardando pagamento.`);
+            }
 
         } catch (error) {
             console.error("[DEBUG] Erro DENTRO do fetch:", error);
-            setMensagem('Erro ao confirmar seu pedido. (Código: FETCH_FAILED)');
+            setMensagem('Erro ao registrar seu pedido. (Código: FETCH_FAILED)');
         }
     };
 

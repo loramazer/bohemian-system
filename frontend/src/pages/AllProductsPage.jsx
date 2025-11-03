@@ -94,7 +94,7 @@ const AllProductsPage = () => {
             // Removemos o prefixo /api/ da chamada
             // ANTES: await apiClient.delete(`/api/produtos/${productToDelete.id_produto}`);
             // DEPOIS:
-            await apiClient.delete(`/produtos/${productToDelete.id_produto}`);
+            await apiClient.delete(`/api/produtos/${productToDelete.id_produto}`);
             
             showToast('Produto removido com sucesso!', 'trash-removed');
             

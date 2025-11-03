@@ -48,7 +48,6 @@ const AllOrdersPage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // Estados de Paginação
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const [totalPedidos, setTotalPedidos] = useState(0);
@@ -56,7 +55,7 @@ const AllOrdersPage = () => {
     // Estados de Filtro
     const [filters, setFilters] = useState({
         search: '',
-        status: '', // Filtra por Status de Pagamento
+        status: '', 
         startDate: '',
         endDate: '',
     });
@@ -77,19 +76,18 @@ const AllOrdersPage = () => {
             try {
                 const params = {
                     page: currentPage,
-                    limit: 15, // 15 pedidos por página
+                    limit: 15, 
                     search: activeFilters.search || null,
                     status: activeFilters.status || null,
                     startDate: activeFilters.startDate || null,
                     endDate: activeFilters.endDate || null,
                 };
                 
-                // Limpa parâmetros nulos
+                
                 Object.keys(params).forEach(key => {
                     if (params[key] === null) delete params[key];
                 });
 
-                // O backend (findAllAdmin) agora retorna 'status' (pagamento) e 'status_pedido' (logístico)
                 const response = await apiClient.get('/api/dashboard/orders/all', { params });
                 
                 setPedidos(response.data.pedidos || []);
@@ -109,7 +107,6 @@ const AllOrdersPage = () => {
         }
     }, [user, authLoading, navigate, currentPage, activeFilters, showToast]);
 
-    // --- Handlers ---
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
@@ -122,8 +119,8 @@ const AllOrdersPage = () => {
     };
 
     const handleApplyFilters = () => {
-        setCurrentPage(1); // Reseta para a página 1
-        setActiveFilters(filters); // Aplica os filtros
+        setCurrentPage(1); 
+        setActiveFilters(filters); 
     };
     
     const handleClearFilters = () => {
@@ -132,25 +129,22 @@ const AllOrdersPage = () => {
         setCurrentPage(1);
     };
 
-    // ATUALIZADO: Esta função agora lida com a mudança do STATUS DO PEDIDO (Logístico)
+    
     const handleStatusChange = async (pedidoId, newStatusPedido, currentPaymentStatus) => {
         
-        // 1. VERIFICAÇÃO DE PAGAMENTO APROVADO
         if (currentPaymentStatus !== 'approved') {
             showToast('A edição do status do pedido só é permitida após a aprovação do pagamento.', 'warning');
             return;
         }
 
         try {
-            // newStatusPedido é o código ENUM (ex: 'authorized')
-            // Chama a API para atualizar o status do pedido (Logístico)
+            
             await apiClient.put(`/api/dashboard/orders/status/${pedidoId}`, { status: newStatusPedido });
             
-            // Atualiza o estado local para refletir a mudança no campo CORRETO
             setPedidos(prevPedidos =>
                 prevPedidos.map(pedido =>
                     pedido.id_pedido === pedidoId
-                        ? { ...pedido, status_pedido: newStatusPedido } // ATUALIZA status_pedido com o código ENUM
+                        ? { ...pedido, status_pedido: newStatusPedido } 
                         : pedido
                 )
             );
@@ -161,7 +155,7 @@ const AllOrdersPage = () => {
         }
     };
 
-    // Função para formatar o valor
+    
     const formatCurrency = (value) => {
         return new Intl.NumberFormat('pt-BR', {
             style: 'currency',
@@ -169,22 +163,21 @@ const AllOrdersPage = () => {
         }).format(value);
     };
 
-    // Função para formatar o Status de Pagamento (fp.status_transacao)
     const formatPaymentStatus = (status) => {
-        // Usa o mapeamento de status de PAGAMENTO
+        
         return paymentStatusMap[status.toLowerCase()] || status;
     };
     
-    // Função para formatar o Status do Pedido (p.status_pedido)
+   
     const formatOrderStatus = (status) => {
-        // Tenta encontrar o texto de exibição pelo código ENUM/DB
+        
         return orderStatusLogisticoMap[status] || status; 
     };
 
-    // Função para mapear o Status do Pedido para a classe CSS
+    
     const getOrderStatusClass = (status) => {
         if (!status) return 'indefinido';
-        // Retorna o próprio código (ex: 'authorized', 'in_process', etc.) para a classe CSS
+        
         return status.toLowerCase(); 
     };
 
@@ -201,7 +194,6 @@ const AllOrdersPage = () => {
                     <h2 className="admin-page-title">Todos os Pedidos ({totalPedidos})</h2>
                 </div>
 
-                {/* --- Barra de Filtros --- */}
                 <div className="orders-filter-bar">
                     <input
                         type="text"
@@ -217,7 +209,6 @@ const AllOrdersPage = () => {
                         onChange={handleFilterChange}
                         className="filter-select"
                     >
-                        {/* Status de Pagamento para Filtragem */}
                         <option value="">Todos os Status (Pagamento)</option> 
                         {paymentStatusOptions.map(status => (
                             <option key={status} value={status}>{formatPaymentStatus(status)}</option>
@@ -241,7 +232,6 @@ const AllOrdersPage = () => {
                     <button onClick={handleClearFilters} className="filter-btn secondary">Limpar</button>
                 </div>
                 
-                {/* --- Tabela de Pedidos --- */}
                 <div className="orders-table-container">
                     {loading && <p>Atualizando...</p>}
                     {error && <p className="error-message">{error}</p>}
@@ -259,7 +249,7 @@ const AllOrdersPage = () => {
                                     <th>Data</th>
                                     <th>Total</th>
                                     <th>Status (Pagamento)</th>
-                                    <th>Status (Pedido)</th> {/* NOVO HEADER */}
+                                    <th>Status (Pedido)</th>
                                     <th>Ações</th>
                                 </tr>
                             </thead>
@@ -274,20 +264,18 @@ const AllOrdersPage = () => {
                                         <td>{pedido.cliente_nome}</td>
                                         <td>{new Date(pedido.dataPedido).toLocaleDateString('pt-BR')}</td>
                                         <td>{formatCurrency(pedido.total_pedido)}</td>
-                                        
-                                        {/* COLUNA 1: STATUS DE PAGAMENTO (Não editável) */}
+                                    
                                         <td>
                                             <span 
-                                                // Usa o status de pagamento (ex: approved) para a classe CSS (verde)
+                                               
                                                 className={`status-badge status-${pedido.status}`} 
                                                 style={{ padding: '8px 12px', borderRadius: '5px' }}
                                             >
-                                                {/* Exibe o texto correto (ex: Aprovado) */}
                                                 {formatPaymentStatus(pedido.status)}
                                             </span>
                                         </td>
                                         
-                                        {/* COLUNA 2: STATUS DO PEDIDO (Editável - Envia código ENUM) */}
+                                        
                                         <td>
                                             <select
                                                 className={`status-select status-${getOrderStatusClass(pedido.status_pedido)}`} 
@@ -318,7 +306,6 @@ const AllOrdersPage = () => {
                     )}
                 </div>
 
-                {/* --- Paginação --- */}
                 {totalPages > 1 && (
                     <Pagination
                         currentPage={currentPage}

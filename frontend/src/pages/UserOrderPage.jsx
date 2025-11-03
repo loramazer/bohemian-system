@@ -48,7 +48,21 @@ const getOrderStatusClass = (status) => {
 // Componente para o Detalhe da Compra (Renderiza dados reais)
 const PurchaseDetail = ({ order, onProductClick }) => {
     
-    const address = `${order.rua}, ${order.numero}${order.complemento ? ' - ' + order.complemento : ''}, ${order.cidade}/${order.estado}`;
+    let address = '';
+    // O backend envia 'rua' como 'Retirada na Loja' ou 'cidade' como null
+    // se for um pedido sem endereço (devido ao LEFT JOIN).
+    if (order.rua === 'Retirada na Loja' || order.cidade === null) {
+        address = 'Retirada na Loja';
+    } else {
+        // Só constrói o endereço completo se ele existir
+        const rua = order.rua || 'Rua não informada';
+        const numero = order.numero || 'S/N';
+        const complemento = order.complemento ? ` - ${order.complemento}` : '';
+        const cidade = order.cidade || '';
+        const estado = order.estado || '';
+
+        address = `${rua}, ${numero}${complemento}, ${cidade}/${estado}`;
+    }
 
     // Define o frete fixo
     const frete = 15.00;
@@ -142,7 +156,22 @@ const UserOrdersPage = () => {
                 setError(null);
                 try {
                     const response = await apiClient.get('/api/pedidos/meus-pedidos');
-                    setOrders(response.data);
+
+                    // Adicione este log para ver o que a API está realmente retornando
+                    console.log("Resposta da API /meus-pedidos:", response.data);
+
+                    // Tenta encontrar o array. O 'data' do Axios está em 'response.data'.
+                    // Se sua API retornar { pedidos: [...] }, precisamos de response.data.pedidos
+                    const ordersArray = response.data.pedidos || response.data.orders || response.data;
+
+                    // Verificação de segurança
+                    if (Array.isArray(ordersArray)) {
+                        setOrders(ordersArray);
+                    } else {
+                        console.error("Erro: A API /meus-pedidos não retornou um array.", response.data);
+                        setOrders([]); // Define como vazio para não quebrar
+                    }
+
                 } catch (err) {
                     console.error("Erro ao buscar pedidos:", err);
                     setError("Não foi possível carregar seus pedidos.");
@@ -218,7 +247,7 @@ const UserOrdersPage = () => {
                                             
                                             <div className="order-summary-row">
                                                 <div className="product-info-summary">
-                                                    <img src={firstItemImage} alt={order.itens[0].nome_produto} className="product-summary-img" />
+                                                    <img src={firstItemImage} alt={order.itens[0]?.nome_produto || 'Item do pedido'} className="product-summary-img" />
                                                     <div className="product-details">
                                                         <p className="product-name">{order.itens[0]?.nome_produto || 'Pedido sem itens cadastrados'}</p>
                                                         {order.itens.length > 1 && (
