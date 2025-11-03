@@ -1,38 +1,44 @@
+// loramazer/bohemian-system/bohemian-system-refatorar-organizacao/frontend/src/components/Dashboard/RecentOrdersTable.jsx
+
 import React, { useState } from 'react';
 import '../../styles/Dashboard.css';
 
 const RecentOrdersTable = ({ orders, onSelectOrder }) => {
-  // ESTADO: Armazena o ID do pedido que está atualmente selecionado
   const [selectedOrderId, setSelectedOrderId] = useState(null);
 
-  // Mapeia o status do backend para um texto amigável no frontend
+  // Mapeamento de status do PEDIDO (Logístico)
+  const orderStatusLogisticoMap = {
+    'in_process': 'Em Preparação', 
+    'pending': 'Pendente', 
+    'cancelled': 'Cancelado', 
+    'authorized': 'Enviado', 
+    'delivered': 'Entregue'  
+  };
+
   const mapStatusToLabel = (status) => {
     if (!status) {
       return 'N/A';
     }
-    switch (status) {
-      case 'approved':
-        return 'Enviado';
-      case 'pending':
-        return 'Pendente';
-      case 'in_process':
-        return 'Em Processo';
-      case 'rejected':
-        return 'Rejeitado';
-      case 'cancelled':
-        return 'Cancelado';
-      default:
-        return 'Desconhecido';
-    }
+    const lowerStatus = status.toLowerCase();
+    return orderStatusLogisticoMap[lowerStatus] || lowerStatus.charAt(0).toUpperCase() + lowerStatus.slice(1);
+  };
+  
+  // Função para formatação de moeda
+  const formatCurrency = (value) => {
+    // Garante que o valor é um número antes de formatar
+    const numericValue = parseFloat(value);
+    if (isNaN(numericValue)) return 'R$ 0,00';
+    
+    return numericValue.toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    });
   };
 
   const handleCheckboxChange = (orderId, order) => {
-    // Implementa a lógica MÚTUA EXCLUSIVA
     if (selectedOrderId === orderId) {
-      // Se já estiver selecionado, deseleciona (para permitir desmarcar)
       setSelectedOrderId(null);
     } else {
-      // Seleciona o novo item e dispara o modal
       setSelectedOrderId(orderId);
       onSelectOrder(order);
     }
@@ -53,8 +59,8 @@ const RecentOrdersTable = ({ orders, onSelectOrder }) => {
             <th>ID do Pedido</th>
             <th>Data</th>
             <th>Cliente</th>
-            <th>Status</th>
-            <th>Valor</th>
+            <th>Status</th> {/* Agora é Status do Pedido (Logístico) */}
+            <th>Valor</th> {/* Agora é Valor Total (com frete) */}
           </tr>
         </thead>
         <tbody>
@@ -63,7 +69,6 @@ const RecentOrdersTable = ({ orders, onSelectOrder }) => {
               key={index}
             >
               <td>
-                {/* Checkbox controlado pelo estado, comportando-se como Radio Button visualmente */}
                 <input
                   type="checkbox"
                   id={`order-${order.id_pedido}`}
@@ -77,11 +82,13 @@ const RecentOrdersTable = ({ orders, onSelectOrder }) => {
               <td>{new Date(order.dataPedido).toLocaleDateString()}</td>
               <td>{order.cliente}</td>
               <td>
+                {/* Status é agora o status_pedido, e a classe usa o status em minúsculo */}
                 <span className={`status-badge status-${order.status.toLowerCase()}`}>
                   {mapStatusToLabel(order.status)}
                 </span>
               </td>
-              <td>{`R$${parseFloat(order.valor_total_pedido).toFixed(2)}`}</td>
+              {/* Usa a formatação robusta */}
+              <td>{formatCurrency(order.valor_total_pedido)}</td>
             </tr>
           ))}
         </tbody>

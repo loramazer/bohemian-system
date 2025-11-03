@@ -13,7 +13,8 @@ const dashboardRoutes = require('./routes/dashboardRoutes');
 const enderecoRoutes = require('./routes/enderecoRoutes');
 const pagamentoRoutes = require('./routes/pagamentoRoutes');
 const favoritoRoutes = require('./routes/favoritoRoutes');
-
+const pedidoRoutes = require('./routes/pedidoRoutes');
+const usuarioRoutes = require('./routes/usuarioRoutes');
 
 
 const app = express();
@@ -27,17 +28,21 @@ const apiRouter = express.Router();
 // 3. Use o roteador principal para definir suas rotas
 apiRouter.use('/auth', authRoutes);
 apiRouter.use('/categorias', categoriaRoutes);
-apiRouter.use('/pagamento', pagamentoRoutes);
+//apiRouter.use('/pagamento', pagamentoRoutes);
 apiRouter.use('/pagamentos', pagamentoRoutes);
 apiRouter.use('/produtos', produtoRoutes);
 apiRouter.use('/dashboard', dashboardRoutes);
 apiRouter.use('/carrinho', carrinhoRoutes);
 apiRouter.use('/enderecos', enderecoRoutes);
 apiRouter.use('/favoritos', favoritoRoutes);
+apiRouter.use('/pedidos', pedidoRoutes);
+apiRouter.use('/usuario', usuarioRoutes);
 
 
 // 4. Use o prefixo /api para o roteador principal
 app.use('/api', apiRouter);
+
+console.log("--- ROTAS DO DASHBOARD CARREGADAS COM SUCESSO ---");
 
 
 // Rota inicial de teste
@@ -45,7 +50,12 @@ app.get('/', (req, res) => {
     res.send('Servidor principal está rodando!');
 });
 
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Servidor do backend rodando na porta ${PORT}`);
+  console.log(`Servidor do backend rodando na porta ${PORT}`);
+  // VERIFIQUE SE O MYSQL ESTÁ CONECTADO
+  require('./config/db').query('SELECT 1')
+    .then(() => console.log('MySQL conectado com sucesso!'))
+    .catch(err => console.error('Falha na conexão com MySQL:', err));
 });

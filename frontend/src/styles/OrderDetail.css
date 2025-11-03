@@ -1,17 +1,8 @@
 .order-detail-main {
     padding: 40px 0;
+    margin-top: -40px;
 }
 
-.admin-breadcrumbs {
-    margin-bottom: 20px;
-    font-size: 0.9rem;
-    color: #888;
-}
-
-.admin-breadcrumbs a {
-    color: #888;
-    text-decoration: none;
-}
 
 .order-detail-header {
     display: flex;
@@ -20,33 +11,78 @@
     margin-bottom: 30px;
 }
 
+/* --- CORREÇÃO (ID ao lado do Título) --- */
 .order-detail-header h2 {
     font-size: 2rem;
     color: #333;
+    white-space: nowrap; /* Impede que quebre a linha */
+    margin-right: 50px;
 }
 
 .order-actions {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 15px; /* Aumentado o espaço */
+    /* NOVO: Permite quebrar linha em telas pequenas */
+    flex-wrap: wrap; 
 }
 
-.order-status-badge {
-    background-color: #d1e7dd;
-    color: #0f5132;
-    padding: 5px 10px;
+/* --- CORREÇÃO (Tamanho dos Controles) --- */
+.order-actions .order-status-badge,
+.order-actions select,
+.order-actions .save-btn {
+    padding: 10px 16px;    /* Aumenta o padding */
+    font-size: 0.95rem;    /* Aumenta a fonte */
+    font-weight: 600;
+    height: 42px;          /* Define altura fixa para alinhar */
+    box-sizing: border-box;
     border-radius: 5px;
-    font-size: 0.9rem;
+}
+
+.order-actions .order-status-badge {
+    line-height: 1.2; /* Alinha o texto do badge verticalmente */
+    /* NOVO: Garante o alinhamento com os controles */
+    display: flex; 
+    align-items: center;
+}
+
+.order-actions select {
+    border: 1px solid #ccc;
+    background-color: #fff;
+    color: #333;
+    /* NOVO: Define largura mínima para o select */
+    min-width: 150px; 
 }
 
 .save-btn {
-    padding: 8px 15px;
+    padding: 10px 16px;
     background-color: #5d7a7b;
     color: #fff;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    font-weight: 600;
 }
+
+/* --- NOVAS CLASSES DE STATUS (para o badge) --- */
+.order-status-badge.status-approved,
+.order-status-badge.status-delivered, /* Adicionado Delivered (Logístico) */
+.order-status-badge.status-authorized {
+    background-color: #d1e7dd;
+    color: #0f5132;
+}
+.order-status-badge.status-pending,
+.order-status-badge.status-in_process {
+    background-color: #fff3cd;
+    color: #664d03;
+}
+.order-status-badge.status-rejected,
+.order-status-badge.status-cancelled,
+.order-status-badge.status-failure {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
 
 /* Estilos para os cartões de informação */
 .info-cards-grid {
@@ -78,30 +114,22 @@
     line-height: 1.6;
 }
 
-.card-btn {
-    margin-top: auto;
-    padding: 8px 15px;
-    border: 1px solid #5d7a7b;
-    border-radius: 5px;
-    background-color: transparent;
-    color: #5d7a7b;
-    cursor: pointer;
-    align-self: flex-start;
-}
-
 /* Seção de produtos e resumo */
 .products-summary-section {
     display: flex;
     gap: 40px;
+    flex-wrap: wrap; /* Adicionado para responsividade */
 }
 
 .order-products-table-container {
     flex: 2;
+    min-width: 400px; /* Impede que fique muito pequeno */
 }
 
 .order-products-table-header {
     display: grid;
-    grid-template-columns: 30px 2fr 1fr 1fr 1fr;
+    /* CORREÇÃO: Removido o espaço para o checkbox (de 5 colunas para 4) */
+    grid-template-columns: 2fr 1fr 1fr 1fr;
     gap: 10px;
     font-weight: bold;
     border-bottom: 2px solid #ddd;
@@ -110,7 +138,8 @@
 
 .order-product-row {
     display: grid;
-    grid-template-columns: 30px 2fr 1fr 1fr 1fr;
+    /* CORREÇÃO: Removido o espaço para o checkbox (de 5 colunas para 4) */
+    grid-template-columns: 2fr 1fr 1fr 1fr;
     gap: 10px;
     align-items: center;
     padding: 20px 0;
@@ -136,6 +165,7 @@
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     height: fit-content;
+    min-width: 300px; /* Largura mínima */
 }
 
 .order-summary-container h3 {
@@ -155,4 +185,22 @@
     border-top: 1px solid #ddd;
     padding-top: 10px;
     margin-top: 10px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .order-detail-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    .products-summary-section {
+        flex-direction: column;
+    }
+    
+    .order-actions {
+        /* Garante que os botões/selects fiquem em linha cheia ou lado a lado */
+        width: 100%;
+        justify-content: space-between;
+    }
 }

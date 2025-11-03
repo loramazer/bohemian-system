@@ -1,0 +1,462 @@
+.orders-main-content {
+    background-color: #fcfcfc;
+    padding: 40px 0 80px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.page-title {
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: #333;
+    padding: 0 20px 15px;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #516A6A;
+    display: inline-block;
+}
+
+.month-group {
+    margin-bottom: 30px;
+}
+
+.month-title {
+    font-size: 1.1rem;
+    color: #555;
+    margin: 0 20px 15px;
+    padding-bottom: 5px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+/* --- Cartão de Pedido --- */
+.order-item-card {
+    background-color: #fff;
+    border: 1px solid #f0f0f0;
+    border-radius: 8px;
+    margin: 0 20px 15px;
+    padding: 15px 20px;
+    transition: box-shadow 0.2s, border-color 0.2s;
+}
+.order-item-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    border-color: #e5e5e5;
+}
+
+/* --- Header do Item --- */
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #f9f9f9;
+}
+
+.order-status {
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+}
+
+/* Status: APROVADO, ENTREGUE (Verde) */
+.status-approved, .status-authorized, .status-aprovado, .status-entregue {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+/* Status: EM PREPARAÇÃO, PENDENTE (Amarelo/Laranja) */
+/* CORREÇÃO: Adicionado .status-in-process para alinhar com o mapeamento logístico "Em Preparação" */
+.status-in_process, .status-pending, .status-em-processamento, .status-pendente, .status-in-process {
+    background-color: #fffde7;
+    color: #ffb300;
+}
+
+/* Status: REJEITADO, CANCELADO (Vermelho) */
+.status-rejected, .status-cancelled, .status-failure, .status-rejeitado, .status-cancelado {
+    background-color: #ffebee;
+    color: #d32f2f;
+}
+
+.order-date {
+    color: #999;
+    font-size: 0.8rem;
+    font-weight: 400;
+}
+
+/* --- Resumo Fechado --- */
+.order-summary-row {
+    display: flex;
+    align-items: center; /* Isso centraliza a imagem e o bloco de texto verticalmente */
+    gap: 20px;
+}
+
+.product-info-summary {
+    display: flex;
+    align-items: center; /* Isso centraliza a imagem e o bloco de texto verticalmente */
+    gap: 15px;
+    flex: 1;
+}
+
+.product-summary-img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #eee;
+    flex-shrink: 0; /* Impede a imagem de encolher */
+}
+
+/* --- CORREÇÃO 1 (Resumo Fechado) --- */
+/* Este é o contêiner do texto (Nome e "+ 1 item") */
+.product-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;  /* Centraliza verticalmente os textos dentro deste bloco */
+    align-items: flex-start;  /* Alinha os textos à esquerda */
+    gap: 2px; /* Adiciona um pequeno espaço entre o nome e o "+1 item" */
+    height: 100%; /* Garante que ocupe a altura para centralizar */
+}
+
+/* Remove margens negativas */
+.product-info-summary .product-name {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #333;
+    margin: 0; /* Remove a margem negativa */
+    line-height: 1.2;
+}
+
+/* Remove margens negativas */
+.more-items-count {
+    color: #888;
+    font-size: 0.8rem;
+    margin: 0; /* Remove a margem negativa */
+    line-height: 1.2;
+    margin-top: -13px;
+}
+/* --- FIM DA CORREÇÃO 1 --- */
+
+
+/* --- Ações --- */
+.order-actions {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.order-actions.single-action {
+    width: auto;
+    justify-content: flex-end;
+}
+
+.action-btn {
+    flex: 1;
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 5px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.order-actions.single-action .action-btn {
+    flex: unset;
+    padding: 8px 15px;
+    font-size: 0.85rem;
+}
+
+.view-btn {
+    background-color: #516A6A;
+    color: #fff;
+}
+.view-btn:hover, .view-btn.active {
+    background-color: #3b5050;
+    box-shadow: 0 2px 6px rgba(81, 106, 106, 0.3);
+}
+
+.re-buy-btn {
+    background-color: #f0f0f0;
+    color: #516A6A;
+    border: 1px solid #d0d0d0;
+}
+.re-buy-btn:hover {
+    background-color: #e5e5e5;
+    color: #3b5050;
+}
+
+/* --- Detalhes do Pedido --- */
+.purchase-detail-card {
+    border-top: 1px dashed #e0e0e0;
+    margin-top: 15px;
+    padding-top: 15px;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.detail-title {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.order-id {
+    font-size: 0.9rem;
+    color: #888;
+    font-weight: 400;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+}
+
+.detail-items {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.detail-item-row {
+    display: flex;
+    align-items: center; /* Mantém o alinhamento vertical */
+    gap: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f9f9f9;
+}
+
+.detail-item-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.detail-item-img {
+    width: 60px;
+    height: 60px;
+    min-width: 60px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #eee;
+}
+
+/* --- INÍCIO DA CORREÇÃO 2 (Detalhes Abertos) --- */
+.detail-item-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centraliza o bloco de texto verticalmente */
+    align-items: flex-start; /* Alinha os textos à esquerda */
+    gap: 2px; /* Espaço entre os itens */
+}
+
+/* Remove margens negativas */
+.detail-item-info .item-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.3;
+}
+
+/* Remove margens negativas */
+.detail-item-info .item-qty {
+    font-size: 0.85rem;
+    color: #777;
+    margin: 0;
+}
+
+/* Remove margens negativas */
+.product-link-btn {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #516A6A;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    text-align: left;
+    margin: 0;
+}
+/* --- FIM DA CORREÇÃO 2 --- */
+
+
+.product-link-btn:hover {
+    text-decoration: underline;
+}
+
+.item-price {
+    font-weight: 600;
+    color: #333;
+    font-size: 0.95rem;
+    text-align: right;
+}
+
+/* --- Resumo Financeiro --- */
+.detail-summary {
+    background-color: #fdfdfd;
+    border: 1px solid #f0f0f0;
+    border-radius: 6px;
+    padding: 10px;
+    height: fit-content;
+    margin-top: 0;
+}
+
+.summary-heading {
+    font-size: 1rem;
+    color: #555;
+    margin: 0 0 10px 0;
+    padding-bottom: 5px;
+    /* border-bottom: 1px solid #eee; */ /* Linha removida */
+    font-weight: 600;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; 
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+.summary-row span:first-child {
+    color: #666;
+}
+.summary-row span:last-child {
+    font-weight: 500;
+}
+
+.summary-total {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #333;
+    /* border-top: 1px solid #ddd; */ /* Linha removida */
+    padding-top: 8px;
+    margin-top: 10px;
+}
+
+.shipping-cost {
+    color: #2e7d32;
+    font-weight: 600;
+    margin-top: 0; /* Correção da margem negativa */
+}
+
+.detail-shipping-info {
+    border-top: 1px solid #f0f0f0;
+    padding-top: 15px;
+    margin-top: 20px;
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+.detail-shipping-info p {
+    margin: 0 0 5px 0;
+}
+
+.help-link {
+    display: inline-block;
+    margin-top: 15px;
+    font-size: 0.85rem;
+    color: #516A6A;
+    font-weight: 500;
+    text-decoration: none;
+}
+.help-link:hover {
+    text-decoration: underline;
+}
+
+/* --- Paginação --- */
+.orders-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-top: 50px;
+    padding: 0 20px;
+}
+
+.orders-pagination button {
+    padding: 8px 18px;
+    border: 1px solid #d0d0d0;
+    background-color: #fff;
+    color: #516A6A;
+    border-radius: 5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.orders-pagination button:hover:not(:disabled) {
+    background-color: #f5f5f5;
+    border-color: #516A6A;
+}
+
+.orders-pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.no-results {
+    text-align: center;
+    color: #888;
+    font-size: 1.1rem;
+    margin: 50px 20px;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 8px;
+    border: 1px solid #f0f0f0;
+}
+
+/* --- Responsividade --- */
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 1.8rem;
+    }
+
+    .order-summary-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .order-actions.single-action {
+        width: 100%;
+        justify-content: stretch;
+    }
+    
+    .action-btn {
+        flex: 1;
+    }
+
+    .detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .detail-summary {
+        order: -1;
+        margin-bottom: 20px;
+    }
+
+    .item-price {
+        text-align: left;
+        margin-top: 5px;
+    }
+
+    .detail-item-row {
+        align-items: flex-start;
+    }
+}
+
+/* Adicione isso ao final de frontend/src/styles/UserOrderPage.css */
+.detail-shipping-info p {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}

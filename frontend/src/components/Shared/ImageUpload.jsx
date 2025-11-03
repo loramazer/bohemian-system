@@ -1,13 +1,14 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useContext } from 'react'; // Importar useContext
 import '../../styles/ImageUpload.css';
 import { FaImage, FaCheckCircle, FaTrashAlt } from 'react-icons/fa';
+import { FeedbackContext } from '../../context/FeedbackContext.jsx'; // Importar o Contexto
 
-// NOVO: Adiciona a prop 'error'
 const ImageUpload = ({ uploadedFiles, onFileChange, onSubmit, error }) => {
     const fileInputRef = useRef(null);
     const [isDragging, setIsDragging] = useState(false);
+    const { showToast } = useContext(FeedbackContext);
 
-    const handleUploadBoxClick = () => {
+const handleUploadBoxClick = () => {
         fileInputRef.current.click();
     };
 
@@ -42,7 +43,11 @@ const ImageUpload = ({ uploadedFiles, onFileChange, onSubmit, error }) => {
         );
 
         if (uploadedFiles.length + filesToAdd.length > 4) {
-            alert(`Você pode adicionar no máximo 4 imagens. Você já tem ${uploadedFiles.length} e tentou adicionar ${filesToAdd.length}.`);
+            const message = `Você pode adicionar no máximo 4 imagens. Você já tem ${uploadedFiles.length}.`;
+            
+            // *** CORREÇÃO AQUI ***
+            // Trocamos 'wishlist-removed' por 'warning'
+            showToast(message, 'warning'); 
             return;
         }
 
@@ -70,7 +75,8 @@ const ImageUpload = ({ uploadedFiles, onFileChange, onSubmit, error }) => {
         onFileChange(prevFiles => prevFiles.filter(file => file.name !== fileName));
     };
 
-const renderFileItem = (file, index) => (
+    const renderFileItem = (file, index) => (
+        // ... (o renderFileItem permanece igual) ...
         <div key={file.name} className="thumbnail-item">
             <img src={file.url} alt={`Thumbnail ${index + 1}`} />
             <div className="file-info">
@@ -80,9 +86,7 @@ const renderFileItem = (file, index) => (
                         <div className="progress loading"></div>
                     </div>
                 )}
-                {/* O checkmark é movido para o contêiner de ações */}
             </div>
-            {/* CRÍTICO: NOVO CONTÊINER PARA OS ÍCONES */}
             <div className="thumbnail-actions">
                 {file.status === 'completed' && (
                     <FaCheckCircle className="checkmark-icon" />
@@ -93,9 +97,9 @@ const renderFileItem = (file, index) => (
     );
 
     return (
+        // ... (o retorno JSX permanece igual) ...
         <div className="image-upload-container">
             <h3>Imagem</h3>
-            {/* Adiciona classe de erro se a prop 'error' estiver presente */}
             <div
                 className={`upload-box ${isDragging ? 'dragging' : ''} ${error ? 'has-error' : ''}`}
                 onClick={handleUploadBoxClick}
@@ -107,7 +111,6 @@ const renderFileItem = (file, index) => (
                 <p>Solte ou clique para selecionar imagens</p>
                 <p>Até 4 arquivos (.jpg, .png, .gif)</p>
             </div>
-            {/* EXIBE O ERRO ABAIXO DO UPLOAD BOX */}
             {error && <p className="image-error-text">{error}</p>} 
             
             <input

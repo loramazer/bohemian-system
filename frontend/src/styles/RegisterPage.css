@@ -2,18 +2,32 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 40px 20px;
+    justify-content: center; /* centraliza verticalmente */
+    min-height: 100vh; /* ocupa a tela inteira */
+    padding: 20px;
+    margin-top: -25px;
 }
 
 .register-breadcrumbs {
     font-size: 0.9rem;
-    color: #888;
-    margin-bottom: 20px;
+    color: #5d7a7b;
+    margin-bottom: 10px; /* aproxima o link do formulário */
+    max-width: 500px; /* <-- MUDANÇA (para 500px) */
+    width: 100%;
+    text-align: left;
+    margin-bottom: 30px;
 }
 
 .register-breadcrumbs a {
-    color: #888;
+    text-align: left;
+    margin-left: -420px; /* <-- MUDANÇA (removido -470px) */
+    color: #5d7a7b; /* mesma cor do login */
     text-decoration: none;
+    font-weight: 500;
+}
+
+.register-breadcrumbs a:hover {
+    text-decoration: underline;
 }
 
 .register-form-wrapper {

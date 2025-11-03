@@ -1,10 +1,11 @@
 // loramazer/bohemian-system/bohemian-system-refatorar-organizacao/frontend/src/pages/AddProductPage.jsx
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react'; // 1. Importar useContext
 import ProductForm from '../components/Admin/ProductForm.jsx'; 
 import ImageUpload from '../components/Shared/ImageUpload.jsx';
 import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
 import apiClient from '../api.js'; 
+import { FeedbackContext } from '../context/FeedbackContext.jsx'; // 2. Importar o Contexto de Feedback
 
 import '../styles/AddProductPage.css';
 
@@ -21,6 +22,9 @@ const AddProductPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [formErrors, setFormErrors] = useState({}); 
+  
+  // 3. Obter a função showToast do contexto
+  const { showToast } = useContext(FeedbackContext);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -45,7 +49,6 @@ const AddProductPage = () => {
   const handleFormChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    // Limpa o erro do campo assim que o usuário começa a digitar
     setFormErrors(prev => ({ ...prev, [name]: undefined }));
   };
 
@@ -53,7 +56,6 @@ const AddProductPage = () => {
     setUploadedFiles(updater);
   };
   
-  // Função de validação
   const validateForm = () => {
     const errors = {};
     if (!formData.nome.trim()) errors.nome = 'O Nome do Produto é obrigatório.';
@@ -69,7 +71,6 @@ const AddProductPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // CRÍTICO: Se a validação falhar, retorna sem fazer nada (sem alert)
     if (!validateForm()) {
         return; 
     }
@@ -82,7 +83,6 @@ const AddProductPage = () => {
       formDataToSend.append('preco_venda', formData.precoRegular);
       formDataToSend.append('categoria', formData.categoria);
 
-      // Anexa todas as imagens
       if (uploadedFiles.length > 0) {
         uploadedFiles.forEach((fileWrapper) => {
           formDataToSend.append('imagens', fileWrapper.file); 
@@ -97,10 +97,9 @@ const AddProductPage = () => {
 
       if (response.status !== 201) throw new Error('Erro ao salvar produto');
       
-      const data = response.data;
-
-      // Mantém um alerta para sucesso (opcional, pode ser trocado por um toast na aplicação real)
-      alert('Produto criado com sucesso! ID: ' + data.produto.id_produto);
+      // 4. AVISO DE SUCESSO (Substituindo o alert)
+      // Usamos o tipo 'success' que tem um estilo verde genérico
+      showToast('Produto criado com sucesso!', 'success');
 
       // Limpar formulário após sucesso
       setFormData({
@@ -115,8 +114,11 @@ const AddProductPage = () => {
 
     } catch (err) {
       console.error('Erro ao salvar produto:', err);
-      // Aqui você poderia definir um erro de servidor genérico no estado (opcional)
-      alert('Erro ao salvar produto. Verifique o console.'); 
+      
+      // 5. AVISO DE ERRO (Substituindo o alert)
+      const errorMsg = err.response?.data?.message || 'Erro ao salvar produto. Tente novamente.';
+      // Usamos o tipo 'wishlist-removed' (cinza) para erros, pois não há um tipo 'error' vermelho definido no CSS
+      showToast(errorMsg, 'wishlist-removed');
     }
   };
 

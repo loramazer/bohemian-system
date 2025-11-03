@@ -1,14 +1,332 @@
-import React from 'react';
+// frontend/src/pages/AllOrdersPage.jsx
+import React, { useState, useEffect, useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
+import Pagination from '../components/Shared/Pagination.jsx';
+import apiClient from '../api.js';
+import { AuthContext } from '../context/AuthContext.jsx';
+import { FeedbackContext } from '../context/FeedbackContext.jsx';
+import '../styles/AllOrdersPage.css';
+
+// Mapeamento de status de PAGAMENTO (Vem do forma_pagamento -> fp.status_transacao)
+const paymentStatusMap = {
+    'pending': 'Pendente',
+    'approved': 'Aprovado',
+    'in_process': 'Em Processamento',
+    'authorized': 'Autorizado',      
+    'delivered': 'Entregue',     
+    'cancelled': 'Cancelado',
+    'rejected': 'Rejeitado',
+    'failure': 'Falhou' // Adicionado status do Mercado Pago para evitar erro
+};
+
+// Mapeamento de status do PEDIDO (Logístico - p.status_pedido). 
+// Chave: Código ENUM do DB (o que será salvo)
+// Valor: Texto de exibição para o Admin
+const orderStatusLogisticoMap = {
+    'in_process': 'Em Preparação', // Logístico 'Em Preparação' -> usa código 'in_process'
+    'pending': 'Pendente', 
+    'cancelled': 'Cancelado', 
+    'authorized': 'Enviado', // Logístico 'Enviado' -> usa código 'authorized'
+    'delivered': 'Entregue'  // Logístico 'Entregue' -> usa código 'delivered'
+};
+
+
+// Opções para o <select> de filtro (Pagamento)
+const paymentStatusOptions = Object.keys(paymentStatusMap);
+
+// Opções para o <select> de Status de Pedido (Logístico). Usamos as chaves (códigos ENUM).
+const orderStatusOptions = Object.keys(orderStatusLogisticoMap);
+
 
 const AllOrdersPage = () => {
+    const { user, loading: authLoading } = useContext(AuthContext);
+    const { showToast } = useContext(FeedbackContext);
+    const navigate = useNavigate();
+
+    const [pedidos, setPedidos] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    // Estados de Paginação
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
+    const [totalPedidos, setTotalPedidos] = useState(0);
+
+    // Estados de Filtro
+    const [filters, setFilters] = useState({
+        search: '',
+        status: '', // Filtra por Status de Pagamento
+        startDate: '',
+        endDate: '',
+    });
+    
+    const [activeFilters, setActiveFilters] = useState(filters);
+
+    // Hook de segurança e busca de dados
+    useEffect(() => {
+        if (authLoading) return;
+        if (!user || user.admin !== 1) {
+            navigate('/');
+            return;
+        }
+
+        const fetchPedidos = async () => {
+            setLoading(true);
+            setError(null);
+            try {
+                const params = {
+                    page: currentPage,
+                    limit: 15, // 15 pedidos por página
+                    search: activeFilters.search || null,
+                    status: activeFilters.status || null,
+                    startDate: activeFilters.startDate || null,
+                    endDate: activeFilters.endDate || null,
+                };
+                
+                // Limpa parâmetros nulos
+                Object.keys(params).forEach(key => {
+                    if (params[key] === null) delete params[key];
+                });
+
+                // O backend (findAllAdmin) agora retorna 'status' (pagamento) e 'status_pedido' (logístico)
+                const response = await apiClient.get('/dashboard/orders/all', { params });
+                
+                setPedidos(response.data.pedidos || []);
+                setTotalPages(response.data.totalPages || 0);
+                setTotalPedidos(response.data.totalPedidos || 0);
+
+            } catch (err) {
+                console.error('Erro ao buscar pedidos:', err);
+                showToast('Erro ao carregar pedidos.', 'warning');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (user && user.admin === 1) {
+            fetchPedidos();
+        }
+    }, [user, authLoading, navigate, currentPage, activeFilters, showToast]);
+
+    // --- Handlers ---
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+        window.scrollTo(0, 0);
+    };
+
+    const handleFilterChange = (e) => {
+        const { name, value } = e.target;
+        setFilters(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleApplyFilters = () => {
+        setCurrentPage(1); // Reseta para a página 1
+        setActiveFilters(filters); // Aplica os filtros
+    };
+    
+    const handleClearFilters = () => {
+        setFilters({ search: '', status: '', startDate: '', endDate: '' });
+        setActiveFilters({ search: '', status: '', startDate: '', endDate: '' });
+        setCurrentPage(1);
+    };
+
+    // ATUALIZADO: Esta função agora lida com a mudança do STATUS DO PEDIDO (Logístico)
+    const handleStatusChange = async (pedidoId, newStatusPedido, currentPaymentStatus) => {
+        
+        // 1. VERIFICAÇÃO DE PAGAMENTO APROVADO
+        if (currentPaymentStatus !== 'approved') {
+            showToast('A edição do status do pedido só é permitida após a aprovação do pagamento.', 'warning');
+            return;
+        }
+
+        try {
+            // newStatusPedido é o código ENUM (ex: 'authorized')
+            // Chama a API para atualizar o status do pedido (Logístico)
+            await apiClient.put(`/dashboard/orders/status/${pedidoId}`, { status: newStatusPedido });
+            
+            // Atualiza o estado local para refletir a mudança no campo CORRETO
+            setPedidos(prevPedidos =>
+                prevPedidos.map(pedido =>
+                    pedido.id_pedido === pedidoId
+                        ? { ...pedido, status_pedido: newStatusPedido } // ATUALIZA status_pedido com o código ENUM
+                        : pedido
+                )
+            );
+            showToast('Status do pedido atualizado!', 'success');
+        } catch (error) {
+            console.error('Erro ao atualizar status:', error);
+            showToast('Falha ao atualizar status.', 'warning');
+        }
+    };
+
+    // Função para formatar o valor
+    const formatCurrency = (value) => {
+        return new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+        }).format(value);
+    };
+
+    // Função para formatar o Status de Pagamento (fp.status_transacao)
+    const formatPaymentStatus = (status) => {
+        // Usa o mapeamento de status de PAGAMENTO
+        return paymentStatusMap[status.toLowerCase()] || status;
+    };
+    
+    // Função para formatar o Status do Pedido (p.status_pedido)
+    const formatOrderStatus = (status) => {
+        // Tenta encontrar o texto de exibição pelo código ENUM/DB
+        return orderStatusLogisticoMap[status] || status; 
+    };
+
+    // Função para mapear o Status do Pedido para a classe CSS
+    const getOrderStatusClass = (status) => {
+        if (!status) return 'indefinido';
+        // Retorna o próprio código (ex: 'authorized', 'in_process', etc.) para a classe CSS
+        return status.toLowerCase(); 
+    };
+
+
+    if (loading && pedidos.length === 0) {
+        return <ContentWrapper><div>Carregando pedidos...</div></ContentWrapper>;
+    }
+
     return (
         <ContentWrapper>
-            <main>
-                <div className="page-header">
-                    <h2>Todos os Pedidos</h2>
+            <main className="all-orders-main">
+                
+                <div className="admin-page-header">
+                    <h2 className="admin-page-title">Todos os Pedidos ({totalPedidos})</h2>
                 </div>
-                <p>Esta é a página de listagem de todos os pedidos. Em breve a lógica de exibição será implementada aqui.</p>
+
+                {/* --- Barra de Filtros --- */}
+                <div className="orders-filter-bar">
+                    <input
+                        type="text"
+                        name="search"
+                        placeholder="Buscar por nome do cliente..."
+                        value={filters.search}
+                        onChange={handleFilterChange}
+                        className="filter-input"
+                    />
+                    <select
+                        name="status"
+                        value={filters.status}
+                        onChange={handleFilterChange}
+                        className="filter-select"
+                    >
+                        {/* Status de Pagamento para Filtragem */}
+                        <option value="">Todos os Status (Pagamento)</option> 
+                        {paymentStatusOptions.map(status => (
+                            <option key={status} value={status}>{formatPaymentStatus(status)}</option>
+                        ))}
+                    </select>
+                    <input
+                        type="date"
+                        name="startDate"
+                        value={filters.startDate}
+                        onChange={handleFilterChange}
+                        className="filter-input"
+                    />
+                    <input
+                        type="date"
+                        name="endDate"
+                        value={filters.endDate}
+                        onChange={handleFilterChange}
+                        className="filter-input"
+                    />
+                    <button onClick={handleApplyFilters} className="filter-btn primary">Filtrar</button>
+                    <button onClick={handleClearFilters} className="filter-btn secondary">Limpar</button>
+                </div>
+                
+                {/* --- Tabela de Pedidos --- */}
+                <div className="orders-table-container">
+                    {loading && <p>Atualizando...</p>}
+                    {error && <p className="error-message">{error}</p>}
+                    
+                    {!loading && pedidos.length === 0 && (
+                        <p>Nenhum pedido encontrado com os filtros atuais.</p>
+                    )}
+
+                    {pedidos.length > 0 && (
+                        <table className="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Pedido ID</th>
+                                    <th>Cliente</th>
+                                    <th>Data</th>
+                                    <th>Total</th>
+                                    <th>Status (Pagamento)</th>
+                                    <th>Status (Pedido)</th> {/* NOVO HEADER */}
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {pedidos.map((pedido) => (
+                                    <tr key={pedido.id_pedido}>
+                                        <td>
+                                            <Link to={`/admin/orders/${pedido.id_pedido}`}>
+                                                #{pedido.id_pedido}
+                                            </Link>
+                                        </td>
+                                        <td>{pedido.cliente_nome}</td>
+                                        <td>{new Date(pedido.dataPedido).toLocaleDateString('pt-BR')}</td>
+                                        <td>{formatCurrency(pedido.total_pedido)}</td>
+                                        
+                                        {/* COLUNA 1: STATUS DE PAGAMENTO (Não editável) */}
+                                        <td>
+                                            <span 
+                                                // Usa o status de pagamento (ex: approved) para a classe CSS (verde)
+                                                className={`status-badge status-${pedido.status}`} 
+                                                style={{ padding: '8px 12px', borderRadius: '5px' }}
+                                            >
+                                                {/* Exibe o texto correto (ex: Aprovado) */}
+                                                {formatPaymentStatus(pedido.status)}
+                                            </span>
+                                        </td>
+                                        
+                                        {/* COLUNA 2: STATUS DO PEDIDO (Editável - Envia código ENUM) */}
+                                        <td>
+                                            <select
+                                                className={`status-select status-${getOrderStatusClass(pedido.status_pedido)}`} 
+                                                // O valor é o código ENUM/DB (ex: 'authorized')
+                                                value={pedido.status_pedido || 'pending'} 
+                                                // Desabilita se o status de pagamento NÃO for 'approved'
+                                                disabled={pedido.status !== 'approved'} 
+                                                // O onChange envia o código ENUM/DB para o backend
+                                                onChange={(e) => handleStatusChange(pedido.id_pedido, e.target.value, pedido.status)}
+                                            >
+                                                {orderStatusOptions.map(status => (
+                                                    <option key={status} value={status}>
+                                                        {formatOrderStatus(status)}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </td>
+
+                                        <td>
+                                            <Link to={`/admin/orders/${pedido.id_pedido}`} className="action-view-btn">
+                                                Ver
+                                            </Link>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    )}
+                </div>
+
+                {/* --- Paginação --- */}
+                {totalPages > 1 && (
+                    <Pagination
+                        currentPage={currentPage}
+                        totalItems={totalPedidos}
+                        itemsPerPage={15}
+                        onPageChange={handlePageChange}
+                    />
+                )}
             </main>
         </ContentWrapper>
     );

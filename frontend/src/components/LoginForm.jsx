@@ -1,6 +1,9 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from "../context/AuthContext.jsx";
+import React, { useState, useContext } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { AuthContext } from "../context/AuthContext.jsx";
 import '../styles/LoginForm.css';
 
 import { FiEye, FiEyeOff } from 'react-icons/fi';
@@ -13,6 +16,7 @@ const LoginForm = () => {
     const { login } = useContext(AuthContext);
     const navigate = useNavigate();
 
+    const handleSubmit = async (e) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
@@ -31,6 +35,14 @@ const LoginForm = () => {
                 <p className="login-subtitle">Faça login para continuar</p>
 
                 <div className="form-group">
+                    <label htmlFor="email">E-mail</label>
+                    <input
+                        type="email"
+                        id="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                    />
                     <label htmlFor="email">E-mail</label>
                     <input
                         type="email"
@@ -62,6 +74,15 @@ const LoginForm = () => {
                     </div>
 
                 <div className="forgot-password">
+                    <Link to="/forgot-password">Esqueceu a senha?</Link>
+                </div>
+
+                {error && <p className="error-message">{error}</p>}
+
+                <button type="submit" className="login-button">Entrar</button>
+
+                <div className="signup-link">
+                    <p>Não tem uma conta? <Link to="/register">Cadastre-se</Link></p>
                     <Link to="/forgot-password">Esqueceu a senha?</Link>
                 </div>
 

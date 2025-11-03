@@ -1,35 +1,40 @@
-// frontend/src/components/Shared/ToastContainer.jsx
+// loramazer/bohemian-system/bohemian-system-refatorar-organizacao/frontend/src/components/Shared/ToastContainer.jsx
 
 import React from 'react';
-import { FaCheckCircle, FaHeart, FaShoppingCart } from 'react-icons/fa';
+// *** MUDANÇA AQUI: Adicionar FaTrash ***
+import { FaCheckCircle, FaHeart, FaShoppingCart, FaTimes, FaExclamationTriangle, FaTrash } from 'react-icons/fa';
 import '../../styles/ToastContainer.css';
 
+// *** MUDANÇA AQUI: Adicionar o novo ícone ao map ***
 const IconMap = {
     success: FaCheckCircle,
     cart: FaShoppingCart,
     wishlist: FaHeart,
-    // Você pode adicionar mais tipos, como 'error', 'info', etc.
+    'wishlist-removed': FaHeart,
+    'warning': FaExclamationTriangle,
+    'trash-removed': FaTrash // <-- NOVO TIPO
 };
 
-// MUDANÇA: Recebe 'toast' (objeto) em vez de 'toasts' (array)
-const ToastContainer = ({ toast }) => { 
-    
-    // Se não houver toast ativo, não renderiza nada
+const ToastContainer = ({ toast, onClose }) => {
+
     if (!toast) {
         return null;
     }
 
+    // Agora IconComponent vai encontrar 'trash-removed' e usar FaTrash
     const IconComponent = IconMap[toast.type] || IconMap.success;
-    
+
     return (
         <div className="toast-container-wrapper">
-            {/* Renderiza apenas o toast ativo */}
-            <div 
-                key={toast.id} // Usa o ID (timestamp) como chave
-                className={`toast-notification toast-${toast.type}`}
+            <div
+                key={toast.id}
+                className={`toast-notification toast-${toast.type}`} 
             >
                 <IconComponent className="toast-icon" />
                 <span className="toast-message">{toast.message}</span>
+                <button onClick={onClose} className="toast-close-btn">
+                    <FaTimes />
+                </button>
             </div>
         </div>
     );

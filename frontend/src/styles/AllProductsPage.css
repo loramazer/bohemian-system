@@ -1,23 +1,14 @@
 .admin-products-main {
     padding: 40px 0;
+    margin-top: -50px;
 }
 
-.admin-breadcrumbs {
-    margin-bottom: 20px;
-    font-size: 0.9rem;
-    color: #888;
-}
-
-.admin-breadcrumbs a {
-    color: #888;
-    text-decoration: none;
-}
 
 .admin-page-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
 
 .admin-page-title {
@@ -38,9 +29,22 @@
 
 .add-product-btn:hover {
     background-color: #4a6263;
-    .product-grid {
+}
+
+.product-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
+    /* CORREÇÃO: Aumentado o espaçamento para o padrão de 40px */
+    gap: 40px; 
+    margin-bottom: 50px;
 }
+
+/* NOVA REGRA: 
+  Aplica uma margem superior de 40px diretamente no 
+  contêiner da paginação, mas SOMENTE quando ele 
+  estiver dentro da div .admin-products-main.
+*/
+.admin-products-main .pagination-container {
+    margin-top: 50px;
+    margin-bottom: -70px;
 }

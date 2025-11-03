@@ -1,3 +1,5 @@
+/* loramazer/bohemian-system/bohemian-system-refatorar-organizacao/frontend/src/styles/AdminProductCard.css */
+
 .admin-product-card {
     border: 1px solid #f0f0f0;
     border-radius: 8px;
@@ -8,6 +10,7 @@
     flex-direction: column;
     text-align: left;
     height: 100%;
+    position: relative; /* Adicionado para o menu */
 }
 
 .card-header-admin {
@@ -18,10 +21,12 @@
 }
 
 .admin-product-image {
-    max-width: 80px;
-    height: auto;
+    width: 80px; /* Corrigido max-width para width */
+    height: 80px; /* Altura fixa para uniformidade */
+    object-fit: cover; /* Garante que a imagem preencha */
     border-radius: 4px;
     flex-shrink: 0;
+    border: 1px solid #eee;
 }
 
 .admin-product-details {
@@ -32,12 +37,18 @@
     font-size: 1rem;
     margin: 0;
     color: #333;
+    font-weight: 600; /* Destaque */
 }
 
 .admin-product-price {
     font-weight: bold;
     color: #5d7a7b;
     margin: 5px 0 0;
+}
+
+/* --- Menu Dropdown de Ações --- */
+.admin-card-menu-container {
+    position: relative;
 }
 
 .card-menu-icon {
@@ -47,6 +58,46 @@
     font-size: 1.2rem;
     padding: 0 5px;
 }
+.card-menu-icon:hover {
+    color: #333;
+}
+
+.admin-card-menu-dropdown {
+    position: absolute;
+    top: 25px; /* Abaixo do ícone */
+    right: 0;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    z-index: 10;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-card-menu-dropdown button {
+    background: none;
+    border: none;
+    padding: 10px 15px;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.admin-card-menu-dropdown button:hover {
+    background-color: #f5f5f5;
+}
+
+.admin-card-menu-dropdown button:last-child {
+    color: #e74c3c; /* Vermelho para excluir */
+}
+/* --- Fim do Menu --- */
+
 
 .admin-product-description {
     font-size: 0.9rem;
@@ -55,19 +106,27 @@
     padding-top: 10px;
     margin-top: 10px;
     margin-bottom: 10px;
-    flex-grow: 1;
+    flex-grow: 1; /* Ocupa o espaço disponível */
+    min-height: 60px; /* Garante altura mínima */
+}
+
+.admin-product-description p {
+    margin: 0;
 }
 
 .admin-product-description p:first-child {
     font-weight: bold;
     margin-bottom: 5px;
+    color: #333;
 }
 
 .admin-product-stats {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    margin-top: auto;
+    margin-top: auto; /* Empurra para baixo */
+    border-top: 1px solid #f0f0f0;
+    padding-top: 10px;
 }
 
 .stat-row {
@@ -76,6 +135,10 @@
     align-items: center;
     font-size: 0.85rem;
     color: #333;
+}
+
+.stat-row p {
+    margin: 0;
 }
 
 .stat-row p:first-child {
@@ -87,16 +150,4 @@
     color: #5d7a7b;
 }
 
-.progress-bar {
-    background-color: #eee;
-    border-radius: 5px;
-    height: 6px;
-    margin-top: 2px;
-    margin-bottom: 8px;
-}
-
-.progress {
-    background-color: #FFA52F; /* Cor laranja */
-    height: 100%;
-    border-radius: 5px;
-}
+/* (Estilos de barra de progresso removidos pois não temos dados de estoque) */

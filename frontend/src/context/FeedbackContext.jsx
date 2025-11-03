@@ -7,7 +7,7 @@ export const FeedbackContext = createContext();
 export const FeedbackProvider = ({ children }) => {
     const [toast, setToast] = useState(null); 
     const timerRef = useRef(null); 
-    const TIMEOUT_MS = 3000; // 3 segundos
+    const TIMEOUT_MS = 2000; // 2 segundos
 
     useEffect(() => {
         return () => {
@@ -17,21 +17,27 @@ export const FeedbackProvider = ({ children }) => {
         };
     }, []);
 
+    const hideToast = useCallback(() => {
+        if (timerRef.current) {
+            clearTimeout(timerRef.current);
+            timerRef.current = null;
+        }
+        setToast(null);
+    }, []);
+
     const showToast = useCallback((message, type = 'success') => {
-        
         if (timerRef.current) {
             clearTimeout(timerRef.current);
         }
 
         const newToast = { id: Date.now(), message, type };
-        setToast(newToast); 
+        setToast(newToast);
 
         timerRef.current = setTimeout(() => {
-            setToast(null); 
-            timerRef.current = null; 
+            hideToast(); // Reutiliza a função hideToast
         }, TIMEOUT_MS);
 
-    }, []); 
+    }, [hideToast]);
 
     const showCartSuccess = useCallback(() => {
         showToast('Produto adicionado ao carrinho!', 'cart'); // Mensagem simplificada
@@ -52,13 +58,14 @@ export const FeedbackProvider = ({ children }) => {
         showToast,
         showCartSuccess,
         showWishlistSuccess,
-        showWishlistRemoved // NOVO: Exporta a função
+        showWishlistRemoved, // NOVO: Exporta a função
+        hideToast
     };
 
     return (
         <FeedbackContext.Provider value={value}>
             {children}
-            <ToastContainer toast={toast} /> 
+            <ToastContainer toast={toast} onClose={hideToast} />
         </FeedbackContext.Provider>
     );
 };

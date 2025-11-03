@@ -1,19 +1,11 @@
-/* frontend/src/styles/Toast.css */
+/* frontend/src/styles/ToastContainer.css */
 
 /* Onde os toasts flutuam */
 .toast-container-wrapper {
     position: fixed;
-    
-    /* ANTERIOR:
-    top: 100px; 
-    right: 20px;
-    */
-
-    /* NOVO: Centralização na tela */
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%); /* Centraliza vertical e horizontalmente */
-    
+    transform: translate(-50%, -50%);
     z-index: 2000;
     display: flex;
     flex-direction: column;
@@ -21,39 +13,31 @@
 }
 
 .toast-notification {
-    /* NOVO: Aumentado */
     padding: 25px 35px;
-    
-    /* NOVO: Mais condizente (arredondado) */
     border-radius: 12px; 
-    
     display: flex;
     align-items: center;
-    justify-content: center; /* Centraliza o ícone e o texto */
+    justify-content: center;
     gap: 15px;
-    
-    /* NOVO: Aumentado */
     font-size: 1.25rem; 
-    font-weight: 600; /* Texto mais destacado */
-    
-    /* NOVO: Aumentado */
+    font-weight: 600;
     min-width: 400px; 
-    
-    /* NOVO: Mais condizente (sombra) */
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2); /* Sombra mais forte */
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    justify-content: flex-start;
+    position: relative;
 }
 
 .toast-icon {
-    /* NOVO: Aumentado */
     font-size: 1.8rem; 
 }
 
 .toast-message {
     color: inherit;
+    margin-right: 25px;
 }
 
 
-/* --- Estilos de Cores (Mantidos) --- */
+/* --- Estilos de Cores (Existentes) --- */
 
 /* Carrinho (Green/Teal principal) */
 .toast-cart {
@@ -61,19 +45,19 @@
     color: white;
 }
 .toast-cart .toast-icon {
-    color: #a4d4c5; /* Cor de destaque para o ícone */
+    color: #a4d4c5;
 }
 
-/* Wishlist (Red/Pink) */
+/* Wishlist (Roxo/Vinho) */
 .toast-wishlist {
-    background-color: #e74c3c; 
+    background-color: #6b5a71; 
     color: white;
 }
 .toast-wishlist .toast-icon {
-    color: #ffd1d1;
+    color: #f0c1ff;
 }
 
-/* Sucesso Genérico (Fallback) */
+/* Sucesso Genérico (Verde) */
 .toast-success {
     background-color: #d4edda;
     color: #155724;
@@ -82,13 +66,55 @@
 .toast-success .toast-icon {
     color: #155724;
 }
+.toast-success .toast-close-btn { /* Garante que o 'x' fique visível */
+    color: #155724;
+}
 
-/* --- NOVO ESTILO (Adicione ao final) --- */
 /* Remoção da Wishlist (Cinza/Neutro) */
 .toast-wishlist-removed {
-    background-color: #7f8c8d; /* Um cinza neutro */
+    background-color: #7f8c8d;
     color: white;
 }
 .toast-wishlist-removed .toast-icon {
-    color: #ecf0f1; /* Um cinza mais claro */
+    color: #ecf0f1;
+}
+
+.toast-trash-removed {
+    background-color: #7f8c8d; /* Mesmo cinza */
+    color: white;
+}
+.toast-trash-removed .toast-icon {
+    color: #ecf0f1; /* Mesmo ícone claro */
+}
+
+/* *** CORREÇÃO AQUI: Adicionar o novo estilo de aviso (Amarelo) *** */
+.toast-warning {
+    background-color: #fff3cd; /* Amarelo 'warning' claro */
+    color: #664d03; /* Texto escuro para contraste */
+    border: 1px solid #ffeeba; /* Borda sutil */
+}
+.toast-warning .toast-icon {
+    color: #664d03; /* Ícone na cor do texto */
+}
+.toast-warning .toast-close-btn {
+    color: #664d03; /* Botão 'x' na cor do texto */
+}
+/* *** FIM DA CORREÇÃO *** */
+
+
+.toast-close-btn {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 0 5px;
+    margin-left: auto;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+    margin-top: 8px; /* Ajuste este valor se o 'x' estiver desalinhado */
+}
+
+.toast-close-btn:hover {
+    opacity: 1;
 }

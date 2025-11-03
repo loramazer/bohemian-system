@@ -1,0 +1,18 @@
+/* loramazer/bohemian-system/bohemian-system-refatorar-organizacao/frontend/src/styles/EditProductPage.css */
+
+/* Reutiliza 100% dos estilos da página de Adicionar Produto */
+@import './AddProductPage.css';
+
+/* REGRAS DE OVERRIDE:
+  Anula as margens negativas do AddProductPage.css, 
+  mas apenas dentro da página de edição (usando a classe que adicionamos).
+*/
+.edit-page-styles .page-title {
+  /* Reseta a margem negativa e aplica um espaçamento normal */
+  margin-top: 10px; 
+}
+
+.edit-page-styles .form-main {
+  /* Reseta a margem negativa */
+  margin-top: 0; 
+}

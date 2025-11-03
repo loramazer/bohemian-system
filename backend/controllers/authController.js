@@ -1,4 +1,5 @@
 // loramazer/bohemian-system/bohemian-system-front-back-carrinhos/backend/controllers/authController.js
+// loramazer/bohemian-system/bohemian-system-front-back-carrinhos/backend/controllers/authController.js
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto'); 
@@ -120,6 +121,7 @@ async function forgotPassword(req, res) {
                     <td style="padding: 40px; text-align: center;">
                       <img src="cid:bohemianLogo" alt="Bohemian Home" style="width: 150px; margin-bottom: 20px;">
                       <h1 style="color: #333333;">Redefina Sua Senha</h1>
+                      {/* --- CORREÇÃO AQUI --- */}
                       <p style="color: #555555;">Olá, ${usuario.nome}.</p>
                       <a href="${resetUrl}" style="background-color: #5d7a7b; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;">Redefinir Senha</a>
                     </td>
@@ -159,6 +161,10 @@ async function resetPassword(req, res) {
     if (!resetToken) {
         return res.status(400).json({ message: 'Token inválido ou expirado.' });
     }
+    
+    // --- CORREÇÃO AQUI ---
+    // 2. Definir o usuarioId a partir do token
+    const usuarioId = resetToken.fk_usuario_id;
 
     const newPasswordHash = await bcrypt.hash(newPassword, saltRounds);
     
