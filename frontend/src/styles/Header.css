@@ -126,11 +126,13 @@
 .admin-menu-toggle,
 .user-menu-toggle { /* NOVO: Aplicando mesmo estilo */
     position: relative;
+    margin-right: -25px;
 }
 
 .admin-dropdown,
 .user-dropdown { /* NOVO: Aplicando mesmo estilo */
     position: absolute;
+    margin-right: -20px;
     top: 30px;
     right: 0;
     background-color: #fff;
