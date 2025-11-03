@@ -28,17 +28,20 @@
   font-weight: 700;
 }
 
-/* --- Ações --- */
-.product-actions {
+/* Os overrides garantem que o ProductCard.css não quebre o layout */
+.detail-actions {
   display: flex;
   gap: 15px;
   margin-top: 20px;
+  position: static !important;
+  opacity: 1 !important;
+  transform: none !important;
 }
 
 .add-to-cart-btn {
   flex: 1;
   background-color: #5d7a7b;
-  color: white;
+  color: white; 
   border: none;
   border-radius: 10px;
   padding: 14px 20px;
@@ -52,13 +55,20 @@
   transition: 0.3s;
 }
 
+/* AJUSTE DOS ÍCONES */
+/* Torna o ícone do carrinho menor */
+.add-to-cart-btn > svg {
+    font-size: 1.1rem; /* Carrinho Menor */
+}
+
+
 .add-to-cart-btn:hover {
   background-color: #4a6162;
   transform: translateY(-2px);
 }
 
 .add-to-wishlist-btn {
-  background: white;
+  background: white; 
   border: 1px solid #ddd;
   border-radius: 10px;
   width: 50px;
@@ -68,6 +78,12 @@
   justify-content: center;
   cursor: pointer;
   transition: 0.3s;
+  color: #5d7a7b;
+}
+
+/* Torna o ícone do coração maior */
+.add-to-wishlist-btn > svg {
+    font-size: 1.5rem; /* Favoritar Maior */
 }
 
 .add-to-wishlist-btn:hover {
@@ -101,4 +117,32 @@
 .share-btn:hover {
   background-color: #f3f3f3;
   border-color: #5d7a7b;
+}
+
+/* AJUSTE DO BOTÃO DE COMPARTILHAR (ÍCONE) */
+.share-btn > svg {
+    font-size: 1.1rem; /* Tamanho do ícone de compartilhar */
+}
+
+
+/* NOVO: Estilo para a Descrição (dentro do ProductInfo) */
+.product-description-detail {
+    margin-top: 30px;
+    padding-top: 30px;
+    border-top: 1px solid #eee;
+}
+.product-description-detail h3 {
+    font-size: 1.6rem;
+    color: #333;
+    border-bottom: 2px solid #5d7a7b;
+    display: inline-block;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    margin-top: 0;
+}
+.product-description-detail p {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.7;
+    margin-top: 0;
 }

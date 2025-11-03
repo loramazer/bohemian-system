@@ -1,5 +1,5 @@
 // loramazer/bohemian-system/bohemian-system-front-back-carrinhos/backend/controllers/authController.js
-// loramazer/bohemian-system/bohemian-system-front-back-carrinhos/backend/controllers/authController.js
+const path = require('path');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto'); 
@@ -102,12 +102,17 @@ async function forgotPassword(req, res) {
     const expiresAt = new Date(Date.now() + 3600000);
 
     // db.execute agora está disponível
-    await db.execute('INSERT INTO password_resets (fk_usuario_id, token, expires_at) VALUES (?, ?, ?)', [usuario.id_usuario, token, expiresAt]);
-
+  await db.execute(
+        // Adiciona fk_cliente_id à lista de colunas
+        'INSERT INTO password_resets (fk_cliente_id, fk_usuario_id, token, expires_at) VALUES (?, ?, ?, ?)', 
+        // Adiciona usuario.id_usuario como primeiro parâmetro
+        [usuario.id_usuario, usuario.id_usuario, token, expiresAt] 
+    );
     // CORRIGIDO: Adicionado / antes de reset-password
-    const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${token}`;
+const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${token}`;
+    const logoPath = path.join(__dirname, '..', '..', 'frontend', 'src', 'assets', 'bohemian-logo.png');
 
-   const mailOptions = {
+    const mailOptions = {
       from: process.env.EMAIL_USER,
       to: usuario.login,
       subject: 'Redefinição de Senha - Bohemian Floral',
@@ -119,11 +124,17 @@ async function forgotPassword(req, res) {
                 <table width="600" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
                   <tr>
                     <td style="padding: 40px; text-align: center;">
-                      <img src="cid:bohemianLogo" alt="Bohemian Home" style="width: 150px; margin-bottom: 20px;">
+                      
+                      <img src="cid:logo" alt="Bohemian Home" style="width: 150px; margin-bottom: 20px;">
+                      
                       <h1 style="color: #333333;">Redefina Sua Senha</h1>
-                      {/* --- CORREÇÃO AQUI --- */}
+                      
                       <p style="color: #555555;">Olá, ${usuario.nome}.</p>
+                      <p style="color: #555555; margin-bottom: 25px;">Recebemos uma solicitação para redefinir sua senha. Clique no botão abaixo para continuar:</p>
+                      
                       <a href="${resetUrl}" style="background-color: #5d7a7b; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;">Redefinir Senha</a>
+                      
+                      <p style="color: #555555; margin-top: 30px; font-size: 0.9em;">Se você não solicitou esta redefinição, por favor, ignore este e-mail.</p>
                     </td>
                   </tr>
                 </table>
@@ -132,14 +143,12 @@ async function forgotPassword(req, res) {
           </table>
         </div>
       `,
-      attachments: [
-        {
+      attachments: [{
           filename: 'bohemian-logo.png',
-          // O caminho para a imagem precisa ser ajustado para onde o Node a acessará
-          path: __dirname + '/../public/bohemian-logo.png', // Assumindo uma pasta 'public'
-          cid: 'bohemianLogo'
-        }
-      ]
+          path: logoPath, 
+          // O CID aqui é o mesmo usado no HTML: cid:logo
+          cid: 'logo' 
+      }]
     };
     await transporter.sendMail(mailOptions); // transporter está definido
 

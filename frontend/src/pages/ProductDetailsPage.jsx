@@ -5,7 +5,7 @@ import { useParams, Link } from 'react-router-dom';
 import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
 import ProductInfo from '../components/ProductDetails/ProductInfo.jsx';
 import ProductGallery from '../components/ProductDetails/ProductGallery.jsx';
-import ProductTabs from '../components/ProductDetails/ProductTabs.jsx';
+import ProductTabs from '../components/ProductDetails/ProductTabs.jsx'; // Manter o import por enquanto, mas não usaremos
 
 // 1. Importar a seção de produtos para usar como "Relacionados"
 import FeaturedProductsSection from '../components/FeaturedProductsSection.jsx';
@@ -16,7 +16,7 @@ import '../styles/ProductDetailsPage.css';
 import '../styles/ProductDetails.css';
 // 4. CSS da seção de relacionados
 import '../styles/FeaturedProductsSection.css';
-
+import apiClient from '../api.js'; // Importar apiClient para fetch
 
 const ProductDetailsPage = () => {
     const { productId } = useParams();
@@ -26,12 +26,12 @@ const ProductDetailsPage = () => {
         const fetchProduct = async () => {
             try {
                 // Vamos usar a rota da API configurada no seu vite.config.js
-                const response = await fetch(`/api/produtos/${productId}`);
+                const response = await apiClient.get(`/produtos/${productId}`);
                 
-                if (!response.ok) {
+                if (response.status !== 200) {
                     throw new Error('Erro ao buscar o produto');
                 }
-                const data = await response.json();
+                const data = response.data;
                 setProductData(data);
             } catch (error) {
                 console.error('Erro ao buscar detalhes do produto:', error);
@@ -47,25 +47,25 @@ const ProductDetailsPage = () => {
 
     return (
         <ContentWrapper>
+            {/* CORREÇÃO: Mover o Breadcrumb para fora da tag <main> e corrigir a estrutura */}
+            <div className="product-breadcrumbs">
+                <Link to="/">Home</Link> &gt; <Link to="/products">Comprar</Link> &gt; <span>{productData.nome}</span>
+            </div>
+            
             <main className="product-details-main">
-                <div className="product-breadcrumbs">
-                    <Link to="/">Home</Link> &gt; <Link to="/products">Comprar</Link> &gt; <span>{productData.nome}</span>
-                </div>
                 
-                {/* Layout Principal (Galeria + Infos) */}
+                {/* Layout Principal (Galeria + Infos, que agora inclui a descrição) */}
                 <section className="product-details-layout">
                     <ProductGallery product={productData} />
-                    <ProductInfo product={productData} />
+                    <ProductInfo product={productData} /> 
                 </section>
                 
-                {/* Descrição (Aba "Sobre o Produto") */}
-                <section className="product-tabs-container">
+                {/* REMOVIDO: A seção de descrição separada <section className="product-tabs-container">
                     <ProductTabs product={productData}/>
-                </section>
+                </section> */}
 
                 {/* Produtos Relacionados */}
                 <section className="related-products-container">
-                    {/* Reutiliza o componente que você já tem */}
                     <FeaturedProductsSection />
                 </section>
             </main>
