@@ -1,11 +1,9 @@
-// loramazer/bohemian-system/bohemian-system-refatorar-organizacao/frontend/src/pages/AddProductPage.jsx
-
-import React, { useState, useEffect, useContext } from 'react'; // 1. Importar useContext
+import React, { useState, useEffect, useContext } from 'react'; 
 import ProductForm from '../components/Admin/ProductForm.jsx'; 
 import ImageUpload from '../components/Shared/ImageUpload.jsx';
 import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
 import apiClient from '../api.js'; 
-import { FeedbackContext } from '../context/FeedbackContext.jsx'; // 2. Importar o Contexto de Feedback
+import { FeedbackContext } from '../context/FeedbackContext.jsx'; 
 
 import '../styles/AddProductPage.css';
 
@@ -23,7 +21,6 @@ const AddProductPage = () => {
   const [error, setError] = useState(null);
   const [formErrors, setFormErrors] = useState({}); 
   
-  // 3. Obter a função showToast do contexto
   const { showToast } = useContext(FeedbackContext);
 
   useEffect(() => {
@@ -96,12 +93,9 @@ const AddProductPage = () => {
       });
 
       if (response.status !== 201) throw new Error('Erro ao salvar produto');
-      
-      // 4. AVISO DE SUCESSO (Substituindo o alert)
-      // Usamos o tipo 'success' que tem um estilo verde genérico
+
       showToast('Produto criado com sucesso!', 'success');
 
-      // Limpar formulário após sucesso
       setFormData({
         nome: '',
         descricao: '',
@@ -115,9 +109,7 @@ const AddProductPage = () => {
     } catch (err) {
       console.error('Erro ao salvar produto:', err);
       
-      // 5. AVISO DE ERRO (Substituindo o alert)
       const errorMsg = err.response?.data?.message || 'Erro ao salvar produto. Tente novamente.';
-      // Usamos o tipo 'wishlist-removed' (cinza) para erros, pois não há um tipo 'error' vermelho definido no CSS
       showToast(errorMsg, 'wishlist-removed');
     }
   };

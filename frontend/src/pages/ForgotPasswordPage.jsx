@@ -1,8 +1,7 @@
-// loramazer/bohemian-system/bohemian-system-refatorar-organizacao/frontend/src/pages/ForgotPasswordPage.jsx
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
-import apiClient from '../api.js'; // NOVO: Importação do apiClient
+import apiClient from '../api.js'; 
 import '../styles/ForgotPasswordPage.css';
 
 const ForgotPasswordPage = () => {
@@ -11,26 +10,19 @@ const ForgotPasswordPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // CORRIGIDO: Agora realmente chama a API
         setMessage('Enviando solicitação...'); 
         try {
-            // CORRIGIDO: Usando apiClient.post
             const response = await apiClient.post('/api/auth/forgot-password', { email });
             const data = response.data;
             
-            // O backend retorna status 200 com uma mensagem genérica por segurança
             if (response.status === 200) {
-                // Mensagem de sucesso do backend (por segurança, o backend sempre retorna esta)
                 setMessage(data.message); 
             } else {
-                 // Caso o status não seja 200 mas não lance erro (improvável com a config do backend)
                 setMessage(data.message || 'Ocorreu um erro. Por favor, tente novamente.');
             }
         } catch (error) {
-            // Tratamento de erro específico para Axios (captura a mensagem do backend)
             const errorMessage = error.response?.data?.message || 'Ocorreu um erro de rede. Por favor, verifique sua conexão.';
             console.error('Erro ao solicitar redefinição de senha:', error);
-            // CORREÇÃO: Define a mensagem de erro para que seja exibida
             setMessage(errorMessage); 
         }
     };
@@ -59,7 +51,7 @@ const ForgotPasswordPage = () => {
                             </div>
                 <button type="submit" className="send-link-button">Enviar Link de Redefinição</button>
                     </form>
-                    {/* Lógica de classe para diferenciar cor do status/erro */}
+                    {}
                     {message && (
                         <p className={`status-message ${message.includes('Erro') || message.includes('Falha') ? 'error-status-message' : 'success-message'}`}>
                             {message}

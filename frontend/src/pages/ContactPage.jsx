@@ -1,4 +1,3 @@
-// loramazer/bohemian-system/bohemian-system-refatorar-organizacao/frontend/src/pages/ContactPage.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
@@ -6,9 +5,9 @@ import { FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaClock } from 'react-icons/fa'
 import heroImage from '../../public/bohemian-home-hero.jpeg'; 
 import '../styles/ContactPage.css';
 
-// Componente ContactPage
+
 const ContactPage = () => {
-    // Dados de Contato
+
     const contactInfo = {
         phone: "(42) 999854-3532",
         email: "bohemian@gmail.com",
@@ -22,7 +21,7 @@ const ContactPage = () => {
 
     const mapEmbedUrl = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3600.865223398492!2d-50.1610993849836!3d-25.09341618394464!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94e437021e102287%3A0xc660d2b8f8a1836c!2sR.%20Mal.%20Deodoro%20da%20Fonseca%2C%2051%20-%20Centro%2C%20Ponta%20Grossa%20-%20PR%2C%2084010-030!5e0!3m2!1spt-BR!2sbr!4v1633534567890!5m2!1spt-BR!2sbr"; 
     
-    // Formata o número para o link do WhatsApp (padrão 55 + DDD + Numero)
+
     const whatsappNumber = `55${contactInfo.phone.replace(/\D/g, '')}`;
     const whatsappLink = `https://wa.me/${whatsappNumber}`;
 
@@ -46,7 +45,7 @@ const ContactPage = () => {
 
                 <section className="contact-content-grid-v2">
                     
-                    {/* Bloco de Informações - APENAS Telefone e Email */}
+                    {}
                     <div className="contact-info-container-v2">
                         <h2>Para um Atendimento Personalizado</h2>
                         
@@ -73,7 +72,7 @@ const ContactPage = () => {
                         </div>
                     </div>
 
-                    {/* Bloco do Mapa e HORÁRIO DE FUNCIONAMENTO */}
+                    {}
                     <div className="contact-map-container">
                         <h2>Onde Nos Encontrar</h2>
                         <div className="map-embed-wrapper">
@@ -86,7 +85,7 @@ const ContactPage = () => {
                                 title="Localização Bohemian Home"
                             ></iframe>
                         </div>
-                        {/* --- CORREÇÃO AQUI --- */}
+                        {}
                         <a 
                             href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(contactInfo.address)}`} 
                             target="_blank" 

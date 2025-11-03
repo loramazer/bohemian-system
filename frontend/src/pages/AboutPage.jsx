@@ -1,5 +1,3 @@
-// loramazer/bohemian-system/bohemian-system-refatorar-organizacao/frontend/src/pages/AboutPage.jsx
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import ContentWrapper from '../components/Shared/ContentWrapper.jsx'; 
@@ -16,7 +14,7 @@ const AboutPage = () => {
             <main className="about-main-content">
                 
                 <section className="about-hero">
-                    {/* A imagem principal (hero) */}
+                    {}
                     <img src={heroImage} alt="Arranjo Floral Bohemian Home" className="about-hero-image" />
                     <div className="about-hero-overlay">
                         <div className="about-breadcrumbs">
@@ -49,14 +47,14 @@ const AboutPage = () => {
                         </p>
                     </div>
                     <div className="about-image-block">
-                        {/* A primeira imagem de destaque */}
+                        {}
                         <img src={destaque1Image} alt="Arranjo Exclusivo" className="about-feature-image" />
                     </div>
                 </section>
 
                 <section className="about-feature-section feature-even">
                     <div className="about-image-block">
-                        {/* A segunda imagem de destaque */}
+                        {}
                         <img src={destaque2Image} alt="Buquê de Noiva" className="about-feature-image" />
                     </div>
                     <div className="about-text-content">

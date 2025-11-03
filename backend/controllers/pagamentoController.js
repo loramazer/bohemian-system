@@ -1,15 +1,11 @@
-// backend/controllers/pagamentoController.js
-
 const { MercadoPagoConfig, Preference, Payment } = require('mercadopago');
 const pool = require('../config/db.js');
 const carrinhoModel = require('../models/carrinhoModel');
-const itemCarrinhoModel = require('../models/itemCarrinhoModel');
-// 1. IMPORTAR O NOVO MODELO DE PEDIDO
+const itemCarrinhoModel = require('../models/itemCarrinhoModel');O
 const pedidoModel = require('../models/pedidoModel'); 
 const usuarioModel = require('../models/usuarioModel');
 
 
-// ... (seu 'client' do Mercado Pago)
 const client = new MercadoPagoConfig({ accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN });
 
 
@@ -17,14 +13,12 @@ const processarNovoPedido = async (paymentId) => {
     try {
         console.log(`[processarNovoPedido] Iniciando processo para PaymentID: ${paymentId}`);
 
-        // ETAPA 1: BUSCAR PAGAMENTO NO MP
         const payment = new Payment(client);
         console.log(`[processarNovoPedido] Verificando ${paymentId} no Mercado Pago...`);
         const pagamentoInfo = await payment.get({ id: paymentId });
         
         const statusPagamento = pagamentoInfo.status; 
 
-        // ETAPA 2: VERIFICAR SE O PEDIDO JÁ EXISTE NO NOSSO BANCO
         const [pedidoExistenteRows] = await pool.query(
             `SELECT * FROM pedido WHERE id_pedido = ?`,
             [paymentId.toString()]
@@ -33,20 +27,16 @@ const processarNovoPedido = async (paymentId) => {
 
 
         if (!pedidoExistente) {
-            // --- CASO 1: PEDIDO NÃO EXISTE (É NOVO) ---
-            // (Esta parte já estava correta, pois já enviava 'pagamentoInfo.date_approved')
+
             console.log(`[processarNovoPedido] Pedido ${paymentId} NÃO existe. Criando novo pedido...`);
 
-            // ... (ETAPA 3: Extrair external_reference - MANTENHA IGUAL)
             if (!pagamentoInfo.external_reference) { /* ... */ }
             const { clienteId, enderecoId, id_carrinho } = JSON.parse(pagamentoInfo.external_reference);
             if (clienteId == null || id_carrinho == null) { /* ... */ }
 
-            // ... (ETAPA 4: Definir Status - MANTENHA IGUAL)
             const statusPedido = (statusPagamento === 'approved') ? 'Em Preparação' : 'Pendente';
 
-            // ... (ETAPA 5: INSERIR NA forma_pagamento - MANTENHA IGUAL)
-            // (Esta query já inclui 'pagamentoInfo.date_approved', por isso funciona)
+
             const [novaFormaPagamentoResult] = await pool.query(
                 `INSERT INTO forma_pagamento (id_transacao_mp, status_transacao, data_pagamento, descricao, qr_code_url) VALUES (?, ?, ?, ?, ?)`,
                 [
@@ -59,7 +49,6 @@ const processarNovoPedido = async (paymentId) => {
             );
             const novoFormaPagamentoId = novaFormaPagamentoResult.insertId;
 
-            // ... (ETAPA 6: INSERIR NA pedido - MANTENHA IGUAL)
             const [novoPedidoResult] = await pool.query(
                `INSERT INTO pedido (id_pedido, fk_id_usuario, fk_forma_pagamento_id_forma_pagamento, fk_endereco_id_endereco, dataPedido, status_pedido) VALUES (?, ?, ?, ?, ?, ?)`,
                 [
@@ -68,30 +57,23 @@ const processarNovoPedido = async (paymentId) => {
             );
             const idPedidoCriado = pagamentoInfo.id.toString();
 
-            // ... (ETAPA 7: MOVER ITENS DO CARRINHO - MANTENHA IGUAL)
-            // ...
-            // ... (ETAPA 8: ESVAZIAR CARRINHO - MANTENHA IGUAL)
 
             return { id_pedido: idPedidoCriado };
 
         } else {
-            // --- CASO 2: PEDIDO JÁ EXISTE (É UM WEBHOOK DE ATUALIZAÇÃO) ---
             console.log(`[PNP] Pedido ${paymentId} JÁ EXISTE.`);
 
-            // Checa se o status do MP é 'approved' e o nosso status *ainda* é 'Pendente'
             if (statusPagamento === 'approved' && pedidoExistente.status_pedido === 'Pendente') {
                 
                 console.log(`[PNP] ATUALIZANDO pedido de 'Pendente' para 'Aprovado'.`);
 
-                // --- CORREÇÃO AQUI: Passar a data de aprovação ---
                 await pedidoModel.atualizarStatusPagamento(
                     paymentId.toString(),
                     'approved',
                     'Em Preparação',
-                    pagamentoInfo.date_approved // <-- O novo parâmetro
+                    pagamentoInfo.date_approved
                 );
 
-                // ... (ETAPA 4: ESVAZIAR O CARRINHO - MANTENHA IGUAL)
                 if (!pagamentoInfo.external_reference) { /* ... */ }
                 const { id_carrinho } = JSON.parse(pagamentoInfo.external_reference);
                 await itemCarrinhoModel.esvaziar(id_carrinho);
@@ -101,7 +83,6 @@ const processarNovoPedido = async (paymentId) => {
             } else if (statusPagamento === 'cancelled' || statusPagamento === 'rejected') {
                 console.log(`[PNP] ATUALIZANDO pedido para '${statusPagamento}'.`);
                 
-                // --- CORREÇÃO AQUI: Passar 'null' para a data ---
                 await pedidoModel.atualizarStatusPagamento(
                     paymentId.toString(),
                     statusPagamento,
@@ -110,7 +91,6 @@ const processarNovoPedido = async (paymentId) => {
                 return pedidoExistente;
 
             } else {
-                // ... (MANTENHA IGUAL)
                 console.log(`[PNP] Webhook ignorado. Status MP: ${statusPagamento}, Status DB: ${pedidoExistente.status_pedido}. Nenhuma ação necessária.`);
                 return pedidoExistente;
             }
@@ -123,9 +103,6 @@ const processarNovoPedido = async (paymentId) => {
 };
 
 
-// =================================================================
-// --- CONTROLLER 'criarPreferencia' (Sem mudanças, mas código completo) ---
-// =================================================================
 exports.criarPreferencia = async (req, res) => {
     try {
         const { cartItems, shippingCost, deliveryOption, selectedAddressId, clienteId } = req.body;
@@ -177,13 +154,13 @@ exports.criarPreferencia = async (req, res) => {
             items: items, 
             payer: payer,
             back_urls: {
-                success: `${process.env.FRONTEND_URL}/pedido/sucesso`, // MUDADO DE order-confirmed
+                success: `${process.env.FRONTEND_URL}/pedido/sucesso`, 
                 failure: `${process.env.FRONTEND_URL}/meus-pedidos`,
                 pending: `${process.env.FRONTEND_URL}/meus-pedidos`,
             },
             auto_return: 'approved',
             external_reference: JSON.stringify(externalReferenceObj),
-            notification_url: `${process.env.BACKEND_URL}/api/pagamentos/webhook`, // Adicionando o webhook
+            notification_url: `${process.env.BACKEND_URL}/api/pagamentos/webhook`, 
         };
       
         const preference = new Preference(client);
@@ -202,10 +179,6 @@ exports.criarPreferencia = async (req, res) => {
 };
 
 
-// =================================================================
-// --- CONTROLLER 'confirmarPedido' ATUALIZADO ---
-// (Agora se chama 'registrarPedido' na prática)
-// =================================================================
 exports.confirmarPedido = async (req, res) => {
     try {
         const { paymentId } = req.body;
@@ -215,7 +188,6 @@ exports.confirmarPedido = async (req, res) => {
             return res.status(400).send('paymentId é obrigatório.');
         }
 
-        // Chama a nova função, que agora lida com 'approved' E 'pending'
         const pedidoSalvo = await processarNovoPedido(paymentId); 
 
         if (pedidoSalvo) {

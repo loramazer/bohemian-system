@@ -1,6 +1,3 @@
-/* frontend/src/styles/ToastContainer.css */
-
-/* Onde os toasts flutuam */
 .toast-container-wrapper {
     position: fixed;
     top: 50%;
@@ -37,9 +34,6 @@
 }
 
 
-/* --- Estilos de Cores (Existentes) --- */
-
-/* Carrinho (Green/Teal principal) */
 .toast-cart {
     background-color: #5d7a7b; 
     color: white;
@@ -48,7 +42,6 @@
     color: #a4d4c5;
 }
 
-/* Wishlist (Roxo/Vinho) */
 .toast-wishlist {
     background-color: #6b5a71; 
     color: white;
@@ -57,7 +50,6 @@
     color: #f0c1ff;
 }
 
-/* Sucesso Genérico (Verde) */
 .toast-success {
     background-color: #d4edda;
     color: #155724;
@@ -66,11 +58,10 @@
 .toast-success .toast-icon {
     color: #155724;
 }
-.toast-success .toast-close-btn { /* Garante que o 'x' fique visível */
+.toast-success .toast-close-btn { 
     color: #155724;
 }
 
-/* Remoção da Wishlist (Cinza/Neutro) */
 .toast-wishlist-removed {
     background-color: #7f8c8d;
     color: white;
@@ -80,26 +71,24 @@
 }
 
 .toast-trash-removed {
-    background-color: #7f8c8d; /* Mesmo cinza */
+    background-color: #7f8c8d; 
     color: white;
 }
 .toast-trash-removed .toast-icon {
-    color: #ecf0f1; /* Mesmo ícone claro */
+    color: #ecf0f1; 
 }
 
-/* *** CORREÇÃO AQUI: Adicionar o novo estilo de aviso (Amarelo) *** */
 .toast-warning {
-    background-color: #fff3cd; /* Amarelo 'warning' claro */
-    color: #664d03; /* Texto escuro para contraste */
-    border: 1px solid #ffeeba; /* Borda sutil */
+    background-color: #fff3cd; 
+    color: #664d03;
+    border: 1px solid #ffeeba; 
 }
 .toast-warning .toast-icon {
-    color: #664d03; /* Ícone na cor do texto */
+    color: #664d03; 
 }
 .toast-warning .toast-close-btn {
-    color: #664d03; /* Botão 'x' na cor do texto */
+    color: #664d03; 
 }
-/* *** FIM DA CORREÇÃO *** */
 
 
 .toast-close-btn {
@@ -112,7 +101,7 @@
     margin-left: auto;
     opacity: 0.7;
     transition: opacity 0.2s ease;
-    margin-top: 8px; /* Ajuste este valor se o 'x' estiver desalinhado */
+    margin-top: 8px; 
 }
 
 .toast-close-btn:hover {

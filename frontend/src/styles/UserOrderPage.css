@@ -28,7 +28,7 @@
     text-transform: capitalize;
 }
 
-/* --- Cartão de Pedido --- */
+
 .order-item-card {
     background-color: #fff;
     border: 1px solid #f0f0f0;
@@ -42,7 +42,7 @@
     border-color: #e5e5e5;
 }
 
-/* --- Header do Item --- */
+
 .order-header {
     display: flex;
     justify-content: space-between;
@@ -60,20 +60,17 @@
     text-transform: uppercase;
 }
 
-/* Status: APROVADO, ENTREGUE (Verde) */
+
 .status-approved, .status-authorized, .status-aprovado, .status-entregue {
     background-color: #e8f5e9;
     color: #2e7d32;
 }
 
-/* Status: EM PREPARAÇÃO, PENDENTE (Amarelo/Laranja) */
-/* CORREÇÃO: Adicionado .status-in-process para alinhar com o mapeamento logístico "Em Preparação" */
 .status-in_process, .status-pending, .status-em-processamento, .status-pendente, .status-in-process {
     background-color: #fffde7;
     color: #ffb300;
 }
 
-/* Status: REJEITADO, CANCELADO (Vermelho) */
 .status-rejected, .status-cancelled, .status-failure, .status-rejeitado, .status-cancelado {
     background-color: #ffebee;
     color: #d32f2f;
@@ -85,16 +82,16 @@
     font-weight: 400;
 }
 
-/* --- Resumo Fechado --- */
+
 .order-summary-row {
     display: flex;
-    align-items: center; /* Isso centraliza a imagem e o bloco de texto verticalmente */
+    align-items: center; 
     gap: 20px;
 }
 
 .product-info-summary {
     display: flex;
-    align-items: center; /* Isso centraliza a imagem e o bloco de texto verticalmente */
+    align-items: center; 
     gap: 15px;
     flex: 1;
 }
@@ -105,41 +102,36 @@
     object-fit: cover;
     border-radius: 4px;
     border: 1px solid #eee;
-    flex-shrink: 0; /* Impede a imagem de encolher */
+    flex-shrink: 0; 
 }
 
-/* --- CORREÇÃO 1 (Resumo Fechado) --- */
-/* Este é o contêiner do texto (Nome e "+ 1 item") */
+
 .product-details {
     display: flex;
     flex-direction: column;
-    justify-content: center;  /* Centraliza verticalmente os textos dentro deste bloco */
-    align-items: flex-start;  /* Alinha os textos à esquerda */
-    gap: 2px; /* Adiciona um pequeno espaço entre o nome e o "+1 item" */
-    height: 100%; /* Garante que ocupe a altura para centralizar */
+    justify-content: center;  
+    align-items: flex-start;  
+    gap: 2px; 
+    height: 100%; 
 }
 
-/* Remove margens negativas */
+
 .product-info-summary .product-name {
     font-weight: 600;
     font-size: 1rem;
     color: #333;
-    margin: 0; /* Remove a margem negativa */
+    margin: 0; 
     line-height: 1.2;
 }
 
-/* Remove margens negativas */
 .more-items-count {
     color: #888;
     font-size: 0.8rem;
-    margin: 0; /* Remove a margem negativa */
+    margin: 0; 
     line-height: 1.2;
     margin-top: -13px;
 }
-/* --- FIM DA CORREÇÃO 1 --- */
 
-
-/* --- Ações --- */
 .order-actions {
     display: flex;
     gap: 10px;
@@ -187,7 +179,6 @@
     color: #3b5050;
 }
 
-/* --- Detalhes do Pedido --- */
 .purchase-detail-card {
     border-top: 1px dashed #e0e0e0;
     margin-top: 15px;
@@ -229,7 +220,7 @@
 
 .detail-item-row {
     display: flex;
-    align-items: center; /* Mantém o alinhamento vertical */
+    align-items: center; 
     gap: 12px;
     padding-bottom: 10px;
     border-bottom: 1px solid #f9f9f9;
@@ -249,17 +240,16 @@
     border: 1px solid #eee;
 }
 
-/* --- INÍCIO DA CORREÇÃO 2 (Detalhes Abertos) --- */
 .detail-item-info {
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: center; /* Centraliza o bloco de texto verticalmente */
-    align-items: flex-start; /* Alinha os textos à esquerda */
-    gap: 2px; /* Espaço entre os itens */
+    justify-content: center; 
+    align-items: flex-start; 
+    gap: 2px; 
 }
 
-/* Remove margens negativas */
+
 .detail-item-info .item-name {
     font-size: 0.9rem;
     font-weight: 600;
@@ -267,14 +257,14 @@
     line-height: 1.3;
 }
 
-/* Remove margens negativas */
+
 .detail-item-info .item-qty {
     font-size: 0.85rem;
     color: #777;
     margin: 0;
 }
 
-/* Remove margens negativas */
+
 .product-link-btn {
     font-size: 0.8rem;
     font-weight: 500;
@@ -286,7 +276,7 @@
     text-align: left;
     margin: 0;
 }
-/* --- FIM DA CORREÇÃO 2 --- */
+
 
 
 .product-link-btn:hover {
@@ -300,7 +290,7 @@
     text-align: right;
 }
 
-/* --- Resumo Financeiro --- */
+
 .detail-summary {
     background-color: #fdfdfd;
     border: 1px solid #f0f0f0;
@@ -315,7 +305,6 @@
     color: #555;
     margin: 0 0 10px 0;
     padding-bottom: 5px;
-    /* border-bottom: 1px solid #eee; */ /* Linha removida */
     font-weight: 600;
 }
 
@@ -337,7 +326,6 @@
     font-size: 1.1rem;
     font-weight: 700;
     color: #333;
-    /* border-top: 1px solid #ddd; */ /* Linha removida */
     padding-top: 8px;
     margin-top: 10px;
 }
@@ -345,7 +333,7 @@
 .shipping-cost {
     color: #2e7d32;
     font-weight: 600;
-    margin-top: 0; /* Correção da margem negativa */
+    margin-top: 0;
 }
 
 .detail-shipping-info {
@@ -372,7 +360,6 @@
     text-decoration: underline;
 }
 
-/* --- Paginação --- */
 .orders-pagination {
     display: flex;
     justify-content: center;
@@ -414,7 +401,6 @@
     border: 1px solid #f0f0f0;
 }
 
-/* --- Responsividade --- */
 @media (max-width: 768px) {
     .page-title {
         font-size: 1.8rem;
@@ -454,7 +440,6 @@
     }
 }
 
-/* Adicione isso ao final de frontend/src/styles/UserOrderPage.css */
 .detail-shipping-info p {
     display: flex;
     align-items: center;

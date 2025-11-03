@@ -10,7 +10,7 @@ const OrderConfirmedPage = () => {
             </div>
             <div className="order-confirmed-box">
                 <div className="checkmark-icon-wrapper">
-                    {/* Placeholder para o ícone de checkmark */}
+                    {}
                     <div className="checkmark-icon">&#10003;</div>
                 </div>
                 <h1 className="confirmation-title">Seu Pedido Foi Enviado</h1>

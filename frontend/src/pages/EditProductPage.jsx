@@ -1,4 +1,3 @@
-// loramazer/bohemian-system/bohemian-system-refatorar-organizacao/frontend/src/pages/EditProductPage.jsx
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import ProductForm from '../components/Admin/ProductForm.jsx'; 
@@ -8,12 +7,7 @@ import apiClient from '../api.js';
 import { FeedbackContext } from '../context/FeedbackContext.jsx';
 import { AuthContext } from '../context/AuthContext.jsx';
 
-// --- ALTERAÇÃO AQUI ---
-// Removemos a importação direta do 'AddProductPage.css'
-// import '../styles/AddProductPage.css'; 
-// E importamos o 'EditProductPage.css', que já contém o @import e as correções
 import '../styles/EditProductPage.css';
-// --- FIM DA ALTERAÇÃO ---
 
 const EditProductPage = () => {
     const { productId } = useParams();
@@ -29,13 +23,11 @@ const EditProductPage = () => {
         precoRegular: '',
         precoPromocao: ''
     });
-    // ... (o resto do arquivo permanece exatamente igual) ...
     const [uploadedFiles, setUploadedFiles] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [formErrors, setFormErrors] = useState({}); 
 
-    // 1. Buscar dados
     useEffect(() => {
         if (authLoading) return;
         if (!user || user.admin !== 1) {
@@ -46,18 +38,16 @@ const EditProductPage = () => {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                // Busca de Categorias (sem /api/, pois apiClient já o tem)
                 const catResponse = await apiClient.get('/api/categorias');
                 setCategories(catResponse.data);
 
-                // Busca do Produto (sem /api/, pois apiClient já o tem)
                 const prodResponse = await apiClient.get(`/api/produtos/${productId}`);
                 const product = prodResponse.data;
 
                 setFormData({
                     nome: product.nome,
                     descricao: product.descricao,
-                    categoria: '', // A API /produtos/:id precisa retornar a categoria
+                    categoria: '', 
                     precoRegular: product.preco_venda,
                     precoPromocao: product.preco_promocao || ''
                 });
@@ -73,7 +63,7 @@ const EditProductPage = () => {
                         })));
                     }
                 } catch (e) {
-                    console.warn("Produto com formato de imagem legado (string única)"); // Este é o log que você vê
+                    console.warn("Produto com formato de imagem legado (string única)"); 
                     if (product.imagem_url) {
                          setUploadedFiles([{
                             file: null,
@@ -119,7 +109,7 @@ const EditProductPage = () => {
         return Object.keys(errors).length === 0;
     };
 
-    // 2. HandleSubmit
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!validateForm()) return;
@@ -140,10 +130,7 @@ const EditProductPage = () => {
                 }
             });
 
-            // --- CORREÇÃO AQUI ---
-            // Removemos o prefixo /api/ da chamada
-            // ANTES: const response = await apiClient.put(`/api/produtos/${productId}`, formDataToSend, {
-            // DEPOIS:
+
             const response = await apiClient.put(`/produtos/${productId}`, formDataToSend, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -156,7 +143,7 @@ const EditProductPage = () => {
             navigate('/admin/products'); 
 
         } catch (err) {
-            console.error('Erro ao atualizar produto:', err); // Este é o log que você vê
+            console.error('Erro ao atualizar produto:', err); 
             const errorMsg = err.response?.data?.message || 'Erro ao salvar. Tente novamente.';
             showToast(errorMsg, 'warning');
         }

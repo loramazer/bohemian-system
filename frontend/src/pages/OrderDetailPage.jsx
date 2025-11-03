@@ -1,4 +1,3 @@
-// frontend/src/pages/OrderDetailPage.jsx
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
@@ -11,7 +10,6 @@ import { FeedbackContext } from '../context/FeedbackContext.jsx';
 
 import '../styles/OrderDetail.css';
 
-// Mapeamento de status de PAGAMENTO (apenas para exibição do badge)
 const paymentStatusMap = {
     'pending': 'Pendente',
     'approved': 'Aprovado',
@@ -23,7 +21,6 @@ const paymentStatusMap = {
     'failure': 'Falhou'
 };
 
-// Mapeamento de status do PEDIDO (Logístico) - Alinha com os códigos ENUM
 const orderStatusLogisticoMap = {
     'in_process': 'Em Preparação', 
     'pending': 'Pendente', 
@@ -32,7 +29,6 @@ const orderStatusLogisticoMap = {
     'delivered': 'Entregue' 
 };
 
-// Opções para o select (os códigos ENUM do status logístico)
 const orderStatusOptions = Object.keys(orderStatusLogisticoMap);
 
 const OrderDetailPage = () => {
@@ -43,10 +39,8 @@ const OrderDetailPage = () => {
 
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
-    // currentStatusLogistico armazena o código ENUM do status logístico
     const [currentStatusLogistico, setCurrentStatusLogistico] = useState(''); 
 
-    // Hook de segurança e busca de dados
     useEffect(() => {
         if (authLoading) return;
         if (!user || user.admin !== 1) {
@@ -59,7 +53,6 @@ const OrderDetailPage = () => {
                 setLoading(true);
                 const response = await apiClient.get(`/api/dashboard/orders/${orderId}`);
                 setOrder(response.data);
-                // Usa o status LOGÍSTICO (status_pedido) do DB
                 setCurrentStatusLogistico(response.data.status_pedido || 'pending'); 
             } catch (error) {
                 console.error('Erro ao buscar detalhes do pedido:', error);
@@ -74,25 +67,18 @@ const OrderDetailPage = () => {
         }
     }, [orderId, user, authLoading, navigate, showToast]);
 
-    // Lida com a mudança no <select>
     const handleStatusSelectChange = (e) => {
-        // Recebe o código ENUM do select
         setCurrentStatusLogistico(e.target.value); 
     };
 
-    // Lida com o clique no botão "Salvar"
     const handleStatusSave = async () => {
-        // Verifica a permissão antes de salvar
         if (!isEditable) {
             showToast('A edição do status do pedido só é permitida após a aprovação do pagamento.', 'warning');
             return;
         }
         
-        // currentStatusLogistico é o código ENUM que será salvo
         try {
-            // Usa o endpoint que atualiza o status_pedido
             await apiClient.put(`/api/dashboard/orders/status/${orderId}`, { status: currentStatusLogistico });
-            // Atualiza o status LOGÍSTICO (status_pedido) no objeto local para refletir a mudança
             setOrder(prevOrder => ({ ...prevOrder, status_pedido: currentStatusLogistico }));
             showToast('Status logístico atualizado com sucesso!', 'success');
         } catch (error) {
@@ -101,27 +87,21 @@ const OrderDetailPage = () => {
         }
     };
     
-    // Função para formatar o status de PAGAMENTO (para o badge)
     const formatPaymentStatus = (status) => {
         if (!status) return 'Indefinido';
         return paymentStatusMap[status.toLowerCase()] || status;
     };
-    
-    // Função para formatar o status LOGÍSTICO (para o select e exibição)
+
     const formatLogisticStatus = (status) => {
         if (!status) return 'Indefinido';
-        // Procura o texto de exibição pelo código ENUM/DB
         return orderStatusLogisticoMap[status] || status;
     };
-    
-    // Função para mapear status logístico para classes CSS (usa as classes de pagamento)
+
     const getLogisticStatusClass = (status) => {
         if (!status) return 'indefinido';
         return status.toLowerCase();
     };
 
-    // --- LÓGICA DE HABILITAÇÃO ---
-    // O select e o botão SALVAR só serão editáveis se o status de pagamento for 'approved'
     const isEditable = order && order.status === 'approved';
 
 
@@ -133,7 +113,6 @@ const OrderDetailPage = () => {
         return <ContentWrapper><div>Pedido não encontrado.</div></ContentWrapper>;
     }
 
-    // Renderiza a página com os dados reais
     return (
         <ContentWrapper>
             <main className="order-detail-main">
@@ -143,16 +122,15 @@ const OrderDetailPage = () => {
 
                     <div className="order-actions">
                         
-                        {/* SELECT: Permite mudar o status LOGÍSTICO */}
+                        {}
                         <select 
                             value={currentStatusLogistico} 
                             onChange={handleStatusSelectChange}
                             className={`status-select status-${getLogisticStatusClass(currentStatusLogistico)}`} 
-                            disabled={!isEditable} /* Desabilitado se não for APROVADO */
+                            disabled={!isEditable} 
                         >
                             <option value="">Mudar Status Logístico</option>
                             {orderStatusOptions.map(status => (
-                                // value é o código ENUM (ex: 'authorized')
                                 <option key={status} value={status}>
                                     {formatLogisticStatus(status)}
                                 </option>
@@ -162,7 +140,6 @@ const OrderDetailPage = () => {
                         <button 
                             className="save-btn" 
                             onClick={handleStatusSave}
-                            // Desabilita se o status selecionado for o mesmo OU se a edição não for permitida
                             disabled={currentStatusLogistico === order.status_pedido || !isEditable}
                         >
                             Salvar
@@ -170,7 +147,7 @@ const OrderDetailPage = () => {
                     </div>
                 </div>
                 
-                {/* O OrderInfoCards.jsx foi modificado para refletir Pagamento */}
+                {}
                 <OrderInfoCards order={order} />
                 
                 <div className="products-summary-section">

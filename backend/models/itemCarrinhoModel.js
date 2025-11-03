@@ -1,5 +1,3 @@
-// models/itemCarrinhoModel.js
-
 const db = require('../config/db');
 
 
@@ -12,13 +10,9 @@ exports.adicionarItem = async (id_carrinho, produto_id, quantidade, preco_unitar
     const itemExistente = rows[0];
     const novaQuantidade = itemExistente.quantidade + quantidade;
     
-    // A query SQL (UPDATE) está correta
     const updateSql = 'UPDATE item_carrinho SET quantidade = ? WHERE id_item_carrinho = ?';
     
-    // --- CORREÇÃO AQUI ---
-    // Mude de 'itemExistente.item_id_carrinho' para 'itemExistente.id_item_carrinho'
     await db.execute(updateSql, [novaQuantidade, itemExistente.id_item_carrinho]);
-    // ---------------------
 
   } else {
     console.log(`[itemCarrinhoModel] Produto ${produto_id} NÃO EXISTE. Inserindo novo item.`); // Seu log
@@ -29,7 +23,6 @@ exports.adicionarItem = async (id_carrinho, produto_id, quantidade, preco_unitar
 
 
 exports.listarItens = async (id_carrinho) => {
-  // --- CORREÇÃO: Adicionado 'p.id_produto' ---
   const sql = `SELECT ic.id_item_carrinho, ic.quantidade, ic.preco_unitario, p.id_produto, p.nome AS nome_produto,p.imagem_url FROM item_carrinho ic JOIN produto p ON ic.id_produto = p.id_produto WHERE ic.id_carrinho = ?;`;
   const [rows] = await db.execute(sql, [id_carrinho]);
   return rows;

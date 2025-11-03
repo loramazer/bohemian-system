@@ -1,10 +1,7 @@
-// backend/controllers/pedidoController.js
 const pedidoModel = require('../models/pedidoModel');
 
-// GET /api/pedidos/meus-pedidos
 async function getMeusPedidos(req, res) {
     try {
-        // req.user.id é injetado pelo authMiddleware
         const usuarioId = req.user.id; 
         console.log("DEBUG: Rota /meus-pedidos chamada.");
     console.log("DEBUG: Objeto req.user:", req.user.id);

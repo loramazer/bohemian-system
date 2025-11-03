@@ -1,17 +1,15 @@
-// loramazer/bohemian-system/bohemian-system-front-back-carrinhos/backend/middlewares/authMiddleware.js
-
 const db = require('../config/db');
 const jwt = require('jsonwebtoken');
 
 const authMiddleware = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
-  // 1. Verifica se o token foi enviado
+
   if (!authHeader) {
     return res.status(401).json({ error: 'Token não fornecido.' });
   }
 
-  // 2. Separa o "Bearer" do token
+
   const parts = authHeader.split(' ');
   if (parts.length !== 2) {
     return res.status(401).json({ error: 'Erro no formato do token.' });

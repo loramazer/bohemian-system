@@ -1,4 +1,3 @@
-// frontend/src/pages/AllOrdersPage.jsx
 import React, { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
@@ -8,7 +7,7 @@ import { AuthContext } from '../context/AuthContext.jsx';
 import { FeedbackContext } from '../context/FeedbackContext.jsx';
 import '../styles/AllOrdersPage.css';
 
-// Mapeamento de status de PAGAMENTO (Vem do forma_pagamento -> fp.status_transacao)
+
 const paymentStatusMap = {
     'pending': 'Pendente',
     'approved': 'Aprovado',
@@ -17,25 +16,21 @@ const paymentStatusMap = {
     'delivered': 'Entregue',     
     'cancelled': 'Cancelado',
     'rejected': 'Rejeitado',
-    'failure': 'Falhou' // Adicionado status do Mercado Pago para evitar erro
+    'failure': 'Falhou' 
 };
 
-// Mapeamento de status do PEDIDO (Logístico - p.status_pedido). 
-// Chave: Código ENUM do DB (o que será salvo)
-// Valor: Texto de exibição para o Admin
+
 const orderStatusLogisticoMap = {
-    'in_process': 'Em Preparação', // Logístico 'Em Preparação' -> usa código 'in_process'
+    'in_process': 'Em Preparação',
     'pending': 'Pendente', 
     'cancelled': 'Cancelado', 
-    'authorized': 'Enviado', // Logístico 'Enviado' -> usa código 'authorized'
-    'delivered': 'Entregue'  // Logístico 'Entregue' -> usa código 'delivered'
+    'authorized': 'Enviado', 
+    'delivered': 'Entregue' 
 };
 
 
-// Opções para o <select> de filtro (Pagamento)
 const paymentStatusOptions = Object.keys(paymentStatusMap);
 
-// Opções para o <select> de Status de Pedido (Logístico). Usamos as chaves (códigos ENUM).
 const orderStatusOptions = Object.keys(orderStatusLogisticoMap);
 
 
@@ -52,7 +47,7 @@ const AllOrdersPage = () => {
     const [totalPages, setTotalPages] = useState(0);
     const [totalPedidos, setTotalPedidos] = useState(0);
 
-    // Estados de Filtro
+
     const [filters, setFilters] = useState({
         search: '',
         status: '', 
@@ -62,7 +57,7 @@ const AllOrdersPage = () => {
     
     const [activeFilters, setActiveFilters] = useState(filters);
 
-    // Hook de segurança e busca de dados
+
     useEffect(() => {
         if (authLoading) return;
         if (!user || user.admin !== 1) {
@@ -279,11 +274,8 @@ const AllOrdersPage = () => {
                                         <td>
                                             <select
                                                 className={`status-select status-${getOrderStatusClass(pedido.status_pedido)}`} 
-                                                // O valor é o código ENUM/DB (ex: 'authorized')
                                                 value={pedido.status_pedido || 'pending'} 
-                                                // Desabilita se o status de pagamento NÃO for 'approved'
                                                 disabled={pedido.status !== 'approved'} 
-                                                // O onChange envia o código ENUM/DB para o backend
                                                 onChange={(e) => handleStatusChange(pedido.id_pedido, e.target.value, pedido.status)}
                                             >
                                                 {orderStatusOptions.map(status => (

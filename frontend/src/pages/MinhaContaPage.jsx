@@ -1,14 +1,12 @@
-// frontend/src/pages/MinhaContaPage.jsx
 import React, { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
-import AddressForm from '../components/Shared/AddressForm.jsx'; // Reutilizamos o formulário
+import AddressForm from '../components/Shared/AddressForm.jsx'; 
 import apiClient from '../api.js';
 import { AuthContext } from '../context/AuthContext.jsx';
 import { FeedbackContext } from '../context/FeedbackContext.jsx';
 import { FaTrash } from 'react-icons/fa';
 
-// --- NOVO: Importar o modal de confirmação ---
 import ConfirmationModal from '../components/Shared/ConfirmationModal.jsx'; 
 import '../styles/MinhaContaPage.css'; 
 
@@ -30,16 +28,13 @@ const MinhaContaPage = () => {
     const [addresses, setAddresses] = useState([]);
     const [showAddForm, setShowAddForm] = useState(false);
 
-    // --- NOVO: State para controlar o modal de exclusão ---
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [addressToDelete, setAddressToDelete] = useState(null);
-    // --- FIM NOVO ---
 
-    // Efeito para buscar dados do perfil ao carregar a página
     useEffect(() => {
-        if (authLoading) return; // Espera a autenticação verificar
+        if (authLoading) return; 
         if (!user) {
-            navigate('/api/login'); // Redireciona se não estiver logado
+            navigate('/api/login'); 
             return;
         }
 
@@ -71,7 +66,6 @@ const MinhaContaPage = () => {
         setPasswordData(prev => ({ ...prev, [name]: value }));
     };
 
-    // Salva dados pessoais (nome, email, telefone)
     const handleProfileSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -81,7 +75,6 @@ const MinhaContaPage = () => {
                 telefone: formData.telefone,
             });
             showToast('Dados atualizados com sucesso!', 'success');
-            // Atualiza o nome no formData (caso o token JWT demore para atualizar)
             setFormData(prev => ({ ...prev, nome: response.data.usuario.nome }));
         } catch (error) {
             console.error("Erro ao atualizar perfil:", error);
@@ -89,7 +82,6 @@ const MinhaContaPage = () => {
         }
     };
 
-    // Salva a nova senha
     const handlePasswordSubmit = async (e) => {
         e.preventDefault();
         if (!passwordData.senhaAtual || !passwordData.novaSenha) {
@@ -102,20 +94,18 @@ const MinhaContaPage = () => {
                 novaSenha: passwordData.novaSenha,
             });
             showToast('Senha alterada com sucesso!', 'success');
-            setPasswordData({ senhaAtual: '', novaSenha: '' }); // Limpa os campos
+            setPasswordData({ senhaAtual: '', novaSenha: '' }); 
         } catch (error) {
             console.error("Erro ao alterar senha:", error);
             showToast(error.response?.data?.message || 'Erro ao alterar senha.', 'warning');
         }
     };
 
-    // Salva um novo endereço (reutilizando o controller existente)
     const handleSaveAddress = async (newAddressData) => {
         try {
             await apiClient.post('/api/enderecos', newAddressData);
             showToast('Endereço salvo com sucesso!', 'success');
             setShowAddForm(false);
-            // Re-busca os dados para atualizar a lista
             const response = await apiClient.get('/api/usuario/me');
             setAddresses(response.data.enderecos || []);
         } catch (error) {
@@ -124,30 +114,28 @@ const MinhaContaPage = () => {
         }
     };
 
-    // --- MUDANÇA: Abre o modal de confirmação ---
     const handleAskDeleteAddress = (addressId) => {
-        setAddressToDelete(addressId); // Salva o ID do endereço que queremos deletar
-        setShowDeleteModal(true);      // Abre o modal
+        setAddressToDelete(addressId); 
+        setShowDeleteModal(true);    
     };
 
-    // --- NOVO: Função que o modal chama ao confirmar ---
     const handleConfirmDelete = async () => {
         if (!addressToDelete) return;
 
         try {
             const response = await apiClient.delete(`/api/enderecos/${addressToDelete}`);
-            setAddresses(response.data.enderecos || []); // Atualiza a lista
-            showToast('Endereço removido.', 'trash-removed'); // Toast cinza com ícone de lixeira
+            setAddresses(response.data.enderecos || []); 
+            showToast('Endereço removido.', 'trash-removed'); 
         } catch (error) {
             console.error("Erro ao remover endereço:", error);
             showToast(error.response?.data?.message || 'Erro ao remover endereço.', 'warning');
         } finally {
-            setShowDeleteModal(false); // Fecha o modal
-            setAddressToDelete(null);  // Limpa o ID
+            setShowDeleteModal(false); 
+            setAddressToDelete(null);  
         }
     };
     
-    // --- NOVO: Função para fechar o modal ---
+
     const handleCancelDelete = () => {
         setShowDeleteModal(false);
         setAddressToDelete(null);
@@ -160,7 +148,7 @@ const MinhaContaPage = () => {
 
     return (
         <ContentWrapper>
-            {/* --- NOVO: Renderiza o modal se showDeleteModal for true --- */}
+            {}
             {showDeleteModal && (
                 <ConfirmationModal
                     title="Excluir Endereço"
@@ -177,7 +165,7 @@ const MinhaContaPage = () => {
                 </div>
                 
                 <div className="account-container">
-                    {/* Card de Dados Pessoais */}
+                    {}
                     <div className="account-card">
                         <h2>Meus Dados</h2>
                         <form className="account-form" onSubmit={handleProfileSubmit}>
@@ -215,7 +203,7 @@ const MinhaContaPage = () => {
                             <button type="submit" className="save-btn">Salvar Alterações</button>
                         </form>
 
-                        {/* Seção de Alterar Senha */}
+                        {}
                         <div className="password-change-section">
                             <h3>Alterar Senha</h3>
                             <form className="account-form" onSubmit={handlePasswordSubmit}>
@@ -244,7 +232,7 @@ const MinhaContaPage = () => {
                         </div>
                     </div>
 
-                    {/* Card de Endereços */}
+                    {}
                     <div className="account-card">
                         <h2>Meus Endereços</h2>
                         
@@ -255,10 +243,9 @@ const MinhaContaPage = () => {
                             {addresses.map(addr => (
                                 <div key={addr.id_endereco} className="address-card-account">
                                     <div className="address-card-header">
-                                        {/* CORREÇÃO: Mostra 'rua' (que vem traduzido do alias do DB) */}
+                                        {}
                                         <strong>{addr.rua}, {addr.numero}</strong>
                                         <button 
-                                            // --- MUDANÇA: Chama a função que abre o modal ---
                                             onClick={() => handleAskDeleteAddress(addr.id_endereco)}
                                             className="address-delete-btn"
                                             title="Excluir endereço"
@@ -266,7 +253,7 @@ const MinhaContaPage = () => {
                                             <FaTrash />
                                         </button>
                                     </div>
-                                    {/* CORREÇÃO: Mostra 'cidade' e 'estado' */}
+                                    {}
                                     <p>{addr.cidade} - {addr.estado}</p>
                                     <p>CEP: {addr.cep}</p>
                                 </div>

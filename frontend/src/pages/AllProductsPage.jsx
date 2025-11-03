@@ -1,4 +1,3 @@
-// loramazer/bohemian-system/bohemian-system-refatorar-organizacao/frontend/src/pages/AllProductsPage.jsx
 import React, { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
@@ -9,8 +8,6 @@ import { getProducts } from '../api.js';
 import apiClient from '../api.js'; 
 import { FeedbackContext } from '../context/FeedbackContext.jsx';
 import { AuthContext } from '../context/AuthContext.jsx';
-
-// Importa os estilos
 import '../styles/AllProductsPage.css';
 import '../styles/AdminProductCard.css'; 
 
@@ -32,7 +29,6 @@ const AllProductsPage = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [productToDelete, setProductToDelete] = useState(null);
 
-    // Hook para buscar os produtos
     useEffect(() => {
         if (!authLoading && (!user || user.admin !== 1)) {
             navigate('/');
@@ -85,20 +81,14 @@ const AllProductsPage = () => {
         setProductToDelete(null);
     };
 
-    // 3. Confirma a exclusão
     const handleConfirmDelete = async () => {
         if (!productToDelete) return;
 
         try {
-            // --- CORREÇÃO AQUI ---
-            // Removemos o prefixo /api/ da chamada
-            // ANTES: await apiClient.delete(`/api/produtos/${productToDelete.id_produto}`);
-            // DEPOIS:
             await apiClient.delete(`/api/produtos/${productToDelete.id_produto}`);
             
             showToast('Produto removido com sucesso!', 'trash-removed');
-            
-            // Atualiza a lista de produtos
+
             setProducts(prev => prev.filter(p => p.id_produto !== productToDelete.id_produto));
             setTotalProducts(prev => prev - 1);
 
@@ -127,7 +117,7 @@ const AllProductsPage = () => {
                 />
             )}
 
-            {/* ANTES: <main className="admin-products-main"> */}
+            {}
             <div className="admin-products-main">
                 <div className="admin-page-header">
                     <h2 className="admin-page-title">Todos os Produtos ({totalProducts})</h2>
@@ -159,7 +149,7 @@ const AllProductsPage = () => {
                     />
                 )}
             </div>
-            {/* ANTES: </main> */}
+            {}
         </ContentWrapper>
     );
 };

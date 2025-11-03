@@ -1,5 +1,3 @@
-// backend/seedAdmin.js
-
 const bcrypt = require('bcrypt');
 const db = require('./config/db');
 
@@ -29,13 +27,11 @@ async function createAdmin() {
         const saltRounds = 10;
         const senhaHash = await bcrypt.hash(adminData.senha, saltRounds);
 
-        // CORREÇÃO: Incluindo 'nome' (obrigatório) e usando 'admin' (1 para TRUE)
         const userSql = 'INSERT INTO usuario (nome, login, senha, admin) VALUES (?, ?, ?, ?)';
         const [userResult] = await connection.query(userSql, [adminData.nome, adminData.email, senhaHash, 1]);
         const novoUsuarioId = userResult.insertId;
         console.log(`-> Registo criado na tabela 'usuario' com ID: ${novoUsuarioId} e permissão ADMIN (1).`);
         
-        // A lógica de inserção na tabela 'colaborador' FOI REMOVIDA.
 
         await connection.commit();
         console.log(`\n✅ Administrador "${adminData.nome}" criado com sucesso!`);

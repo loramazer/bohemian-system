@@ -1,4 +1,3 @@
-// loramazer/bohemian-system/bohemian-system-front-back-carrinhos/backend/controllers/authController.js
 const path = require('path');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -101,14 +100,10 @@ async function forgotPassword(req, res) {
     const token = crypto.randomBytes(32).toString('hex');
     const expiresAt = new Date(Date.now() + 3600000);
 
-    // db.execute agora está disponível
   await db.execute(
-        // Adiciona fk_cliente_id à lista de colunas
         'INSERT INTO password_resets (fk_cliente_id, fk_usuario_id, token, expires_at) VALUES (?, ?, ?, ?)', 
-        // Adiciona usuario.id_usuario como primeiro parâmetro
         [usuario.id_usuario, usuario.id_usuario, token, expiresAt] 
     );
-    // CORRIGIDO: Adicionado / antes de reset-password
 const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${token}`;
     const logoPath = path.join(__dirname, '..', '..', 'frontend', 'src', 'assets', 'bohemian-logo.png');
 
@@ -146,11 +141,10 @@ const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${token}`;
       attachments: [{
           filename: 'bohemian-logo.png',
           path: logoPath, 
-          // O CID aqui é o mesmo usado no HTML: cid:logo
           cid: 'logo' 
       }]
     };
-    await transporter.sendMail(mailOptions); // transporter está definido
+    await transporter.sendMail(mailOptions); 
 
     res.status(200).json({ message: 'Se as informações estiverem corretas, você receberá um e-mail com as instruções para redefinir sua senha.' });
   } catch (error) {
@@ -163,24 +157,19 @@ async function resetPassword(req, res) {
   const { token, newPassword } = req.body;
 
   try {
-    // 1. Buscar o token válido
     const [rows] = await db.execute('SELECT * FROM password_resets WHERE token = ? AND expires_at > NOW()', [token]);
     const resetToken = rows[0];
 
     if (!resetToken) {
         return res.status(400).json({ message: 'Token inválido ou expirado.' });
     }
-    
-    // --- CORREÇÃO AQUI ---
-    // 2. Definir o usuarioId a partir do token
+
     const usuarioId = resetToken.fk_usuario_id;
 
     const newPasswordHash = await bcrypt.hash(newPassword, saltRounds);
     
-    // 3. CORREÇÃO CRÍTICA: Atualizar a senha na tabela `usuario`
     await db.execute('UPDATE usuario SET senha = ? WHERE id_usuario = ?', [newPasswordHash, usuarioId]);
 
-    // 4. Remover o token de reset
     await db.execute('DELETE FROM password_resets WHERE id_reset = ?', [resetToken.id_reset]);
 
     res.status(200).json({ message: 'Senha redefinida com sucesso!' });

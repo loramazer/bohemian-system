@@ -1,5 +1,3 @@
-// src/pages/CheckoutPage.jsx
-
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { CartContext } from '../context/CartContext';
@@ -9,13 +7,10 @@ import AddressForm from '../components//Shared/AddressForm';
 
 
 const CheckoutPage = () => {
-    // ... (todos os seus states: deliveryOption, addresses, etc.)
     const { user } = useContext(AuthContext);
 
-    // 2. PEGAR DADOS DO CARRINHO E LOADING DO CARRINHO
     const { cartItems, loading: loadingCart } = useContext(CartContext);
 
-    // 3. NOVO STATE PARA LOADING DO PAGAMENTO
     const [isCreatingPreference, setIsCreatingPreference] = useState(false);
     const [paymentError, setPaymentError] = useState('');
 
@@ -26,8 +21,6 @@ const CheckoutPage = () => {
     const [showAddForm, setShowAddForm] = useState(false);
     const storeAddress = "R. Mal. Deodoro da Fonseca, 51 - Centro - Ponta Grossa, PR";
 
-    // ... (suas funções fetchAddresses, handleSaveAddress, renderAddressList) ...
-    // Coloquei suas funções originais aqui para o contexto
     const fetchAddresses = async () => {
         setIsLoading(true);
         try {
@@ -46,7 +39,6 @@ const CheckoutPage = () => {
         if (user) {
             fetchAddresses();
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
 
     const handleSaveAddress = async (formData) => {
@@ -75,14 +67,9 @@ const CheckoutPage = () => {
             </div>
         );
     };
-    // --- Fim das suas funções originais ---
 
-
-    // 4. CALCULAR TOTAIS
     const subtotal = cartItems.reduce((acc, item) => acc + item.preco_unitario * item.quantidade, 0);
 
-    // O custo do frete simulado
-    // Se for 'retirada', frete é 0.
     const shippingCost = deliveryOption === 'retirada' ? 0 : 15.00;
 
     const total = subtotal + shippingCost;
@@ -96,7 +83,6 @@ const CheckoutPage = () => {
         }
         if (cartItems.length === 0) { /* ... */ }
 
-        // --- MUDANÇA: Verifique se o 'user' está carregado ---
         if (!user || !user.id) {
             setPaymentError('Erro: Usuário não autenticado.');
             return;
@@ -104,20 +90,17 @@ const CheckoutPage = () => {
 
         setIsCreatingPreference(true);
         try {
-            // --- MUDANÇA: Enviar o 'clienteId' aqui ---
             const enderecoParaSalvar = deliveryOption === 'retirada' ? null : selectedAddressId;
 
             const response = await apiClient.post('/api/pagamentos/criar-preferencia', {
                 cartItems: cartItems,
                 shippingCost: shippingCost,
                 deliveryOption: deliveryOption,
-                selectedAddressId: enderecoParaSalvar, // Já estávamos enviando o ID ou null
-                clienteId: user.id, // A NOVA LINHA IMPORTANTE
+                selectedAddressId: enderecoParaSalvar, 
+                clienteId: user.id, 
             });
 
             if (response.data.init_point) {
-                // --- MUDANÇA: Remover TODO o 'localStorage' ---
-                // localStorage.setItem('dadosConfirmacaoPedido', ...); // REMOVA ISSO
 
                 window.location.href = response.data.init_point;
             }
@@ -130,16 +113,15 @@ const CheckoutPage = () => {
         }
     };
 
-    // 7. RENDERIZAÇÃO
+
     return (
-        // Usamos um grid para dividir a página em duas colunas: Opções e Resumo
         <div className="checkout-page-grid">
 
-            {/* Coluna da Esquerda: Opções de Entrega */}
+            {}
             <main className="checkout-container">
                 <h2>Como você prefere receber seu pedido?</h2>
                 <div className="delivery-options">
-                    {/* ... seus botões de 'retirada' e 'entrega' ... */}
+                    {}
                     <button
                         className={deliveryOption === 'retirada' ? 'active' : ''}
                         onClick={() => setDeliveryOption('retirada')}
@@ -180,7 +162,7 @@ const CheckoutPage = () => {
                 </div>
             </main>
 
-            {/* Coluna da Direita: Resumo do Pedido */}
+            {}
             <aside className="checkout-summary-container">
                 <h3>Resumo do Pedido</h3>
 
@@ -209,7 +191,7 @@ const CheckoutPage = () => {
                     </div>
                 )}
 
-                {/* Botão de Pagamento */}
+                {}
                 <button
                     className="payment-btn"
                     onClick={handleGoToPayment}

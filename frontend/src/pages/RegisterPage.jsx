@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
-import RegisterForm from '../components/RegisterForm.jsx'; // <--- CORREÇÃO: Importar o componente
+import RegisterForm from '../components/RegisterForm.jsx'; 
 import '../styles/RegisterPage.css';
 
 

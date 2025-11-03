@@ -1,10 +1,8 @@
-// frontend/src/pages/CatalogPage.jsx
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import Sidebar from '../components/Catalog/Sidebar';
 import ProductGrid from '../components/Catalog/ProductGrid';
 import Pagination from '../components/Shared/Pagination';
-// CORREÇÃO: Importar getProducts e getCategories do api.js
 import { getProducts, getCategories } from '../api';
 import '../styles/CatalogPage.css';
 
@@ -24,11 +22,10 @@ function CatalogPage() {
 
   const PRODUCTS_PER_PAGE = 9;
 
-  // ATUALIZADO: Incluir 'search' no estado inicial dos filtros lido da URL
   const [filters, setFilters] = useState(() => {
     const params = new URLSearchParams(location.search);
     const catsFromUrl = params.get('categories');
-    const searchFromUrl = params.get('search'); // NOVO: Ler busca da URL
+    const searchFromUrl = params.get('search'); 
 
     return {
       categories: catsFromUrl
@@ -36,7 +33,7 @@ function CatalogPage() {
          : [],
       sort: params.get('sort') || 'name_asc',
       price: parseInt(params.get('price'), 10) || 500,
-      search: searchFromUrl || '', // NOVO: Adicionar busca ao estado
+      search: searchFromUrl || '', 
     };
   });
 
@@ -51,67 +48,57 @@ function CatalogPage() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        // 1. A 'response' do axios (ou api.js) é um objeto
         const response = await getCategories();
 
-        // 2. Extraia o array de dentro de 'response.data'
-        //    (Se 'getCategories' já extrai 'data', talvez o array esteja em 'response' direto)
         const categoriesData = response.data || response;
 
-        // 3. VERIFICAÇÃO DE SEGURANÇA: Só atualiza o estado se for um array
         if (Array.isArray(categoriesData)) {
           setCategories(categoriesData);
         } else {
           console.error("Erro: A API getCategories() não retornou um array.", categoriesData);
-          setCategories([]); // Define como vazio para não quebrar
+          setCategories([]); 
         }
 
       } catch (err) {
         console.error('Erro ao buscar categorias:', err);
-        setCategories([]); // Define como vazio em caso de falha na API
+        setCategories([]); 
       }
     };
     fetchCategories();
   }, []);
 
-  // Buscar produtos (ATUALIZADO)
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
       setError(null);
 
       try {
-        // Monta os parâmetros incluindo a busca
         const params = {
           page: currentPage,
           limit: PRODUCTS_PER_PAGE,
           categories: filters.categories.join(','),
           sort: filters.sort,
           maxPrice: filters.price,
-          search: filters.search, // NOVO: Incluir busca nos parâmetros da API
+          search: filters.search, 
         };
 
-        // Remove parâmetros vazios ou padrão antes de chamar a API
         Object.keys(params).forEach(key => {
           if (!params[key] || (key === 'sort' && params[key] === 'name_asc') || (key === 'maxPrice' && params[key] === 500)) {
-            if(key !== 'search' || !params[key]) { // Não remove 'search' se estiver vazio intencionalmente
+            if(key !== 'search' || !params[key]) { 
              delete params[key];
             }
           }
         });
 
-         // Atualiza a URL com os parâmetros atuais (incluindo busca)
         const searchParams = new URLSearchParams();
         if (params.page > 1) searchParams.set('page', String(params.page));
         if (params.categories) searchParams.set('categories', params.categories);
-        if (params.sort) searchParams.set('sort', params.sort); // Sempre inclui sort se não for o padrão
-        if (params.maxPrice) searchParams.set('price', String(params.maxPrice)); // Sempre inclui price se não for o padrão
-        if (params.search) searchParams.set('search', params.search); // NOVO: Adiciona busca à URL
+        if (params.sort) searchParams.set('sort', params.sort);
+        if (params.maxPrice) searchParams.set('price', String(params.maxPrice)); 
+        if (params.search) searchParams.set('search', params.search); 
 
-        // Navega para a URL atualizada (replace evita adicionar ao histórico)
         navigate(`${location.pathname}?${searchParams.toString()}`, { replace: true });
 
-        // CORREÇÃO: Usar a função importada com os parâmetros
         const data = await getProducts(params);
 
         setProducts(data.products || []);
@@ -127,13 +114,11 @@ function CatalogPage() {
     };
 
     fetchProducts();
-    // ATUALIZADO: Adiciona filters.search às dependências
   }, [filters, currentPage, navigate, location.pathname]);
 
-  // Função para aplicar filtros do Sidebar (inalterada, mas agora inclui search indiretamente via estado 'filters')
   const handleApplyFilters = (newFilters) => {
     setFilters(prevFilters => ({
-      ...prevFilters, // Mantém a busca atual
+      ...prevFilters, 
       categories: newFilters.categories,
       sort: newFilters.sort,
       price: newFilters.price,
@@ -146,27 +131,23 @@ function CatalogPage() {
     window.scrollTo(0, 0);
   };
 
-  // NOVO: useEffect para ouvir mudanças no parâmetro 'search' da URL (vindo do Header)
    useEffect(() => {
      const searchTermFromUrl = query.get('search') || '';
-     // Atualiza o estado 'filters' APENAS se o search da URL for diferente do estado atual
      if (searchTermFromUrl !== filters.search) {
        setFilters(prev => ({ ...prev, search: searchTermFromUrl }));
-       setCurrentPage(1); // Reseta para a primeira página na nova busca
+       setCurrentPage(1); 
      }
-   // eslint-disable-next-line react-hooks/exhaustive-deps
-   }, [location.search]); // Ouve mudanças na query string completa
+   }, [location.search]); 
 
    
  return (
-    // NOVO: Container principal para a página, centralizado
     <div className="catalog-page-container">
-        {/* Breadcrumbs aqui, antes da área de conteúdo principal */}
+        {}
         <div className="catalog-breadcrumbs">
             <Link to="/">Home</Link> &gt; <span>Comprar</span>
         </div>
 
-        {/* NOVO: Div para agrupar Sidebar e Main Content */}
+        {}
         <div className="catalog-content-area">
             <Sidebar
                 categories={categories}
@@ -178,7 +159,7 @@ function CatalogPage() {
                 }}
             />
             <main className="catalog-main">
-                {/* O conteúdo do main permanece o mesmo */}
+                {}
                 {loading && <div className="loader">Carregando...</div>}
                 {error && <div className="error-message">{error}</div>}
                 {!loading && !error && (

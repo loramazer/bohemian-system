@@ -1,5 +1,3 @@
-// src/pages/PaginaSucesso.jsx
-
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
@@ -7,7 +5,6 @@ function PaginaSucesso() {
     const [searchParams] = useSearchParams();
     const [mensagem, setMensagem] = useState('Processando seu pagamento...');
 
-    // --- CORREÇÃO AQUI ---
     useEffect(() => {
         console.log("--- PÁGINA DE STATUS CARREGADA ---");
 
@@ -15,11 +12,9 @@ function PaginaSucesso() {
         const status = searchParams.get('status');
         console.log("[DEBUG] payment_id:", paymentId, "status:", status);
 
-        // Agora, chamamos o backend para 'approved' E 'pending'
         if (paymentId && (status === 'approved' || status === 'pending')) {
             console.log(`[DEBUG] Status ${status}. Chamando backend para registrar...`);
-            // A função 'confirmarPedido' no backend agora vai registrar
-            // tanto pedidos aprovados quanto pendentes.
+
             registrarPedidoNoBackend(paymentId, status);
 
         } else if (status === 'failure' || status === 'rejected') {
@@ -39,7 +34,7 @@ function PaginaSucesso() {
             const response = await fetch('http://localhost:3000/api/pagamentos/confirmar-pedido', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ paymentId }), // Só precisamos enviar o paymentId
+                body: JSON.stringify({ paymentId }), 
             });
 
             console.log("[DEBUG] Resposta do fetch:", response);
@@ -50,7 +45,6 @@ function PaginaSucesso() {
 
             const dadosPedido = await response.json();
 
-            // Mensagem de sucesso baseada no status
             if (status === 'approved') {
                 setMensagem(`Pedido #${dadosPedido.id_pedido} confirmado com sucesso!`);
             } else if (status === 'pending') {

@@ -1,7 +1,5 @@
-// backend/models/favoritoModel.js
 const db = require('../config/db');
 
-// Busca todos os produtos favoritos de um usuário
 exports.findByUserId = async (id_usuario) => {
     const sql = `
         SELECT 
@@ -18,14 +16,14 @@ exports.findByUserId = async (id_usuario) => {
     return rows;
 };
 
-// Adiciona um favorito (ignora se já existir)
+
 exports.add = async (id_usuario, id_produto) => {
     const sql = 'INSERT IGNORE INTO favoritos (id_usuario, id_produto) VALUES (?, ?)';
     const [result] = await db.execute(sql, [id_usuario, id_produto]);
     return result;
 };
 
-// Remove um favorito
+
 exports.remove = async (id_usuario, id_produto) => {
     const sql = 'DELETE FROM favoritos WHERE id_usuario = ? AND id_produto = ?';
     await db.execute(sql, [id_usuario, id_produto]);
