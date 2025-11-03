@@ -29,7 +29,7 @@ const AddProductPage = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await apiClient.get('/categorias'); 
+        const response = await apiClient.get('/api/categorias'); 
         
         const data = response.data;
         
@@ -89,7 +89,7 @@ const AddProductPage = () => {
         });
       }
 
-      const response = await apiClient.post('/produtos', formDataToSend, {
+      const response = await apiClient.post('/api/produtos', formDataToSend, {
           headers: {
               'Content-Type': 'multipart/form-data',
           },

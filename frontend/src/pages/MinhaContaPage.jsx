@@ -39,14 +39,14 @@ const MinhaContaPage = () => {
     useEffect(() => {
         if (authLoading) return; // Espera a autenticação verificar
         if (!user) {
-            navigate('/login'); // Redireciona se não estiver logado
+            navigate('/api/login'); // Redireciona se não estiver logado
             return;
         }
 
         const fetchProfile = async () => {
             try {
                 setLoadingData(true);
-                const response = await apiClient.get('/usuario/me');
+                const response = await apiClient.get('/api/usuario/me');
                 const { nome, login, telefone, enderecos } = response.data;
                 setFormData({ nome, email: login, telefone: telefone || '' });
                 setAddresses(enderecos || []);
@@ -75,7 +75,7 @@ const MinhaContaPage = () => {
     const handleProfileSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await apiClient.put('/usuario/me', {
+            const response = await apiClient.put('/api/usuario/me', {
                 nome: formData.nome,
                 email: formData.email,
                 telefone: formData.telefone,
@@ -112,7 +112,7 @@ const MinhaContaPage = () => {
     // Salva um novo endereço (reutilizando o controller existente)
     const handleSaveAddress = async (newAddressData) => {
         try {
-            await apiClient.post('/enderecos', newAddressData);
+            await apiClient.post('/api/enderecos', newAddressData);
             showToast('Endereço salvo com sucesso!', 'success');
             setShowAddForm(false);
             // Re-busca os dados para atualizar a lista
@@ -135,7 +135,7 @@ const MinhaContaPage = () => {
         if (!addressToDelete) return;
 
         try {
-            const response = await apiClient.delete(`/enderecos/${addressToDelete}`);
+            const response = await apiClient.delete(`/api/enderecos/${addressToDelete}`);
             setAddresses(response.data.enderecos || []); // Atualiza a lista
             showToast('Endereço removido.', 'trash-removed'); // Toast cinza com ícone de lixeira
         } catch (error) {

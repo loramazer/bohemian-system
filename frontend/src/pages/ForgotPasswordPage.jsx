@@ -13,7 +13,7 @@ const ForgotPasswordPage = () => {
         setMessage('Enviando solicitação...');
         try {
             // CORRIGIDO: Usando apiClient.post
-            const response = await apiClient.post('/auth/forgot-password', { email });
+            const response = await apiClient.post('/api/auth/forgot-password', { email });
             const data = response.data;
             
             // O backend retorna status 200 com uma mensagem genérica por segurança
@@ -42,7 +42,7 @@ const ForgotPasswordPage = () => {
                         </p>
                         <form className="forgot-password-form" onSubmit={handleSubmit}>
                             <div className="form-group">
-                                <label htmlFor="email">Email Address</label>
+                                <label htmlFor="email">Endereço de Email</label>
                                 <input
                                     type="email"
                                     id="email"

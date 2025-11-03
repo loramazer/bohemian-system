@@ -24,14 +24,14 @@ const CheckoutPage = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [selectedAddressId, setSelectedAddressId] = useState(null);
     const [showAddForm, setShowAddForm] = useState(false);
-    const storeAddress = "Rua das Flores, 123, Centro, São Paulo - SP";
+    const storeAddress = "R. Mal. Deodoro da Fonseca, 51 - Centro - Ponta Grossa, PR";
 
     // ... (suas funções fetchAddresses, handleSaveAddress, renderAddressList) ...
     // Coloquei suas funções originais aqui para o contexto
     const fetchAddresses = async () => {
         setIsLoading(true);
         try {
-            const response = await apiClient.get('/enderecos');
+            const response = await apiClient.get('/api/enderecos');
             setAddresses(response.data);
             if (response.data.length > 0 && !selectedAddressId) {
                 setSelectedAddressId(response.data[0].id_endereco);
@@ -50,7 +50,7 @@ const CheckoutPage = () => {
     }, [user]);
 
     const handleSaveAddress = async (formData) => {
-        await apiClient.post('/enderecos', formData);
+        await apiClient.post('/api/enderecos', formData);
         fetchAddresses();
         setShowAddForm(false);
     };
@@ -107,7 +107,7 @@ const CheckoutPage = () => {
             // --- MUDANÇA: Enviar o 'clienteId' aqui ---
             const enderecoParaSalvar = deliveryOption === 'retirada' ? null : selectedAddressId;
 
-            const response = await apiClient.post('/pagamentos/criar-preferencia', {
+            const response = await apiClient.post('/api/pagamentos/criar-preferencia', {
                 cartItems: cartItems,
                 shippingCost: shippingCost,
                 deliveryOption: deliveryOption,

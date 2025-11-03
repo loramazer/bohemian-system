@@ -22,22 +22,10 @@ exports.adicionarItem = async (id_carrinho, produto_id, quantidade, preco_unitar
 
 
 exports.listarItens = async (id_carrinho) => {
-  const sql = `
-    SELECT
-      ic.id_item_carrinho,
-      ic.quantidade,
-      ic.preco_unitario,
-      p.nome AS nome_produto,
-      p.imagem_url
-    FROM
-      item_carrinho ic
-    JOIN
-      produto p ON ic.id_produto = p.id_produto
-    WHERE
-      ic.id_carrinho = ?;
-  `;
-  const [rows] = await db.execute(sql, [id_carrinho]);
-  return rows;
+  // --- CORREÇÃO: Adicionado 'p.id_produto' ---
+  const sql = `SELECT ic.id_item_carrinho, ic.quantidade, ic.preco_unitario, p.id_produto, p.nome AS nome_produto,p.imagem_url FROM item_carrinho ic JOIN produto p ON ic.id_produto = p.id_produto WHERE ic.id_carrinho = ?;`;
+  const [rows] = await db.execute(sql, [id_carrinho]);
+  return rows;
 };
 
 exports.esvaziar = async (id_carrinho) => {

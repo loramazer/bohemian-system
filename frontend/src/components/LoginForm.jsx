@@ -56,7 +56,7 @@ const LoginForm = () => {
                         <button
                             type="button"
                             className="toggle-password-btn"
-                            _ onClick={() => setIsSenhaVisivel(!isSenhaVisivel)}
+                            onClick={() => setIsSenhaVisivel(!isSenhaVisivel)}
                         >
                             {isSenhaVisivel ? <FiEyeOff /> : <FiEye />}
                         </button>

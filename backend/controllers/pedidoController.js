@@ -6,6 +6,8 @@ async function getMeusPedidos(req, res) {
     try {
         // req.user.id é injetado pelo authMiddleware
         const usuarioId = req.user.id; 
+        console.log("DEBUG: Rota /meus-pedidos chamada.");
+    console.log("DEBUG: Objeto req.user:", req.user.id);
         
         if (!usuarioId) {
             return res.status(401).json({ message: 'Usuário não autenticado.' });

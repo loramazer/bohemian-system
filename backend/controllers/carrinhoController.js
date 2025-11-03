@@ -27,29 +27,40 @@ exports.iniciarCarrinho = async (req, res) => {
 };
 
 exports.adicionarItem = async (req, res) => {
-    try {
-        if (!req.user || !req.user.id) {
-            return res.status(401).json({ error: "Usuário não autenticado." });
-        }
-        const id_usuario = req.user.id;
-        console.log("[carrinhoController] Recebido req.body:", req.body);
-        const { produto_id, quantidade, preco_unitario } = req.body;
-        const usuarioId = req.user.id;
-        console.log("[carrinhoController] ID do Usuário:", id_usuario);
-        const carrinho = await carrinhoModel.buscarCarrinhoAtivo(usuarioId);
-        console.log("[carrinhoController] ID do Usuário:", id_usuario);
-        if (!carrinho) {
-            return res.status(404).json({ error: "Carrinho não encontrado para este usuário." });
-        }
+    try {
+        if (!req.user || !req.user.id) {
+            return res.status(401).json({ error: "Usuário não autenticado." });
+        }
+        const id_usuario = req.user.id;
+        console.log("[carrinhoController] Recebido req.body:", req.body);
+        const { produto_id, quantidade, preco_unitario } = req.body;
+        
+        console.log("[carrinhoController] ID do Usuário:", id_usuario);
+        const carrinho = await carrinhoModel.buscarCarrinhoAtivo(id_usuario);
+        
+        // --- LOG DE DEBUG ADICIONADO ---
+        // Vamos ver o que 'buscarCarrinhoAtivo' realmente retornou
+        console.log("[carrinhoController] Objeto 'carrinho' encontrado:", carrinho);
 
-        await itemModel.adicionarItem(carrinho.id_carrinho, produto_id, quantidade, preco_unitario);
-        const itensDoCarrinho = await itemModel.listarItens(carrinho.id_carrinho);
+        // --- VERIFICAÇÃO CORRIGIDA ---
+        // Agora checamos se o objeto E a propriedade 'id_carrinho' existem
+        if (!carrinho || !carrinho.id_carrinho) {
+            console.error(`[carrinhoController] Carrinho ou ID do carrinho não encontrado. Objeto: ${JSON.stringify(carrinho)}`);
+            return res.status(404).json({ error: "Carrinho não encontrado ou inválido para este usuário." });
+        }
+        // -------------------------------
 
-        res.json({ message: "Item adicionado ao carrinho", itens: itensDoCarrinho });
-    } catch (error) {
-        console.error("Erro ao adicionar item:", error);
-        res.status(500).json({ error: "Erro interno do servidor." });
-    }
+        // Se o código chegou aqui, 'carrinho.id_carrinho' é VÁLIDO.
+        await itemModel.adicionarItem(carrinho.id_carrinho, produto_id, quantidade, preco_unitario);
+        
+        // 'listarItens' usa o 'id_carrinho' que sabemos que é válido
+        const itensDoCarrinho = await itemModel.listarItens(carrinho.id_carrinho); 
+
+        res.json({ message: "Item adicionado ao carrinho", itens: itensDoCarrinho });
+    } catch (error) {
+        console.error("Erro ao adicionar item:", error);
+        res.status(500).json({ error: "Erro interno do servidor." });
+    }
 };
 
 exports.verCarrinho = async (req, res) => {

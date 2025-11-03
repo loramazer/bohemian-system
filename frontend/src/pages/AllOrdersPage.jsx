@@ -90,7 +90,7 @@ const AllOrdersPage = () => {
                 });
 
                 // O backend (findAllAdmin) agora retorna 'status' (pagamento) e 'status_pedido' (logístico)
-                const response = await apiClient.get('/dashboard/orders/all', { params });
+                const response = await apiClient.get('/api/dashboard/orders/all', { params });
                 
                 setPedidos(response.data.pedidos || []);
                 setTotalPages(response.data.totalPages || 0);
@@ -144,7 +144,7 @@ const AllOrdersPage = () => {
         try {
             // newStatusPedido é o código ENUM (ex: 'authorized')
             // Chama a API para atualizar o status do pedido (Logístico)
-            await apiClient.put(`/dashboard/orders/status/${pedidoId}`, { status: newStatusPedido });
+            await apiClient.put(`/api/dashboard/orders/status/${pedidoId}`, { status: newStatusPedido });
             
             // Atualiza o estado local para refletir a mudança no campo CORRETO
             setPedidos(prevPedidos =>

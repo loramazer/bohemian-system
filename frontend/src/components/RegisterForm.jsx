@@ -32,7 +32,7 @@ const RegisterForm = () => {
             return;
         }
         try {
-            const response = await apiClient.post('/auth/register', formData);
+            const response = await apiClient.post('/api/auth/register', formData);
 
             if (response.status === 201) {
                 navigate('/login');
@@ -54,7 +54,7 @@ const RegisterForm = () => {
                     <input type="text" id="nome" name="nome" placeholder="Seu nome" value={formData.nome} onChange={handleChange} required />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="login">Email Address</label>
+                    <label htmlFor="login">Endereço de Email</label>
                     <input type="email" id="login" name="email" placeholder="Seu email" value={formData.email} onChange={handleChange} required />
                 </div>
                 <div className="form-group">

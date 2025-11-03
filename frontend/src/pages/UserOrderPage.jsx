@@ -141,7 +141,7 @@ const UserOrdersPage = () => {
                 setLoading(true);
                 setError(null);
                 try {
-                    const response = await apiClient.get('/pedidos/meus-pedidos');
+                    const response = await apiClient.get('/api/pedidos/meus-pedidos');
                     setOrders(response.data);
                 } catch (err) {
                     console.error("Erro ao buscar pedidos:", err);
@@ -220,7 +220,7 @@ const UserOrdersPage = () => {
                                                 <div className="product-info-summary">
                                                     <img src={firstItemImage} alt={order.itens[0].nome_produto} className="product-summary-img" />
                                                     <div className="product-details">
-                                                        <p className="product-name">{order.itens[0].nome_produto}</p>
+                                                        <p className="product-name">{order.itens[0]?.nome_produto || 'Pedido sem itens cadastrados'}</p>
                                                         {order.itens.length > 1 && (
                                                             <p className="more-items-count"> + {order.itens.length - 1} item(s) no total</p>
                                                         )}

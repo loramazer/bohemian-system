@@ -57,7 +57,7 @@ const OrderDetailPage = () => {
         const fetchOrderDetails = async () => {
             try {
                 setLoading(true);
-                const response = await apiClient.get(`/dashboard/orders/${orderId}`);
+                const response = await apiClient.get(`/api/dashboard/orders/${orderId}`);
                 setOrder(response.data);
                 // Usa o status LOGÍSTICO (status_pedido) do DB
                 setCurrentStatusLogistico(response.data.status_pedido || 'pending'); 
@@ -91,7 +91,7 @@ const OrderDetailPage = () => {
         // currentStatusLogistico é o código ENUM que será salvo
         try {
             // Usa o endpoint que atualiza o status_pedido
-            await apiClient.put(`/dashboard/orders/status/${orderId}`, { status: currentStatusLogistico });
+            await apiClient.put(`/api/dashboard/orders/status/${orderId}`, { status: currentStatusLogistico });
             // Atualiza o status LOGÍSTICO (status_pedido) no objeto local para refletir a mudança
             setOrder(prevOrder => ({ ...prevOrder, status_pedido: currentStatusLogistico }));
             showToast('Status logístico atualizado com sucesso!', 'success');

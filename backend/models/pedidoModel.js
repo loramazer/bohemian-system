@@ -1,209 +1,148 @@
 // backend/models/pedidoModel.js
 const db = require('../config/db');
 
-async function findByUsuarioId(usuarioId) {
-    // ESTA É A CONSULTA CORRIGIDA
-    const query = `
-        SELECT 
-            p.id_pedido,
-            p.dataPedido,
-            p.data_entrega,
-            fp.status_transacao AS status,
-            
-            p.status_pedido, -- <-- ADICIONADO: Busca o status logístico do pedido
-
-            -- CORREÇÃO: Trocado 'e.rua' por 'e.nome' (como no seu dump)
-            e.nome AS rua, 
-            e.numero,
-            e.complemento,
-            cid.nome AS cidade,
-            cid.sigla_UF AS estado,
-            
-            -- Calcula o total do pedido somando (preco * quantidade) de cada item
-            (SELECT SUM(ip_inner.precoUnitario * ip_inner.quantidade)
-             FROM itempedido ip_inner
-             WHERE ip_inner.fk_pedido_id_pedido = p.id_pedido) AS total_pedido,
-             
-            -- Agrupa todos os itens do pedido em um array JSON
-            JSON_ARRAYAGG(
-                JSON_OBJECT(
-                    'id_produto', pr.id_produto,
-                    'nome_produto', pr.nome,
-                    'quantidade', ip.quantidade,
-                    'precoUnitario', ip.precoUnitario,
-                    'imagem_url', pr.imagem_url 
-                )
-            ) AS itens
-
-        FROM pedido p
-        JOIN itempedido ip ON p.id_pedido = ip.fk_pedido_id_pedido
-        JOIN produto pr ON ip.fk_produto_id_produto = pr.id_produto
-        JOIN forma_pagamento fp ON p.fk_forma_pagamento_id_forma_pagamento = fp.id_forma_pagamento
-        JOIN endereco e ON p.fk_endereco_id_endereco = e.id_endereco
-        JOIN cidade cid ON e.id_cidade = cid.id_cidade
-
-        -- O ID do cliente está na tabela 'pedido'
-        WHERE p.fk_cliente_id_cliente = ? 
-
-        -- CORREÇÃO: Agrupando pelos campos corretos
-        GROUP BY p.id_pedido, p.dataPedido, p.data_entrega, fp.status_transacao, 
-                 e.nome, e.numero, e.complemento, cid.nome, cid.sigla_UF,
-                 p.status_pedido -- <-- ADICIONADO: Agrupa pelo novo campo
-                 
-        ORDER BY p.dataPedido DESC;
-    `;
-
-    try {
-        const [rows] = await db.execute(query, [usuarioId]);
-        
-        return rows.map(order => ({
-            ...order,
-            itens: order.itens.map(item => ({
-                ...item,
-                imagem_url: parseImageUrl(item.imagem_url)
-            }))
-        }));
-
-    } catch (error) {
-        console.error("Erro ao buscar pedidos por usuário no Model:", error);
-        throw error;
-    }
-}
-
-// Função auxiliar para pegar a primeira imagem do JSON
 function parseImageUrl(imageUrlString) {
-    try {
-        const parsed = JSON.parse(imageUrlString);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-            return parsed[0];
-        }
-    } catch (e) {
-        // Ignora o erro
-    }
-    return imageUrlString; 
+    try {
+        // Tenta parsear a string JSON
+        const parsed = JSON.parse(imageUrlString);
+        
+        // Se for um array e tiver pelo menos uma imagem, retorna a primeira
+        if (Array.isArray(parsed) && parsed.length > 0) {
+            return parsed[0];
+        }
+    } catch (e) {
+        // Se falhar o parse, significa que já é uma URL única (string)
+        // Não faz nada e apenas retorna a string original
+    }
+    // Retorna a string original se não for um array JSON ou se o parse falhar
+    return imageUrlString; 
 }
+
+async function findByUsuarioId(usuarioId) {
+    
+    // --- CORREÇÃO: Query SQL "achatada" E com LEFT JOINs ---
+    const query = `SELECT p.id_pedido, p.dataPedido, p.data_entrega, p.status_pedido, fp.status_transacao AS status, COALESCE(e.nome, 'Retirada na Loja') AS rua, e.numero, e.complemento, cid.nome AS cidade, cid.sigla_UF AS estado, (SELECT SUM(ip_inner.precoUnitario * ip_inner.quantidade) FROM itempedido ip_inner WHERE ip_inner.fk_pedido_id_pedido = p.id_pedido) AS total_pedido, JSON_ARRAYAGG( JSON_OBJECT( 'id_produto', pr.id_produto, 'nome_produto', pr.nome, 'quantidade', ip.quantidade, 'precoUnitario', ip.precoUnitario, 'imagem_url', pr.imagem_url ) ) AS itens FROM pedido p LEFT JOIN itempedido ip ON p.id_pedido = ip.fk_pedido_id_pedido LEFT JOIN produto pr ON ip.fk_produto_id_produto = pr.id_produto LEFT JOIN forma_pagamento fp ON p.fk_forma_pagamento_id_forma_pagamento = fp.id_forma_pagamento LEFT JOIN endereco e ON p.fk_endereco_id_endereco = e.id_endereco LEFT JOIN cidade cid ON e.id_cidade = cid.id_cidade WHERE p.fk_id_usuario = ? GROUP BY p.id_pedido, p.dataPedido, p.data_entrega, p.status_pedido, fp.status_transacao, e.nome, e.numero, e.complemento, cid.nome, cid.sigla_UF ORDER BY p.dataPedido DESC;`;
+    // --- MUDANÇAS: Todos os JOINs (exceto 'pedido') agora são LEFT JOIN ---
+
+    try {
+        // Verifique se o seu backend (controller) está passando o ID de usuário correto
+        console.log(`[pedidoModel] Buscando pedidos para o usuário ID: ${usuarioId}`);
+        const [rows] = await db.execute(query, [usuarioId]);
+        console.log(`[pedidoModel] Query executada, ${rows.length} pedidos encontrados.`);
+
+        // Se 'rows' estiver vazio, o frontend mostrará "Nenhum pedido".
+        if (rows.length === 0) {
+            return [];
+        }
+
+        return rows.map(order => {
+            // Adiciona uma checagem de segurança para 'itens' que podem ser [null]
+            // se um pedido não tiver itens (por causa do LEFT JOIN)
+            const itemsArray = (typeof order.itens === 'string' ? JSON.parse(order.itens) : order.itens) || [];
+            
+            return {
+                ...order,
+                itens: itemsArray.filter(item => item.id_produto != null).map(item => ({ // Filtra itens nulos
+                    ...item,
+                    imagem_url: parseImageUrl(item.imagem_url)
+                }))
+            }
+        });
+
+    } catch (error) {
+        console.error("Erro ao buscar pedidos por usuário no Model:", error);
+        throw error;
+    }
+}
+
 
 // --- FUNÇÃO ATUALIZADA: findAllAdmin (Inclui status_pedido) ---
 async function findAllAdmin(options) {
-    const {
-        page = 1,
-        limit = 10,
-        status,
-        search, // Para buscar nome do cliente
-        startDate,
-        endDate
-    } = options;
-    
-    // NOVO: Definir Frete Fixo
-    const FRETE_FIXO = 15.00;
+    const { page = 1, limit = 10, status, search, startDate, endDate } = options;
+    const FRETE_FIXO = 15.00;
 
-    let params = [];
-    let countParams = [];
-    let whereClauses = [];
+    let params = [];
+    let countParams = [];
+    let whereClauses = [];
 
-    // CORREÇÃO: Trocado 'cliente c' por 'usuario u'
-    let baseSql = `
-        FROM pedido p
-        JOIN usuario u ON p.fk_cliente_id_cliente = u.id_usuario
-        JOIN forma_pagamento fp ON p.fk_forma_pagamento_id_forma_pagamento = fp.id_forma_pagamento
-        LEFT JOIN itempedido ip ON p.id_pedido = ip.fk_pedido_id_pedido
-    `;
+    // --- CORREÇÃO 2: O JOIN ON foi corrigido ---
+    let baseSql = `FROM pedido p
+        JOIN usuario u ON p.fk_id_usuario = u.id_usuario 
+        JOIN forma_pagamento fp ON p.fk_forma_pagamento_id_forma_pagamento = fp.id_forma_pagamento
+        LEFT JOIN itempedido ip ON p.id_pedido = ip.fk_pedido_id_pedido
+    `;
+    // --- MUDANÇA BEM AQUI ^^^ (de 'fk_cliente_id_cliente' para 'fk_id_usuario') ---
 
-    // --- Filtros Dinâmicos ---
-    if (status) {
-        whereClauses.push(`fp.status_transacao = ?`);
-        params.push(status);
-        countParams.push(status);
-    }
-    if (search) {
-        whereClauses.push(`u.nome LIKE ?`);
-        const searchParam = `%${search}%`;
-        params.push(searchParam);
-        countParams.push(searchParam);
-    }
-    if (startDate) {
-        whereClauses.push(`p.dataPedido >= ?`);
-        params.push(startDate);
-        countParams.push(startDate);
-    }
-    if (endDate) {
-        whereClauses.push(`p.dataPedido <= ?`);
-        params.push(endDate);
-        countParams.push(endDate);
-    }
+    // --- Filtros Dinâmicos ---
+    if (status) {
+        whereClauses.push(`fp.status_transacao = ?`);
+        params.push(status);
+        countParams.push(status);
+    }
+    if (search) {
+        whereClauses.push(`u.nome LIKE ?`);
+        const searchParam = `%${search}%`;
+        params.push(searchParam);
+        countParams.push(searchParam);
+    }
+    if (startDate) {
+        whereClauses.push(`p.dataPedido >= ?`);
+        params.push(startDate);
+        countParams.push(startDate);
+    }
+    if (endDate) {
+        whereClauses.push(`p.dataPedido <= ?`);
+        params.push(endDate);
+        countParams.push(endDate);
+    }
 
-    const whereSql = whereClauses.length > 0 ? ` WHERE ${whereClauses.join(' AND ')}` : '';
+    const whereSql = whereClauses.length > 0 ? ` WHERE ${whereClauses.join(' AND ')}` : '';
 
-    // --- Query de Contagem (Total de Pedidos) ---
-    const countSql = `SELECT COUNT(DISTINCT p.id_pedido) as totalPedidos ${baseSql} ${whereSql}`;
-    
-    const [countResult] = await db.execute(countSql, countParams);
-    const totalPedidos = countResult[0].totalPedidos;
-    const totalPages = Math.ceil(totalPedidos / limit);
+    // --- Query de Contagem (Total de Pedidos) ---
+    const countSql = `SELECT COUNT(DISTINCT p.id_pedido) as totalPedidos ${baseSql} ${whereSql}`;
+    
+    const [countResult] = await db.execute(countSql, countParams);
+    const totalPedidos = countResult[0].totalPedidos;
+    const totalPages = Math.ceil(totalPedidos / limit);
 
-    // --- Query de Busca (Pedidos Paginados) ---
-    let sql = `
-        SELECT 
-            p.id_pedido,
-            p.dataPedido,
-            u.nome AS cliente_nome,
-            fp.status_transacao AS status,
-            p.status_pedido AS status_pedido, 
-            -- CORREÇÃO CRÍTICA: Adicionando o frete de R$ 15,00
-            (SELECT SUM(ip_inner.precoUnitario * ip_inner.quantidade)
-             FROM itempedido ip_inner
-             WHERE ip_inner.fk_pedido_id_pedido = p.id_pedido) + ${FRETE_FIXO} AS total_pedido
-        ${baseSql}
-        ${whereSql}
-        GROUP BY p.id_pedido, p.dataPedido, u.nome, fp.status_transacao, p.status_pedido
-        ORDER BY p.dataPedido DESC
-    `;
+    // --- Query de Busca (Pedidos Paginados) ---
+    // (Também achatada para evitar erros de sintaxe)
+    let sql = `SELECT p.id_pedido, p.dataPedido, u.nome AS cliente_nome, fp.status_transacao AS status, p.status_pedido AS status_pedido, (SELECT SUM(ip_inner.precoUnitario * ip_inner.quantidade) FROM itempedido ip_inner WHERE ip_inner.fk_pedido_id_pedido = p.id_pedido) + ${FRETE_FIXO} AS total_pedido ${baseSql} ${whereSql} GROUP BY p.id_pedido, p.dataPedido, u.nome, fp.status_transacao, p.status_pedido ORDER BY p.dataPedido DESC`;
 
-    const offset = (page - 1) * limit;
-    sql += ` LIMIT ${parseInt(limit)} OFFSET ${parseInt(offset)}`;
+    const offset = (page - 1) * limit;
+    sql += ` LIMIT ${parseInt(limit)} OFFSET ${parseInt(offset)}`;
 
-    const [pedidos] = await db.execute(sql, params);
+    const [pedidos] = await db.execute(sql, params);
 
-    return {
-        // Mapeia para garantir que total_pedido seja string com 2 casas decimais
-        pedidos: pedidos.map(p => ({
-            ...p,
-            total_pedido: p.total_pedido ? parseFloat(p.total_pedido).toFixed(2) : '0.00'
-        })),
-        totalPages,
-        totalPedidos,
-        currentPage: parseInt(page)
-    };
+    return {
+        pedidos: pedidos.map(p => ({
+            ...p,
+            total_pedido: p.total_pedido ? parseFloat(p.total_pedido).toFixed(2) : '0.00'
+        })),
+        totalPages,
+        totalPedidos,
+        currentPage: parseInt(page)
+    };
 }
 
-// --- FUNÇÃO RENOMEADA: updatePaymentStatus (Atualiza Status de Pagamento) ---
+// ... (O resto do seu arquivo: updatePaymentStatus, updateOrderStatus) ...
 async function updatePaymentStatus(pedidoId, status) {
-    const sql = `
-        UPDATE forma_pagamento fp
-        JOIN pedido p ON fp.id_forma_pagamento = p.fk_forma_pagamento_id_forma_pagamento
-        SET fp.status_transacao = ?
-        WHERE p.id_pedido = ?
-    `;
-    const [result] = await db.execute(sql, [status, pedidoId]);
-    return result.affectedRows;
+    const sql = `UPDATE forma_pagamento fp JOIN pedido p ON fp.id_forma_pagamento = p.fk_forma_pagamento_id_forma_pagamento SET fp.status_transacao = ? WHERE p.id_pedido = ?`;
+    const [result] = await db.execute(sql, [status, pedidoId]);
+    return result.affectedRows;
 }
 
-// --- FUNÇÃO NOVA: updateOrderStatus (Atualiza Status Logístico) ---
 async function updateOrderStatus(pedidoId, statusPedido) {
-    const sql = `
-        UPDATE pedido
-        SET status_pedido = ?
-        WHERE id_pedido = ?
-    `;
-    const [result] = await db.execute(sql, [statusPedido, pedidoId]);
-    return result.affectedRows;
+    const sql = `UPDATE pedido SET status_pedido = ? WHERE id_pedido = ?`;
+    const [result] = await db.execute(sql, [statusPedido, pedidoId]);
+return result.affectedRows;
 }
 
 
 // 3. ATUALIZAR O MODULE.EXPORTS
 module.exports = { 
-    findByUsuarioId,
-    findAllAdmin, // <-- ADICIONADO
-    updatePaymentStatus, // <-- RENOMEADO
-    updateOrderStatus  // <-- NOVO
+    findByUsuarioId,
+    findAllAdmin,
+    updatePaymentStatus, 
+    updateOrderStatus 
 };

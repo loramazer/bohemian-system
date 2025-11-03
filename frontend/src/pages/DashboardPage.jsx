@@ -45,7 +45,7 @@ const DashboardPage = () => {
         const fetchData = async () => {
             try {
                 // ... (lógica de fetchData)
-                const kpisResponse = await apiClient.get('/dashboard/kpis');
+                const kpisResponse = await apiClient.get('/api/dashboard/kpis');
                 const kpisData = kpisResponse.data;
                 setKpis([
                     { title: 'Total Pedidos', value: kpisData.totalPedidos },
@@ -55,11 +55,11 @@ const DashboardPage = () => {
                 ]);
 
                 // CORRIGIDO: Usando apiClient
-                const bestSellersResponse = await apiClient.get('/dashboard/best-sellers');
+                const bestSellersResponse = await apiClient.get('/api/dashboard/best-sellers');
                 setBestSellers(bestSellersResponse.data);
 
                 // CORRIGIDO: Usando apiClient
-                const recentOrdersResponse = await apiClient.get('/dashboard/recent-orders');
+                const recentOrdersResponse = await apiClient.get('/api/dashboard/recent-orders');
                 const recentOrdersData = recentOrdersResponse.data;
                 setRecentOrders(recentOrdersData.map(order => ({
                     ...order,
@@ -76,7 +76,7 @@ const DashboardPage = () => {
         const fetchChartData = async () => {
             try {
                 // CORRIGIDO: Usando apiClient
-                const chartResponse = await apiClient.get(`/dashboard/monthly-revenue?period=${chartPeriod}`);
+                const chartResponse = await apiClient.get(`/api/dashboard/monthly-revenue?period=${chartPeriod}`);
                 setMonthlyRevenue(chartResponse.data);
             } catch (error) {
                 console.error('Erro ao buscar dados do gráfico:', error);
@@ -102,7 +102,7 @@ const DashboardPage = () => {
     const fetchOrderDetails = async (orderId) => {
         try {
             // CORRIGIDO: Usando apiClient
-            const response = await apiClient.get(`/dashboard/orders/${orderId}`);
+            const response = await apiClient.get(`/api/dashboard/orders/${orderId}`);
             setSelectedOrder(response.data);
         } catch (error) {
             console.error('Erro ao buscar detalhes do pedido:', error);
