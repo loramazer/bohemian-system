@@ -1,8 +1,7 @@
-// loramazer/bohemian-system/bohemian-system-refatorar-organizacao/backend/controllers/dashboardController.js
 const db = require('../config/db');
 const pedidoModel = require('../models/pedidoModel');
 
-// Função auxiliar (corrigida)
+
 function parseImageUrl(imageUrlString) {
     if (!imageUrlString) return null;
     try {
@@ -11,9 +10,9 @@ function parseImageUrl(imageUrlString) {
             return parsed[0];
         }
     } catch (e) {
-        // Ignora o erro
+
     }
-    // Retorna a string original (não checa mais 'http')
+
     return imageUrlString;
 }
 
@@ -21,17 +20,14 @@ async function getKpiData(req, res) {
   try {
     const [totalPedidosResult] = await db.execute('SELECT COUNT(*) AS total FROM pedido');
     
-    // 1. Pedidos Ativos (Query Achatada)
     const [pedidosAtivosResult] = await db.execute(
       `SELECT COUNT(p.id_pedido) AS total FROM pedido p JOIN forma_pagamento fp ON p.fk_forma_pagamento_id_forma_pagamento = fp.id_forma_pagamento WHERE fp.status_transacao = 'approved' AND p.status_pedido != 'delivered'`
     ); 
-    
-    // 2. Pedidos Fechados (Query Achatada)
+
     const [pedidosFechadosResult] = await db.execute(
       `SELECT COUNT(*) AS total FROM pedido WHERE status_pedido = 'delivered'`
     );
     
-    // 3. Pedidos Previstos (Query Achatada)
     const [pedidosPrevistosResult] = await db.execute(
       `SELECT COUNT(p.id_pedido) AS total FROM pedido p JOIN forma_pagamento fp ON p.fk_forma_pagamento_id_forma_pagamento = fp.id_forma_pagamento WHERE fp.status_transacao = 'pending'`
     );
@@ -65,13 +61,10 @@ async function getMonthlyRevenue(req, res) {
         const { period } = req.query;
         let query = '';
         if (period === 'semiannual') {
-            // Query Achatada
             query = `SELECT DATE_FORMAT(p.dataPedido, '%Y-%m') AS mes, SUM(i.precoUnitario * i.quantidade) AS total_faturado FROM pedido p JOIN itempedido i ON p.id_pedido = i.fk_pedido_id_pedido WHERE p.dataPedido >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH) GROUP BY mes ORDER BY mes ASC;`;
         } else if (period === 'annual') {
-            // Query Achatada
             query = `SELECT DATE_FORMAT(p.dataPedido, '%Y-%m') AS mes, SUM(i.precoUnitario * i.quantidade) AS total_faturado FROM pedido p JOIN itempedido i ON p.id_pedido = i.fk_pedido_id_pedido WHERE p.dataPedido >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH) GROUP BY mes ORDER BY mes ASC;`;
-        } else { // Padrão: mensal (último mês)
-            // Query Achatada
+        } else {
             query = `SELECT DATE_FORMAT(p.dataPedido, '%Y-%m') AS mes, SUM(i.precoUnitario * i.quantidade) AS total_faturado FROM pedido p JOIN itempedido i ON p.id_pedido = i.fk_pedido_id_pedido WHERE p.dataPedido >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH) GROUP BY mes ORDER BY mes ASC;`;
         }
         const [rows] = await db.execute(query);
@@ -86,7 +79,6 @@ async function getRecentOrders(req, res) {
     try {
         const FRETE_FIXO = 15.00; 
         
-        // Query Achatada
         const query = `SELECT p.id_pedido, p.dataPedido, u.nome AS cliente, p.status_pedido AS status_pedido, (SUM(ip.precoUnitario * ip.quantidade) + ?) AS valor_total_com_frete, SUM(ip.precoUnitario * ip.quantidade) AS valor_subtotal, GROUP_CONCAT(pr.nome SEPARATOR ', ') AS nome_produtos FROM pedido p LEFT JOIN usuario u ON p.fk_id_usuario = u.id_usuario LEFT JOIN forma_pagamento fp ON p.fk_forma_pagamento_id_forma_pagamento = fp.id_forma_pagamento LEFT JOIN itempedido ip ON p.id_pedido = ip.fk_pedido_id_pedido LEFT JOIN produto pr ON ip.fk_produto_id_produto = pr.id_produto GROUP BY p.id_pedido, p.dataPedido, u.nome, p.status_pedido ORDER BY p.dataPedido DESC LIMIT 6;`;
         
         const [rows] = await db.execute(query, [FRETE_FIXO]); 
@@ -111,7 +103,6 @@ async function getOrderDetails(req, res) {
     try {
         const { id } = req.params;
         
-        // Query Achatada (e trocado fk_cliente_id_cliente por fk_id_usuario)
         const query = `SELECT p.id_pedido, p.dataPedido, p.data_entrega, p.status_pedido, u.nome AS cliente_nome, u.login AS cliente_email, u.telefone AS cliente_telefone, fp.descricao AS forma_pagamento, fp.status_transacao AS status_pagamento, e.nome AS endereco_nome, e.numero AS endereco_numero, e.complemento AS endereco_complemento, e.cep AS endereco_cep, cid.nome AS cidade_nome, cid.sigla_UF AS cidade_uf, ip.quantidade, ip.precoUnitario, pr.id_produto, pr.nome AS nome_produto, pr.descricao AS descricao_produto, pr.imagem_url AS produto_imagem_url FROM pedido p LEFT JOIN usuario u ON p.fk_id_usuario = u.id_usuario LEFT JOIN forma_pagamento fp ON p.fk_forma_pagamento_id_forma_pagamento = fp.id_forma_pagamento LEFT JOIN endereco e ON p.fk_endereco_id_endereco = e.id_endereco LEFT JOIN cidade cid ON e.id_cidade = cid.id_cidade LEFT JOIN itempedido ip ON p.id_pedido = ip.fk_pedido_id_pedido LEFT JOIN produto pr ON ip.fk_produto_id_produto = pr.id_produto WHERE p.id_pedido = ?;`;
         
         const [rows] = await db.execute(query, [id]);
@@ -124,7 +115,6 @@ async function getOrderDetails(req, res) {
         let subtotal = 0;
 
         const products = rows.map(row => {
-            // Proteção contra itens nulos (se um pedido não tiver itens)
             if (!row.id_produto) return null; 
             
             const totalItem = parseFloat(row.precoUnitario) * row.quantidade;
@@ -135,9 +125,9 @@ async function getOrderDetails(req, res) {
                 idProduto: `#${row.id_produto}`,
                 quantity: row.quantidade,
                 total: totalItem,
-                image: parseImageUrl(row.produto_imagem_url) || 'https://placeholder.co/60x60' // Placeholder atualizado
+                image: parseImageUrl(row.produto_imagem_url) || 'https://placeholder.co/60x60' 
             };
-        }).filter(p => p !== null); // Remove os itens nulos
+        }).filter(p => p !== null); 
         
         const tax = 0.00;
         const discount = 0.00;
@@ -154,7 +144,6 @@ async function getOrderDetails(req, res) {
                 name: firstRow.cliente_nome,
                 email: firstRow.cliente_email,
                 phone: firstRow.cliente_telefone || '(Telefone não cadastrado)',
-                // Correção para Retirada na Loja
                 address: firstRow.endereco_nome ? `${firstRow.endereco_nome}, ${firstRow.endereco_numero}` : 'Retirada na Loja',
                 city: firstRow.cidade_nome ? `${firstRow.cidade_nome}, ${firstRow.cidade_uf}` : '',
                 zip: firstRow.endereco_cep || '',

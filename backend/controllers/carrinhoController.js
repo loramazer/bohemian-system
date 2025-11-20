@@ -37,23 +37,17 @@ exports.adicionarItem = async (req, res) => {
         
         console.log("[carrinhoController] ID do Usuário:", id_usuario);
         const carrinho = await carrinhoModel.buscarCarrinhoAtivo(id_usuario);
-        
-        // --- LOG DE DEBUG ADICIONADO ---
-        // Vamos ver o que 'buscarCarrinhoAtivo' realmente retornou
+
         console.log("[carrinhoController] Objeto 'carrinho' encontrado:", carrinho);
 
-        // --- VERIFICAÇÃO CORRIGIDA ---
-        // Agora checamos se o objeto E a propriedade 'id_carrinho' existem
+
         if (!carrinho || !carrinho.id_carrinho) {
             console.error(`[carrinhoController] Carrinho ou ID do carrinho não encontrado. Objeto: ${JSON.stringify(carrinho)}`);
             return res.status(404).json({ error: "Carrinho não encontrado ou inválido para este usuário." });
         }
-        // -------------------------------
 
-        // Se o código chegou aqui, 'carrinho.id_carrinho' é VÁLIDO.
         await itemModel.adicionarItem(carrinho.id_carrinho, produto_id, quantidade, preco_unitario);
-        
-        // 'listarItens' usa o 'id_carrinho' que sabemos que é válido
+
         const itensDoCarrinho = await itemModel.listarItens(carrinho.id_carrinho); 
 
         res.json({ message: "Item adicionado ao carrinho", itens: itensDoCarrinho });
@@ -115,7 +109,6 @@ exports.criarPreferenciaPagamento = async (req, res) => {
             return res.status(404).json({ error: "Carrinho não encontrado para este usuário." });
         }
 
-        // CORREÇÃO: Busca os itens diretamente do model
         const itens = await itemModel.listarItens(carrinho.id_carrinho);
         
         if (!itens || itens.length === 0) {
@@ -126,22 +119,19 @@ exports.criarPreferenciaPagamento = async (req, res) => {
             items: itens.map(item => ({
                 title: item.nome_produto,
                 quantity: item.quantidade,
-                unit_price: parseFloat(item.preco_unitario), // Garante que é um número
+                unit_price: parseFloat(item.preco_unitario), 
                 currency_id: 'BRL',
             })),
-            // CORREÇÃO: URLs de retorno usando uma variável de ambiente para o frontend
             back_urls: {
                 success: `${process.env.FRONTEND_URL}/order-confirmed?status=success`, 
                 failure: `${process.env.FRONTEND_URL}/order-confirmed?status=failure`,
                 pending: `${process.env.FRONTEND_URL}/order-confirmed?status=pending`,
             },
             auto_return: 'approved',
-            // Opcional: Notificações para o backend (Webhook)
-            // notification_url: `${process.env.BACKEND_URL}/api/pagamento/webhook`,
         };
 
         const preferenceResult = await preference.create({ body });
-        res.json({ id: preferenceResult.id, init_point: preferenceResult.init_point }); // Retorna init_point
+        res.json({ id: preferenceResult.id, init_point: preferenceResult.init_point }); 
     } catch (error) {
         console.error("Erro ao criar preferência de pagamento:", error);
         res.status(500).json({ error: "Erro interno do servidor." });

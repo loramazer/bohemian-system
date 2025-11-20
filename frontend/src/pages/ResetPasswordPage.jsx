@@ -1,9 +1,8 @@
-// loramazer/bohemian-system/bohemian-system-refatorar-organizacao/frontend/src/pages/ResetPasswordPage.jsx
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
 import apiClient from '../api.js'; 
-import '../styles/ResetPasswordPage.css'; // Usando o CSS correto para esta página
+import '../styles/ResetPasswordPage.css'; 
 
 const ResetPasswordPage = () => {
     const { token } = useParams();
@@ -47,7 +46,7 @@ const ResetPasswordPage = () => {
                             <div className="form-group">
                                 <label htmlFor="senha">Nova Senha</label>
                                 <input
-                                    type="password" // Garantindo que seja 'password'
+                                    type="password" 
                                     id="senha"
                                     name="senha"
                                     placeholder="Sua nova senha"
@@ -56,10 +55,10 @@ const ResetPasswordPage = () => {
                                     required
                                 />
                             </div>
-                            {/* Um campo de confirmação seria ideal para UX, mas como não está no escopo, mantemos o fluxo simples. */}
+                            {}
                             <button type="submit" className="login-button">Redefinir Senha</button>
                         </form>
-                        {/* Classe status-message já existe no CSS */}
+                        {}
                         {message && <p className="status-message">{message}</p>}
                     </div>
                 </div>

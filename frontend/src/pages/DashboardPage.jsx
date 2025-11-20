@@ -13,7 +13,7 @@ import { AuthContext } from '../context/AuthContext.jsx';
 
 import '../styles/Dashboard.css';
 
-// Registra os componentes e plugins do Chart.js
+
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -25,12 +25,9 @@ ChartJS.register(
   Filler
 );
 
-// src/pages/DashboardPage.jsx
 
-// ... (imports)
 
 const DashboardPage = () => {
-    // --- HOOKS (useContext, useNavigate, useState) DEVEM VIR SEMPRE PRIMEIRO ---
     const { user, loading } = useContext(AuthContext); 
     const navigate = useNavigate();
     const [kpis, setKpis] = useState([]);
@@ -40,11 +37,9 @@ const DashboardPage = () => {
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [chartPeriod, setChartPeriod] = useState('monthly');
 
-    // --- HOOKS de EFEITO (useEffect) DEVEM ESTAR NO TOPO TAMBÉM ---
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // ... (lógica de fetchData)
                 const kpisResponse = await apiClient.get('/api/dashboard/kpis');
                 const kpisData = kpisResponse.data;
                 setKpis([
@@ -54,11 +49,9 @@ const DashboardPage = () => {
                     { title: 'Pedidos Previstos', value: kpisData.pedidosPrevistos },
                 ]);
 
-                // CORRIGIDO: Usando apiClient
                 const bestSellersResponse = await apiClient.get('/api/dashboard/best-sellers');
                 setBestSellers(bestSellersResponse.data);
 
-                // CORRIGIDO: Usando apiClient
                 const recentOrdersResponse = await apiClient.get('/api/dashboard/recent-orders');
                 const recentOrdersData = recentOrdersResponse.data;
                 setRecentOrders(recentOrdersData.map(order => ({
@@ -75,7 +68,6 @@ const DashboardPage = () => {
     useEffect(() => {
         const fetchChartData = async () => {
             try {
-                // CORRIGIDO: Usando apiClient
                 const chartResponse = await apiClient.get(`/api/dashboard/monthly-revenue?period=${chartPeriod}`);
                 setMonthlyRevenue(chartResponse.data);
             } catch (error) {
@@ -85,8 +77,6 @@ const DashboardPage = () => {
         fetchChartData();
     }, [chartPeriod]);
 
-    // --- LÓGICA DE RETURN ANTECIPADO (CORREÇÃO: MOVIDA PARA AQUI) ---
-    // Esta lógica agora só é executada APÓS todos os hooks terem sido chamados.
 
     if (!loading && (!user || user.admin !== 1)) {
         navigate('/');
@@ -96,12 +86,9 @@ const DashboardPage = () => {
     if (loading || !user || user.admin !== 1) {
         return <ContentWrapper><div>Carregando...</div></ContentWrapper>;
     }
-    
-    // --- FUNÇÕES DEPOIS DA LÓGICA DE RETURN ---
 
     const fetchOrderDetails = async (orderId) => {
         try {
-            // CORRIGIDO: Usando apiClient
             const response = await apiClient.get(`/api/dashboard/orders/${orderId}`);
             setSelectedOrder(response.data);
         } catch (error) {

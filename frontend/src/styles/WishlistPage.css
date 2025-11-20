@@ -2,16 +2,13 @@
     margin-top: -40px;
     margin-bottom: 55px;
     margin-left: 0px;
-    color: #888; /* Cor para o texto não-clicável (ex: "Lista de Desejos") */
+    color: #888; 
     font-size: 0.9rem;
 }
 
-/* CORREÇÃO 2: Esta é a regra que faltava.
-  Ela remove o sublinhado e aplica a cor correta ao link "Home".
-*/
 .wishlist-breadcrumbs a {
-    color: #5d7a7b; /* Sua cor principal "Bohemian" */
-    text-decoration: none; /* Remove o sublinhado */
+    color: #5d7a7b; 
+    text-decoration: none; 
     font-weight: 600;
     transition: color 0.2s ease;
 }
@@ -22,12 +19,10 @@
 }
 
 .wishlist-grid {
-    /* Reutiliza o estilo do product-grid, mas o nome é específico para a página */
     margin-top: -20px;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
     gap: 40px; 
-    /* NOVO: Adiciona espaço abaixo da grade antes da paginação */
     margin-bottom: 40px;
 }
 
@@ -38,9 +33,7 @@
     border-radius: 8px;
     margin: 40px auto;
     max-width: 500px;
-
-    /* NOVO: Centraliza verticalmente o conteúdo "vazio" */
-    min-height: 50vh; /* Garante que ocupe altura */
+    min-height: 50vh; 
     display: flex;
     flex-direction: column;
     justify-content: center;

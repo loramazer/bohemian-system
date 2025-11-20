@@ -1,4 +1,3 @@
-// frontend/src/main.jsx
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router } from 'react-router-dom';
@@ -6,7 +5,7 @@ import App from './App.jsx';
 import './index.css';
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { CartProvider } from './context/CartContext.jsx';
-import { FeedbackProvider } from './context/FeedbackContext.jsx'; // NOVO: Importe o Provider
+import { FeedbackProvider } from './context/FeedbackContext.jsx'; 
 import { WishlistProvider } from './context/WishlistContext.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -14,7 +13,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <Router>
       <AuthProvider>
         <FeedbackProvider>
-          {/* NOVO: Adicionar WishlistProvider */}
+          {}
           <WishlistProvider>
             <CartProvider>
               <App />

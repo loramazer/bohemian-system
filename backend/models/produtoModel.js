@@ -1,12 +1,9 @@
-// backend/models/produtoModel.js
 const db = require('../config/db');
 
-// ----------------------------------------------------------------
-// SUBSTITUA TODA A FUNÇÃO 'getAll' (da linha 4 até ~116) POR ESTA:
-// ----------------------------------------------------------------
+
 async function getAll(options) {
     const {
-        categories, // string '1,2,3'
+        categories, 
         search,
         sort,
         maxPrice,
@@ -30,7 +27,6 @@ async function getAll(options) {
     let countParams = [];
     let countSql = `SELECT COUNT(DISTINCT p.id_produto) as totalProducts FROM produto p`;
 
-    // Lógica de JOIN (só adiciona se o filtro de categoria existir)
     const categoryIds = (categories || '')
                                   .split(',')
                                   .map(id => parseInt(id.trim()))
@@ -50,7 +46,6 @@ async function getAll(options) {
         countParams.push(...categoryIds);
     }
 
-    // Lógica de WHERE
     if (search) {
         whereClauses.push(`(p.nome LIKE ? OR p.descricao LIKE ?)`);
         const searchParam = `%${search}%`;
@@ -65,24 +60,20 @@ if (maxPrice !== undefined && maxPrice !== null && !isNaN(maxPrice)) {
 }
 
 
-    // Aplica o WHERE
     if (whereClauses.length > 0) {
         const whereString = ` WHERE ` + whereClauses.join(' AND ');
         sql += whereString;
         countSql += whereString;
     }
 
-    // --- CORREÇÃO: Execução Sequencial (Sem Promise.all) ---
 
-    // 1. Executa a contagem PRIMEIRO
     const [countResult] = await db.execute(countSql, countParams);
     const totalProducts = countResult[0].totalProducts;
     const totalPages = Math.ceil(totalProducts / limit);
 
-    // 2. Adiciona GROUP BY e ORDER BY (Apenas para a query de produtos)
     sql += ` GROUP BY p.id_produto`;
     
-    let orderBy = ' ORDER BY p.nome ASC'; // Padrão
+    let orderBy = ' ORDER BY p.nome ASC'; 
     switch (sort) {
         case 'name_desc':
             orderBy = ' ORDER BY p.nome DESC';
@@ -95,31 +86,25 @@ if (maxPrice !== undefined && maxPrice !== null && !isNaN(maxPrice)) {
             break;
     }
     sql += orderBy;
-// 3. Adiciona Paginação (Apenas para a query de produtos)
+
 const offset = (page - 1) * limit;
 const safeLimit = parseInt(limit, 10);
 const safeOffset = parseInt(offset, 10);
 
-// ✅ Interpola na query (MySQL2 não lida bem com placeholders aqui)
 sql += ` LIMIT ${safeLimit} OFFSET ${safeOffset}`;
 
 console.log('SQL executado:\n', sql);
 console.log('Parâmetros enviados:', params);
 
-// 4. Executa a busca de produtos SEGUNDO
 const [productRows] = await db.execute(sql, params);
 
-// 5. Retorna o objeto
+
 return {
     products: productRows,
     pages: totalPages,
     totalProducts: totalProducts
 };
 }
-// ----------------------------------------------------------------
-// FIM DA SUBSTITUIÇÃO (MANTENHA O RESTANTE DO ARQUIVO ABAIXO)
-// ----------------------------------------------------------------
-
 
 async function getById(id) {
   const [rows] = await db.execute('SELECT * FROM produto WHERE id_produto = ?', [id]);
@@ -185,10 +170,8 @@ async function updateProductCategory(productId, categoryName) {
     try {
         await connection.beginTransaction();
         
-        // 1. Remove todas as associações de categoria *antigas* deste produto
         await connection.execute('DELETE FROM produtocategoria WHERE fk_produto_id_produto = ?', [productId]);
         
-        // 2. Adiciona a *nova* associação
         await connection.execute(
             'INSERT INTO produtocategoria (fk_produto_id_produto, fk_categoria_id_categoria) VALUES (?, ?)',
             [productId, categoryId]
@@ -199,7 +182,7 @@ async function updateProductCategory(productId, categoryName) {
     } catch (error) {
         await connection.rollback();
         console.error("Erro ao atualizar categoria do produto:", error);
-        throw error; // Lança o erro para o controller
+        throw error; 
     } finally {
         connection.release();
     }
@@ -213,5 +196,5 @@ module.exports = {
     update, 
     remove, 
     addCategoryToProduct,
-    updateProductCategory // <-- ADICIONE ESTA EXPORTAÇÃO
+    updateProductCategory 
 };

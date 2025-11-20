@@ -18,10 +18,8 @@ const WishlistPage = () => {
     const { wishlistItems, removeWishlistItem, isFavorited } = useContext(WishlistContext);
     const { addItem } = useContext(CartContext);
     
-    // NOVO: Estado para controlar a página atual
     const [currentPage, setCurrentPage] = useState(1);
 
-    // Funções de clique (sem alteração)
     const handleRemove = (e, product) => {
         e.preventDefault(); 
         e.stopPropagation();
@@ -34,18 +32,16 @@ const WishlistPage = () => {
         addItem(product);
     };
 
-    // NOVO: Lógica de Paginação
-    // Calcula o total de itens
+
     const totalItems = wishlistItems.length;
-    // Fatia o array original (wishlistItems) para mostrar apenas os da página atual
     const currentItems = wishlistItems.slice(
         (currentPage - 1) * ITEMS_PER_PAGE,
         currentPage * ITEMS_PER_PAGE
     );
-    // Manipulador para mudar de página
+
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
-        window.scrollTo(0, 0); // Opcional: Rola para o topo ao mudar de página
+        window.scrollTo(0, 0);
     };
 
 

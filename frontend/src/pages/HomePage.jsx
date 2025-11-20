@@ -18,7 +18,7 @@ const HomePage = () => {
 
     return (
         <main>
-            {/* NOVO: Envolve HeroSection dentro de ContentWrapper */}
+            {}
             <ContentWrapper> 
                 <HeroSection />
             </ContentWrapper>

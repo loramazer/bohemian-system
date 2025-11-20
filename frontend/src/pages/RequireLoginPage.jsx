@@ -1,10 +1,8 @@
-// frontend/src/pages/RequireLoginPage.jsx
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
 import { FaLock } from 'react-icons/fa';
-import '../styles/RequireLoginPage.css'; // Novo CSS
+import '../styles/RequireLoginPage.css'; 
 
 const RequireLoginPage = () => {
     return (
