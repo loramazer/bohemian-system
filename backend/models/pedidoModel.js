@@ -3,60 +3,126 @@ const db = require('../config/db');
 
 function parseImageUrl(imageUrlString) {
     try {
-        // Tenta parsear a string JSON
         const parsed = JSON.parse(imageUrlString);
         
-        // Se for um array e tiver pelo menos uma imagem, retorna a primeira
         if (Array.isArray(parsed) && parsed.length > 0) {
             return parsed[0];
         }
     } catch (e) {
-        // Se falhar o parse, significa que já é uma URL única (string)
-        // Não faz nada e apenas retorna a string original
+        
     }
-    // Retorna a string original se não for um array JSON ou se o parse falhar
+   
     return imageUrlString; 
 }
 
 async function findByUsuarioId(usuarioId) {
-    
-    // --- CORREÇÃO: Query SQL "achatada" E com LEFT JOINs ---
-    const query = `SELECT p.id_pedido, p.dataPedido, p.data_entrega, p.status_pedido, fp.status_transacao AS status, COALESCE(e.nome, 'Retirada na Loja') AS rua, e.numero, e.complemento, cid.nome AS cidade, cid.sigla_UF AS estado, (SELECT SUM(ip_inner.precoUnitario * ip_inner.quantidade) FROM itempedido ip_inner WHERE ip_inner.fk_pedido_id_pedido = p.id_pedido) AS total_pedido, JSON_ARRAYAGG( JSON_OBJECT( 'id_produto', pr.id_produto, 'nome_produto', pr.nome, 'quantidade', ip.quantidade, 'precoUnitario', ip.precoUnitario, 'imagem_url', pr.imagem_url ) ) AS itens FROM pedido p LEFT JOIN itempedido ip ON p.id_pedido = ip.fk_pedido_id_pedido LEFT JOIN produto pr ON ip.fk_produto_id_produto = pr.id_produto LEFT JOIN forma_pagamento fp ON p.fk_forma_pagamento_id_forma_pagamento = fp.id_forma_pagamento LEFT JOIN endereco e ON p.fk_endereco_id_endereco = e.id_endereco LEFT JOIN cidade cid ON e.id_cidade = cid.id_cidade WHERE p.fk_id_usuario = ? GROUP BY p.id_pedido, p.dataPedido, p.data_entrega, p.status_pedido, fp.status_transacao, e.nome, e.numero, e.complemento, cid.nome, cid.sigla_UF ORDER BY p.dataPedido DESC;`;
-    // --- MUDANÇAS: Todos os JOINs (exceto 'pedido') agora são LEFT JOIN ---
+    // NOVA ESTRATÉGIA: JOIN Simples e Agrupamento via JavaScript
+    // Isso evita erros de JSON do MySQL e garante que os dados venham.
 
-    try {
-        // Verifique se o seu backend (controller) está passando o ID de usuário correto
-        console.log(`[pedidoModel] Buscando pedidos para o usuário ID: ${usuarioId}`);
-        const [rows] = await db.execute(query, [usuarioId]);
-        console.log(`[pedidoModel] Query executada, ${rows.length} pedidos encontrados.`);
+    const query = `
+        SELECT 
+            p.id_pedido, 
+            p.dataPedido, 
+            p.data_entrega, 
+            p.status_pedido, 
+            fp.status_transacao, 
+            COALESCE(e.nome, 'Retirada na Loja') AS rua_entrega, 
+            e.numero, 
+            e.complemento, 
+            cid.nome AS cidade, 
+            cid.sigla_UF AS estado,
+            
+            -- Dados do Item
+            ip.quantidade AS item_quantidade,
+            ip.precoUnitario AS item_preco,
+            
+            -- Dados do Produto
+            pr.id_produto,
+            pr.nome AS nome_produto,
+            pr.imagem_url
+            
+        FROM pedido p
+        LEFT JOIN itempedido ip ON p.id_pedido = ip.fk_pedido_id_pedido
+        LEFT JOIN produto pr ON ip.fk_produto_id_produto = pr.id_produto
+        LEFT JOIN forma_pagamento fp ON p.fk_forma_pagamento_id_forma_pagamento = fp.id_forma_pagamento 
+        LEFT JOIN endereco e ON p.fk_endereco_id_endereco = e.id_endereco 
+        LEFT JOIN cidade cid ON e.id_cidade = cid.id_cidade 
+        
+        WHERE p.fk_id_usuario = ? 
+        ORDER BY p.id_pedido DESC, p.dataPedido DESC;
+    `;
 
-        // Se 'rows' estiver vazio, o frontend mostrará "Nenhum pedido".
-        if (rows.length === 0) {
-            return [];
-        }
+    try {
+        console.log(`[pedidoModel] Buscando pedidos (RAW) para usuario: ${usuarioId}`);
+        const [rows] = await db.execute(query, [usuarioId]);
+        
+        // Se não veio nada, retorna array vazio
+        if (!rows || rows.length === 0) return [];
 
-        return rows.map(order => {
-            // Adiciona uma checagem de segurança para 'itens' que podem ser [null]
-            // se um pedido não tiver itens (por causa do LEFT JOIN)
-            const itemsArray = (typeof order.itens === 'string' ? JSON.parse(order.itens) : order.itens) || [];
-            
-            return {
-                ...order,
-                itens: itemsArray.filter(item => item.id_produto != null).map(item => ({ // Filtra itens nulos
-                    ...item,
-                    imagem_url: parseImageUrl(item.imagem_url)
-                }))
-            }
-        });
+        // --- LÓGICA DE AGRUPAMENTO (Transforma Linhas em Objetos de Pedido) ---
+        const pedidosMap = new Map();
 
-    } catch (error) {
-        console.error("Erro ao buscar pedidos por usuário no Model:", error);
-        throw error;
-    }
+        rows.forEach(row => {
+            // Se o pedido ainda não está no mapa, cria a estrutura dele
+            if (!pedidosMap.has(row.id_pedido)) {
+                pedidosMap.set(row.id_pedido, {
+                    id_pedido: row.id_pedido,
+                    dataPedido: row.dataPedido,
+                    data_entrega: row.data_entrega,
+                    status_pedido: row.status_pedido,
+                    status: row.status_transacao, // O front espera 'status' para pagamento
+                    rua: row.rua_entrega,
+                    numero: row.numero,
+                    complemento: row.complemento,
+                    cidade: row.cidade,
+                    estado: row.estado,
+                    total_pedido: 0, // Vamos calcular somando os itens
+                    itens: []
+                });
+            }
+
+            const pedidoAtual = pedidosMap.get(row.id_pedido);
+
+            // Se a linha tem um produto válido (pode ser null devido ao LEFT JOIN se o pedido estiver vazio)
+            if (row.id_produto) {
+                // Adiciona o item ao array
+                pedidoAtual.itens.push({
+                    id_produto: row.id_produto,
+                    nome_produto: row.nome_produto,
+                    quantidade: row.item_quantidade,
+                    precoUnitario: row.item_preco,
+                    imagem_url: parseImageUrl(row.imagem_url)
+                });
+
+                // Soma ao total do pedido
+                // Converter para float para garantir matemática correta
+                const subtotalItem = parseFloat(row.item_preco) * row.item_quantidade;
+                pedidoAtual.total_pedido += subtotalItem;
+            }
+        });
+
+        // Converte o Map de volta para um Array
+        const pedidosFormatados = Array.from(pedidosMap.values());
+        
+        console.log(`[pedidoModel] ${pedidosFormatados.length} pedidos formatados com sucesso.`);
+        
+        // Debug para ver se o primeiro pedido tem itens
+        if(pedidosFormatados.length > 0) {
+             console.log(`[DEBUG] Primeiro pedido tem ${pedidosFormatados[0].itens.length} itens.`);
+             // Formata o total final para 2 casas decimais (opcional, mas bom para evitar 100.0000001)
+             pedidosFormatados.forEach(p => {
+                 p.total_pedido = p.total_pedido.toFixed(2);
+             });
+        }
+
+        return pedidosFormatados;
+
+    } catch (error) {
+        console.error("Erro crítico no agrupamento de pedidos:", error);
+        throw error;
+    }
 }
 
-
-// --- FUNÇÃO ATUALIZADA: findAllAdmin (Inclui status_pedido) ---
 async function findAllAdmin(options) {
     const { page = 1, limit = 10, status, search, startDate, endDate } = options;
     const FRETE_FIXO = 15.00;
@@ -65,11 +131,7 @@ async function findAllAdmin(options) {
     let countParams = [];
     let whereClauses = [];
 
-    // --- CORREÇÃO 2: O JOIN ON foi corrigido ---
     let baseSql = `FROM pedido p JOIN usuario u ON p.fk_id_usuario = u.id_usuario JOIN forma_pagamento fp ON p.fk_forma_pagamento_id_forma_pagamento = fp.id_forma_pagamento LEFT JOIN itempedido ip ON p.id_pedido = ip.fk_pedido_id_pedido`;
-    // --- MUDANÇA BEM AQUI ^^^ (de 'fk_cliente_id_cliente' para 'fk_id_usuario') ---
-
-    // --- Filtros Dinâmicos ---
     if (status) {
         whereClauses.push(`fp.status_transacao = ?`);
         params.push(status);
@@ -94,15 +156,12 @@ async function findAllAdmin(options) {
 
     const whereSql = whereClauses.length > 0 ? ` WHERE ${whereClauses.join(' AND ')}` : '';
 
-    // --- Query de Contagem (Total de Pedidos) ---
     const countSql = `SELECT COUNT(DISTINCT p.id_pedido) as totalPedidos ${baseSql} ${whereSql}`;
     
     const [countResult] = await db.execute(countSql, countParams);
     const totalPedidos = countResult[0].totalPedidos;
     const totalPages = Math.ceil(totalPedidos / limit);
 
-    // --- Query de Busca (Pedidos Paginados) ---
-    // (Também achatada para evitar erros de sintaxe)
     let sql = `SELECT p.id_pedido, p.dataPedido, u.nome AS cliente_nome, fp.status_transacao AS status, p.status_pedido AS status_pedido, (SELECT SUM(ip_inner.precoUnitario * ip_inner.quantidade) FROM itempedido ip_inner WHERE ip_inner.fk_pedido_id_pedido = p.id_pedido) + ${FRETE_FIXO} AS total_pedido ${baseSql} ${whereSql} GROUP BY p.id_pedido, p.dataPedido, u.nome, fp.status_transacao, p.status_pedido ORDER BY p.dataPedido DESC`;
 
     const offset = (page - 1) * limit;
@@ -126,16 +185,12 @@ async function updateOrderStatus(pedidoId, statusPedido) {
     const [result] = await db.execute(sql, [statusPedido, pedidoId]);
 return result.affectedRows;
 }
-async function atualizarStatusPagamento(paymentId, statusPagamento, statusPedido, dataPagamento) { // <-- 1. NOVO PARÂMETRO 'dataPagamento'
-    
-    // 2. Atualiza a 'forma_pagamento' (Query Achatada E com data_pagamento)
+async function atualizarStatusPagamento(paymentId, statusPagamento, statusPedido, dataPagamento) {
     const sqlUpdateFormaPagamento = `UPDATE forma_pagamento fp JOIN pedido p ON fp.id_forma_pagamento = p.fk_forma_pagamento_id_forma_pagamento SET fp.status_transacao = ?, fp.data_pagamento = ? WHERE p.id_pedido = ?`;
     
-    // 3. Passa a data de pagamento para a query
     await db.execute(sqlUpdateFormaPagamento, [statusPagamento, dataPagamento, paymentId]);
     console.log(`[pedidoModel] Status do pagamento (forma_pagamento) atualizado para ${statusPagamento} para o pedido ${paymentId}.`);
 
-    // 4. Atualiza a 'pedido' (Query Achatada)
     const sqlUpdatePedido = `UPDATE pedido SET status_pedido = ? WHERE id_pedido = ?`;
     
     const [result] = await db.execute(sqlUpdatePedido, [statusPedido, paymentId]);
@@ -144,10 +199,9 @@ async function atualizarStatusPagamento(paymentId, statusPagamento, statusPedido
     return result.affectedRows;
 }
 
-
-// 3. ATUALIZAR O MODULE.EXPORTS
 module.exports = { 
     findByUsuarioId,
     findAllAdmin,
-    atualizarStatusPagamento
+    atualizarStatusPagamento,
+    updateOrderStatus
 };

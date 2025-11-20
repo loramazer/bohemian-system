@@ -6,9 +6,6 @@ import apiClient from '../api.js';
 import { AuthContext } from '../context/AuthContext.jsx';
 import '../styles/UserOrderPage.css'; 
 
-// --- FUNÇÕES DE STATUS ---
-
-// FUNÇÃO 1: Formata o status do PAGAMENTO (Vem da forma_pagamento)
 const formatPaymentStatus = (status) => {
     if (!status) return 'Indefinido';
     
@@ -25,36 +22,30 @@ const formatPaymentStatus = (status) => {
     return statusMap[status.toLowerCase()] || status.charAt(0).toUpperCase() + status.slice(1);
 };
 
-// FUNÇÃO 2: Formata o status do PEDIDO (Vem do pedido)
+
 const formatOrderStatus = (status) => {
     return status || 'Indefinido';
 };
 
-// FUNÇÃO 3: Mapeia o Status do Pedido para uma classe CSS
 const getOrderStatusClass = (status) => {
     if (!status) return 'indefinido';
     const s = status.toLowerCase();
     
-    // Mapeia seus status logísticos para as classes de estilo existentes
     if (s === 'em preparação') return 'in-process'; 
     if (s === 'pendente') return 'pending'; 
     if (s === 'cancelado') return 'cancelled'; 
     if (s === 'enviado') return 'authorized'; 
     if (s === 'entregue') return 'approved'; 
     
-    return 'indefinido'; // Fallback
+    return 'indefinido'; 
 };
 
-// Componente para o Detalhe da Compra (Renderiza dados reais)
 const PurchaseDetail = ({ order, onProductClick }) => {
     
     let address = '';
-    // O backend envia 'rua' como 'Retirada na Loja' ou 'cidade' como null
-    // se for um pedido sem endereço (devido ao LEFT JOIN).
     if (order.rua === 'Retirada na Loja' || order.cidade === null) {
         address = 'Retirada na Loja';
     } else {
-        // Só constrói o endereço completo se ele existir
         const rua = order.rua || 'Rua não informada';
         const numero = order.numero || 'S/N';
         const complemento = order.complemento ? ` - ${order.complemento}` : '';
@@ -63,18 +54,18 @@ const PurchaseDetail = ({ order, onProductClick }) => {
 
         address = `${rua}, ${numero}${complemento}, ${cidade}/${estado}`;
     }
-
-    // Define o frete fixo
-    const frete = 15.00;
-    // Calcula o total real
-    const totalComFrete = parseFloat(order.total_pedido) + frete;
+    const subtotal = parseFloat(order.total_pedido || 0);
+    let frete = 15.00;
+    if (order.rua === 'Retirada na Loja') { frete = 0.00; 
+    }
+    
+    const totalComFrete = subtotal + frete;
 
     return (
         <div className="purchase-detail-card">
             <h4 className="detail-title">Detalhes da Compra <span className="order-id">#{order.id_pedido}</span></h4>
             <div className="detail-grid">
                 
-                {/* Itens do Pedido */}
                 <div className="detail-items">
                     {order.itens.map(item => (
                         <div key={item.id_produto} className="detail-item-row">
@@ -96,7 +87,7 @@ const PurchaseDetail = ({ order, onProductClick }) => {
                     <h5 className="summary-heading">Resumo Financeiro</h5>
                     <div className="summary-row">
                         <span>Subtotal:</span>
-                        <span>R$ {parseFloat(order.total_pedido).toFixed(2).replace('.', ',')}</span>
+                        <span>R$ {subtotal.toFixed(2).replace('.', ',')}</span>
                     </div>
                     <div className="summary-row">
                         <span>Frete:</span>
@@ -230,7 +221,8 @@ const UserOrdersPage = () => {
                             <div key={month} className="month-group">
                                 <h2 className="month-title">{month}</h2>
                                 {groupedOrders[month].map(order => {
-                                    const firstItemImage = order.itens[0]?.imagem_url || ''; 
+                                    const placeholderImg = 'https://placeholder.co/100x100?text=Sem+Img';
+                                    const firstItemImage = order.itens[0]?.imagem_url || placeholderImg; 
 
                                     return (
                                         <div key={order.id_pedido} className="order-item-card">
