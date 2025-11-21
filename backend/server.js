@@ -1,4 +1,5 @@
 const express = require('express');
+const iniciarCronJobs = require('./services/cronJobs');
 const cors = require('cors');
 require('dotenv').config();
 
@@ -44,6 +45,7 @@ app.get('/', (req, res) => {
     res.send('Servidor principal está rodando!');
 });
 
+iniciarCronJobs();
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

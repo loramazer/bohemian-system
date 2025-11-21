@@ -1,6 +1,5 @@
 const db = require('../config/db');
 
-
 async function getAll(options) {
     const {
         categories, 
@@ -8,11 +7,27 @@ async function getAll(options) {
         sort,
         maxPrice,
         page = 1,
-        limit = 9
+        limit = 9,
+        ativo // <--- 1. Recebemos o parametro aqui
     } = options;
 
     let params = [];
-    let whereClauses = ["p.ativo = 1"];
+    let countParams = [];
+    
+    // 2. MUDANÇA IMPORTANTE: Começamos com array vazio, não fixo em "ativo = 1"
+    let whereClauses = []; 
+
+    // 3. Lógica de Filtro de Status
+    if (ativo !== undefined && ativo !== null && ativo !== '') {
+        // Se o controller mandou um status (0 ou 1), usamos ele
+        whereClauses.push("p.ativo = ?");
+        params.push(ativo);
+        countParams.push(ativo);
+    } else {
+        // Se ninguém mandou nada (ex: cliente na loja), padrão é só ver ativos
+        whereClauses.push("p.ativo = 1");
+    }
+
     let sql = `
         SELECT 
             p.id_produto, 
@@ -24,13 +39,12 @@ async function getAll(options) {
         FROM produto p
     `;
     
-    let countParams = [];
     let countSql = `SELECT COUNT(DISTINCT p.id_produto) as totalProducts FROM produto p`;
 
     const categoryIds = (categories || '')
-                                  .split(',')
-                                  .map(id => parseInt(id.trim()))
-                                  .filter(id => !isNaN(id) && id > 0);
+        .split(',')
+        .map(id => parseInt(id.trim()))
+        .filter(id => !isNaN(id) && id > 0);
 
     if (categoryIds.length > 0) {
         const joinSql = `
@@ -42,6 +56,8 @@ async function getAll(options) {
         
         const placeholders = categoryIds.map(() => '?').join(',');
         whereClauses.push(`c.id_categoria IN (${placeholders})`);
+        
+        // Adiciona aos params
         params.push(...categoryIds);
         countParams.push(...categoryIds);
     }
@@ -53,19 +69,17 @@ async function getAll(options) {
         countParams.push(searchParam, searchParam);
     }
 
-if (maxPrice !== undefined && maxPrice !== null && !isNaN(maxPrice)) {
-    whereClauses.push(`p.preco_venda <= ?`);
-    params.push(Number(maxPrice));
-    countParams.push(Number(maxPrice));
-}
-
+    if (maxPrice !== undefined && maxPrice !== null && !isNaN(maxPrice)) {
+        whereClauses.push(`p.preco_venda <= ?`);
+        params.push(Number(maxPrice));
+        countParams.push(Number(maxPrice));
+    }
 
     if (whereClauses.length > 0) {
         const whereString = ` WHERE ` + whereClauses.join(' AND ');
         sql += whereString;
         countSql += whereString;
     }
-
 
     const [countResult] = await db.execute(countSql, countParams);
     const totalProducts = countResult[0].totalProducts;
@@ -87,51 +101,58 @@ if (maxPrice !== undefined && maxPrice !== null && !isNaN(maxPrice)) {
     }
     sql += orderBy;
 
-const offset = (page - 1) * limit;
-const safeLimit = parseInt(limit, 10);
-const safeOffset = parseInt(offset, 10);
+    const offset = (page - 1) * limit;
+    const safeLimit = parseInt(limit, 10);
+    const safeOffset = parseInt(offset, 10);
 
-sql += ` LIMIT ${safeLimit} OFFSET ${safeOffset}`;
+    sql += ` LIMIT ${safeLimit} OFFSET ${safeOffset}`;
 
-console.log('SQL executado:\n', sql);
-console.log('Parâmetros enviados:', params);
+    // Debug útil para ver se o filtro está indo
+    console.log('SQL executado:\n', sql);
+    console.log('Parâmetros enviados:', params);
 
-const [productRows] = await db.execute(sql, params);
+    const [productRows] = await db.execute(sql, params);
 
-
-return {
-    products: productRows,
-    pages: totalPages,
-    totalProducts: totalProducts
-};
+    return {
+        products: productRows,
+        pages: totalPages,
+        totalProducts: totalProducts
+    };
 }
 
 async function getById(id) {
-  const [rows] = await db.execute('SELECT * FROM produto WHERE id_produto = ?', [id]);
-  return rows[0];
+    const [rows] = await db.execute('SELECT * FROM produto WHERE id_produto = ?', [id]);
+    return rows[0];
 }
 
 async function create({ nome, preco_venda, descricao = null, ativo = 1, imagem_url = null }) {
-  const [result] = await db.execute(
-  	'INSERT INTO produto (nome, preco_venda, descricao, ativo, imagem_url) VALUES (?, ?, ?, ?, ?)',
-  	[nome, preco_venda, descricao, ativo, imagem_url]
-  );
-  return { id_produto: result.insertId, nome, preco_venda, descricao, ativo, imagem_url };
+    const [result] = await db.execute(
+        'INSERT INTO produto (nome, preco_venda, descricao, ativo, imagem_url) VALUES (?, ?, ?, ?, ?)',
+        [nome, preco_venda, descricao, ativo, imagem_url]
+    );
+    return { id_produto: result.insertId, nome, preco_venda, descricao, ativo, imagem_url };
 }
 
 async function update(id, { nome, preco_venda, descricao = null, ativo = 1, imagem_url = null }) {
-  await db.execute(
-  	'UPDATE produto SET nome = ?, preco_venda = ?, descricao = ?, ativo = ?, imagem_url = ? WHERE id_produto = ?',
-  	[nome, preco_venda, descricao, ativo, imagem_url, id]
-  );
-  return { id_produto: id, nome, preco_venda, descricao, ativo, imagem_url };
+    await db.execute(
+        'UPDATE produto SET nome = ?, preco_venda = ?, descricao = ?, ativo = ?, imagem_url = ? WHERE id_produto = ?',
+        [nome, preco_venda, descricao, ativo, imagem_url, id]
+    );
+    return { id_produto: id, nome, preco_venda, descricao, ativo, imagem_url };
 }
 
 async function remove(id) {
     await db.execute(
-    'UPDATE produto SET ativo = 0 WHERE id_produto = ?', 
-    [id]
-  );
+        'UPDATE produto SET ativo = 0 WHERE id_produto = ?', 
+        [id]
+    );
+}
+
+// --- 4. NOVA FUNÇÃO DE TOGGLE ---
+async function toggleStatus(id) {
+    // 'NOT ativo' ou '!ativo' inverte o booleano no MySQL (1 vira 0, 0 vira 1)
+    const sql = 'UPDATE produto SET ativo = !ativo WHERE id_produto = ?';
+    await db.execute(sql, [id]);
 }
 
 async function getCategoryIdByName(categoryName) {
@@ -147,9 +168,6 @@ async function addCategoryToProduct(productId, categoryName) {
             INSERT INTO produtocategoria (fk_produto_id_produto, fk_categoria_id_categoria)
             VALUES (?, ?)
         `;
-        console.log('SQL:', sql);
-        console.log('Params:', [productId, categoryId]);
-
         await db.execute(sql, [productId, categoryId]);
         return true;
     }
@@ -188,13 +206,13 @@ async function updateProductCategory(productId, categoryName) {
     }
 }
 
-
 module.exports = { 
     getAll, 
     getById, 
     create, 
     update, 
     remove, 
+    toggleStatus, // <--- 5. Exportamos a nova função
     addCategoryToProduct,
     updateProductCategory 
 };

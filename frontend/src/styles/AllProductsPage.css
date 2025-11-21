@@ -1,23 +1,87 @@
-.admin-products-main {
-    padding: 40px 0;
-    margin-top: -50px;
-}
-
-
-.admin-page-header {
+/* Container do Switch */
+.filter-switch-container {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 10px;
+    padding: 10px;
+    margin-top: -35px;
+    margin-left: -1000px;
 }
 
-.admin-page-title {
-    font-size: 2rem;
+/* Textos laterais */
+.switch-label {
+    font-size: 16px;
+    font-weight: 500;
+    color: #999;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.switch-label.active {
     color: #333;
+    font-weight: bold;
+}
+
+/* O componente Switch */
+.page-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 26px;
+}
+
+.page-switch input { 
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.page-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #2ecc71; /* Verde (Ativos) */
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.page-slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+/* Estado Inativo (Ocultos) */
+input:checked + .page-slider {
+    background-color: #95a5a6; /* Cinza (Ocultos) */
+}
+
+input:checked + .page-slider:before {
+    transform: translateX(23px);
+}
+
+.empty-state {
+    text-align: center;
+    color: #777;
+    margin-top: 40px;
+    font-style: italic;
 }
 
 .add-product-btn {
     padding: 10px 20px;
+    margin-top: 20px;
     background-color: #5d7a7b;
     color: #fff;
     border: none;
@@ -29,22 +93,4 @@
 
 .add-product-btn:hover {
     background-color: #4a6263;
-}
-
-.product-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    /* CORREÇÃO: Aumentado o espaçamento para o padrão de 40px */
-    gap: 40px; 
-    margin-bottom: 50px;
-}
-
-/* NOVA REGRA: 
-  Aplica uma margem superior de 40px diretamente no 
-  contêiner da paginação, mas SOMENTE quando ele 
-  estiver dentro da div .admin-products-main.
-*/
-.admin-products-main .pagination-container {
-    margin-top: 50px;
-    margin-bottom: -70px;
 }

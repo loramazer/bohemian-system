@@ -61,32 +61,47 @@ async function create(req, res) {
 
 async function getAll(req, res) {
     try {
-        // Extrair todos os parâmetros da query que o frontend envia
         const {
-            categories, // Vem como '1,2,3'
+            categories,
             search,
             sort,
             maxPrice,
             page,
-            limit
+            limit,
+            ativo // <--- NOVO: Recebe o parâmetro ativo
         } = req.query;
 
-        // Passar os parâmetros para o model
-        // O model fará a lógica de paginação e filtragem
+        // Passa o parâmetro 'ativo' para o model
         const result = await produtoModel.getAll({
-            categories, // O model vai tratar a string '1,2,3'
+            categories,
             search,
             sort,
             maxPrice: maxPrice ? parseFloat(maxPrice) : null,
             page: parseInt(page) || 1,
-            limit: parseInt(limit) || 9 // Padrão de 9 itens
+            limit: parseInt(limit) || 9,
+            ativo // <--- NOVO
         });
         
-        // O model agora retorna um objeto { products, totalPages, ... }
         res.json(result); 
 
     } catch (error) {
         console.error('Erro ao listar produtos:', error);
+        res.status(500).json({ message: 'Erro interno do servidor' });
+    }
+}
+
+// --- NOVA FUNÇÃO: Adicione esta função ---
+async function toggleStatus(req, res) {
+    try {
+        const { id } = req.params;
+        // Chama o método no model para inverter o status (crie esse método no model se não existir)
+        // Se seu model não tiver 'toggleStatus', você pode usar uma query direta aqui ou no model.
+        // Exemplo genérico chamando o model:
+        await produtoModel.toggleStatus(id); 
+        
+        res.status(200).json({ message: 'Status do produto alterado com sucesso' });
+    } catch (error) {
+        console.error('Erro ao alterar status:', error);
         res.status(500).json({ message: 'Erro interno do servidor' });
     }
 }
@@ -167,9 +182,10 @@ async function remove(req, res) {
 
 module.exports = {
     create,
-    getAll, // Esta é a função que atualizamos
+    getAll,
     getById,
     update,
     remove,
+    toggleStatus, // <--- NOVO: Não esqueça de exportar!
     uploadMiddleware: upload.array('imagens', 4)
 };
