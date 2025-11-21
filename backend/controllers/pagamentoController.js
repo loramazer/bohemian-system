@@ -2,7 +2,6 @@ const { MercadoPagoConfig, Preference, Payment } = require('mercadopago');
 const pool = require('../config/db.js');
 const carrinhoModel = require('../models/carrinhoModel');
 const itemCarrinhoModel = require('../models/itemCarrinhoModel');
-const itemCarrinhoModel = require('../models/itemCarrinhoModel');O
 const pedidoModel = require('../models/pedidoModel'); 
 const usuarioModel = require('../models/usuarioModel');
 
