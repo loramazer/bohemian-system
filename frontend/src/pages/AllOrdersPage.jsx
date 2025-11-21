@@ -11,24 +11,36 @@ const paymentStatusMap = {
     'pending': 'Pendente',
     'approved': 'Aprovado',
     'in_process': 'Em Processamento',
-    'authorized': 'Autorizado',      
-    'delivered': 'Entregue',     
+    'authorized': 'Autorizado',
+    'delivered': 'Entregue',
     'cancelled': 'Cancelado',
     'rejected': 'Rejeitado',
-    'failure': 'Falhou' 
+    'failure': 'Falhou'
 };
 
 const orderStatusLogisticoMap = {
     'in_process': 'Em Preparação',
-    'pending': 'Pendente', 
-    'cancelled': 'Cancelado', 
-    'authorized': 'Enviado', 
-    'delivered': 'Entregue' 
+    'pending': 'Pendente',
+    'cancelled': 'Cancelado',
+    'authorized': 'Enviado',
+    'delivered': 'Entregue'
 };
 
 const paymentStatusOptions = Object.keys(paymentStatusMap);
-// Aqui pegamos as chaves dos status logísticos
 const orderStatusOptions = Object.keys(orderStatusLogisticoMap);
+
+const normalizeStatus = (status) => {
+    if (!status) return 'pending';
+    const s = status.toLowerCase();
+
+    if (s === 'pendente') return 'pending';
+    if (s === 'em preparação') return 'in_process';
+    if (s === 'cancelado') return 'cancelled';
+    if (s === 'enviado') return 'authorized';
+    if (s === 'entregue') return 'delivered';
+
+    return s;
+};
 
 const AllOrdersPage = () => {
     const { user, loading: authLoading } = useContext(AuthContext);
@@ -45,11 +57,11 @@ const AllOrdersPage = () => {
 
     const [filters, setFilters] = useState({
         search: '',
-        status: '', // Agora este campo representará o status do PEDIDO
+        status: '',
         startDate: '',
         endDate: '',
     });
-    
+
     const [activeFilters, setActiveFilters] = useState(filters);
 
     useEffect(() => {
@@ -65,19 +77,19 @@ const AllOrdersPage = () => {
             try {
                 const params = {
                     page: currentPage,
-                    limit: 15, 
+                    limit: 15,
                     search: activeFilters.search || null,
-                    status: activeFilters.status || null, // Envia o status do pedido
+                    status: activeFilters.status || null,
                     startDate: activeFilters.startDate || null,
                     endDate: activeFilters.endDate || null,
                 };
-                
+
                 Object.keys(params).forEach(key => {
                     if (params[key] === null) delete params[key];
                 });
 
                 const response = await apiClient.get('/api/dashboard/orders/all', { params });
-                
+
                 setPedidos(response.data.pedidos || []);
                 setTotalPages(response.data.totalPages || 0);
                 setTotalPedidos(response.data.totalPedidos || 0);
@@ -106,10 +118,10 @@ const AllOrdersPage = () => {
     };
 
     const handleApplyFilters = () => {
-        setCurrentPage(1); 
-        setActiveFilters(filters); 
+        setCurrentPage(1);
+        setActiveFilters(filters);
     };
-    
+
     const handleClearFilters = () => {
         setFilters({ search: '', status: '', startDate: '', endDate: '' });
         setActiveFilters({ search: '', status: '', startDate: '', endDate: '' });
@@ -124,11 +136,11 @@ const AllOrdersPage = () => {
 
         try {
             await apiClient.put(`/api/dashboard/orders/status/${pedidoId}`, { status: newStatusPedido });
-            
+
             setPedidos(prevPedidos =>
                 prevPedidos.map(pedido =>
                     pedido.id_pedido === pedidoId
-                        ? { ...pedido, status_pedido: newStatusPedido } 
+                        ? { ...pedido, status_pedido: newStatusPedido }
                         : pedido
                 )
             );
@@ -149,14 +161,14 @@ const AllOrdersPage = () => {
     const formatPaymentStatus = (status) => {
         return paymentStatusMap[status.toLowerCase()] || status;
     };
-    
+
     const formatOrderStatus = (status) => {
-        return orderStatusLogisticoMap[status] || status; 
+        return orderStatusLogisticoMap[status] || status;
     };
 
     const getOrderStatusClass = (status) => {
         if (!status) return 'indefinido';
-        return status.toLowerCase(); 
+        return normalizeStatus(status);
     };
 
     if (loading && pedidos.length === 0) {
@@ -166,7 +178,7 @@ const AllOrdersPage = () => {
     return (
         <ContentWrapper>
             <main className="all-orders-main">
-                
+
                 <div className="admin-page-header">
                     <h2 className="admin-page-title">Todos os Pedidos ({totalPedidos})</h2>
                 </div>
@@ -180,22 +192,20 @@ const AllOrdersPage = () => {
                         onChange={handleFilterChange}
                         className="filter-input"
                     />
-                    
-                    {/* --- ALTERAÇÃO AQUI: FILTRO AGORA É POR STATUS DO PEDIDO --- */}
+
                     <select
                         name="status"
                         value={filters.status}
                         onChange={handleFilterChange}
                         className="filter-select"
                     >
-                        <option value="">Todos os Status (Pedido)</option> 
+                        <option value="">Todos os Status (Pedido)</option>
                         {orderStatusOptions.map(status => (
                             <option key={status} value={status}>
                                 {formatOrderStatus(status)}
                             </option>
                         ))}
                     </select>
-                    {/* ---------------------------------------------------------- */}
 
                     <input
                         type="date"
@@ -214,11 +224,11 @@ const AllOrdersPage = () => {
                     <button onClick={handleApplyFilters} className="filter-btn primary">Filtrar</button>
                     <button onClick={handleClearFilters} className="filter-btn secondary">Limpar</button>
                 </div>
-                
+
                 <div className="orders-table-container">
                     {loading && <p>Atualizando...</p>}
                     {error && <p className="error-message">{error}</p>}
-                    
+
                     {!loading && pedidos.length === 0 && (
                         <p>Nenhum pedido encontrado com os filtros atuais.</p>
                     )}
@@ -247,23 +257,21 @@ const AllOrdersPage = () => {
                                         <td>{pedido.cliente_nome}</td>
                                         <td>{new Date(pedido.dataPedido).toLocaleDateString('pt-BR')}</td>
                                         <td>{formatCurrency(pedido.total_pedido)}</td>
-                                    
-                                        {/* Status de Pagamento (Apenas visualização) */}
+
                                         <td>
-                                            <span 
-                                                className={`status-badge status-${pedido.status}`} 
+                                            <span
+                                                className={`status-badge status-${pedido.status}`}
                                                 style={{ padding: '8px 12px', borderRadius: '5px' }}
                                             >
                                                 {formatPaymentStatus(pedido.status)}
                                             </span>
                                         </td>
-                                        
-                                        {/* Status do Pedido (Editável) */}
+
                                         <td>
                                             <select
-                                                className={`status-select status-${getOrderStatusClass(pedido.status_pedido)}`} 
-                                                value={pedido.status_pedido || 'pending'} 
-                                                disabled={pedido.status !== 'approved'} 
+                                                className={`status-select status-${getOrderStatusClass(pedido.status_pedido)}`}
+                                                value={normalizeStatus(pedido.status_pedido)}
+                                                disabled={pedido.status !== 'approved'}
                                                 onChange={(e) => handleStatusChange(pedido.id_pedido, e.target.value, pedido.status)}
                                             >
                                                 {orderStatusOptions.map(status => (

@@ -45,62 +45,87 @@ async function findByUsuarioId(usuarioId) {
 }
 
 async function findAllAdmin(options) {
-    const { page = 1, limit = 10, status, search, startDate, endDate } = options;
-    const FRETE_FIXO = 15.00;
+    const { page = 1, limit = 10, status, search, startDate, endDate } = options;
+    const FRETE_FIXO = 15.00;
 
-    let params = [];
-    let countParams = [];
-    let whereClauses = [];
+    let params = [];
+    let countParams = [];
+    let whereClauses = [];
 
-    let baseSql = `FROM pedido p JOIN usuario u ON p.fk_id_usuario = u.id_usuario JOIN forma_pagamento fp ON p.fk_forma_pagamento_id_forma_pagamento = fp.id_forma_pagamento LEFT JOIN itempedido ip ON p.id_pedido = ip.fk_pedido_id_pedido`;
+    const statusMap = {
+        'pending': ['Pendente', 'pending'],
+        'in_process': ['Em Preparação', 'in_process'],
+        'authorized': ['Enviado', 'authorized'],
+        'delivered': ['Entregue', 'delivered'],
+        'cancelled': ['Cancelado', 'cancelled']
+    };
 
-    if (status) {
-        whereClauses.push(`fp.status_transacao = ?`);
-        params.push(status);
-        countParams.push(status);
-    }
-    if (search) {
-        whereClauses.push(`u.nome LIKE ?`);
-        const searchParam = `%${search}%`;
-        params.push(searchParam);
-        countParams.push(searchParam);
-    }
-    if (startDate) {
-        whereClauses.push(`p.dataPedido >= ?`);
-        params.push(startDate);
-        countParams.push(startDate);
-    }
-    if (endDate) {
-        whereClauses.push(`p.dataPedido <= ?`);
-        params.push(endDate);
-        countParams.push(endDate);
-    }
+    let baseSql = `FROM pedido p 
+                   JOIN usuario u ON p.fk_id_usuario = u.id_usuario 
+                   JOIN forma_pagamento fp ON p.fk_forma_pagamento_id_forma_pagamento = fp.id_forma_pagamento 
+                   LEFT JOIN itempedido ip ON p.id_pedido = ip.fk_pedido_id_pedido`;
 
-    const whereSql = whereClauses.length > 0 ? ` WHERE ${whereClauses.join(' AND ')}` : '';
+    if (status) {
+        const validStatuses = statusMap[status] || [status];
+        const placeholders = validStatuses.map(() => '?').join(',');
+        
+        whereClauses.push(`p.status_pedido IN (${placeholders})`);
+        
+        params.push(...validStatuses);
+        countParams.push(...validStatuses);
+    }
 
-    const countSql = `SELECT COUNT(DISTINCT p.id_pedido) as totalPedidos ${baseSql} ${whereSql}`;
-    
-    const [countResult] = await db.execute(countSql, countParams);
-    const totalPedidos = countResult[0].totalPedidos;
-    const totalPages = Math.ceil(totalPedidos / limit);
+    if (search) {
+        whereClauses.push(`u.nome LIKE ?`);
+        const searchParam = `%${search}%`;
+        params.push(searchParam);
+        countParams.push(searchParam);
+    }
+    if (startDate) {
+        whereClauses.push(`p.dataPedido >= ?`);
+        params.push(startDate);
+        countParams.push(startDate);
+    }
+    if (endDate) {
+        whereClauses.push(`p.dataPedido <= ?`);
+        params.push(endDate);
+        countParams.push(endDate);
+    }
 
+    const whereSql = whereClauses.length > 0 ? ` WHERE ${whereClauses.join(' AND ')}` : '';
 
-    let sql = `SELECT p.id_pedido, p.dataPedido, u.nome AS cliente_nome, fp.status_transacao AS status, p.status_pedido AS status_pedido, (SELECT SUM(ip_inner.precoUnitario * ip_inner.quantidade) FROM itempedido ip_inner WHERE ip_inner.fk_pedido_id_pedido = p.id_pedido) + ${FRETE_FIXO} AS total_pedido ${baseSql} ${whereSql} GROUP BY p.id_pedido, p.dataPedido, u.nome, fp.status_transacao, p.status_pedido ORDER BY p.dataPedido DESC`;
+    const countSql = `SELECT COUNT(DISTINCT p.id_pedido) as totalPedidos ${baseSql} ${whereSql}`;
+    
+    const [countResult] = await db.execute(countSql, countParams);
+    const totalPedidos = countResult[0].totalPedidos;
+    const totalPages = Math.ceil(totalPedidos / limit);
 
-    const offset = (page - 1) * limit;
-    sql += ` LIMIT ${parseInt(limit)} OFFSET ${parseInt(offset)}`;
+    let sql = `SELECT 
+                p.id_pedido, 
+                p.dataPedido, 
+                u.nome AS cliente_nome, 
+                fp.status_transacao AS status, 
+                p.status_pedido AS status_pedido, 
+                (SELECT COALESCE(SUM(ip_inner.precoUnitario * ip_inner.quantidade), 0) FROM itempedido ip_inner WHERE ip_inner.fk_pedido_id_pedido = p.id_pedido) + ${FRETE_FIXO} AS total_pedido 
+               ${baseSql} 
+               ${whereSql} 
+               GROUP BY p.id_pedido, p.dataPedido, u.nome, fp.status_transacao, p.status_pedido 
+               ORDER BY p.dataPedido DESC`;
 
-    const [pedidos] = await db.execute(sql, params);
+    const offset = (page - 1) * limit;
+    sql += ` LIMIT ${parseInt(limit)} OFFSET ${parseInt(offset)}`;
 
-    return {
-        pedidos: pedidos.map(p => ({
-            ...p,
-            total_pedido: p.total_pedido ? parseFloat(p.total_pedido).toFixed(2) : '0.00'
-        })),
-        totalPages,
-        totalPedidos,
-        currentPage: parseInt(page)
-    };
+    const [pedidos] = await db.execute(sql, params);
+
+    return {
+        pedidos: pedidos.map(p => ({
+            ...p,
+            total_pedido: p.total_pedido ? parseFloat(p.total_pedido).toFixed(2) : '0.00'
+        })),
+        totalPages,
+        totalPedidos,
+        currentPage: parseInt(page)
+    };
 }
 
 async function updateOrderStatus(pedidoId, statusPedido) {
