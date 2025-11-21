@@ -147,7 +147,8 @@ const AllOrdersPage = () => {
             showToast('Status do pedido atualizado!', 'success');
         } catch (error) {
             console.error('Erro ao atualizar status:', error);
-            showToast('Falha ao atualizar status.', 'warning');
+            const errorMessage = error.response?.data?.message || 'Falha ao atualizar status.';
+            showToast(errorMessage, 'warning');
         }
     };
 
