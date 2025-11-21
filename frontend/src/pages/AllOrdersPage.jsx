@@ -7,7 +7,6 @@ import { AuthContext } from '../context/AuthContext.jsx';
 import { FeedbackContext } from '../context/FeedbackContext.jsx';
 import '../styles/AllOrdersPage.css';
 
-
 const paymentStatusMap = {
     'pending': 'Pendente',
     'approved': 'Aprovado',
@@ -19,7 +18,6 @@ const paymentStatusMap = {
     'failure': 'Falhou' 
 };
 
-
 const orderStatusLogisticoMap = {
     'in_process': 'Em Preparação',
     'pending': 'Pendente', 
@@ -28,11 +26,9 @@ const orderStatusLogisticoMap = {
     'delivered': 'Entregue' 
 };
 
-
 const paymentStatusOptions = Object.keys(paymentStatusMap);
-
+// Aqui pegamos as chaves dos status logísticos
 const orderStatusOptions = Object.keys(orderStatusLogisticoMap);
-
 
 const AllOrdersPage = () => {
     const { user, loading: authLoading } = useContext(AuthContext);
@@ -47,16 +43,14 @@ const AllOrdersPage = () => {
     const [totalPages, setTotalPages] = useState(0);
     const [totalPedidos, setTotalPedidos] = useState(0);
 
-
     const [filters, setFilters] = useState({
         search: '',
-        status: '', 
+        status: '', // Agora este campo representará o status do PEDIDO
         startDate: '',
         endDate: '',
     });
     
     const [activeFilters, setActiveFilters] = useState(filters);
-
 
     useEffect(() => {
         if (authLoading) return;
@@ -73,11 +67,10 @@ const AllOrdersPage = () => {
                     page: currentPage,
                     limit: 15, 
                     search: activeFilters.search || null,
-                    status: activeFilters.status || null,
+                    status: activeFilters.status || null, // Envia o status do pedido
                     startDate: activeFilters.startDate || null,
                     endDate: activeFilters.endDate || null,
                 };
-                
                 
                 Object.keys(params).forEach(key => {
                     if (params[key] === null) delete params[key];
@@ -102,7 +95,6 @@ const AllOrdersPage = () => {
         }
     }, [user, authLoading, navigate, currentPage, activeFilters, showToast]);
 
-
     const handlePageChange = (page) => {
         setCurrentPage(page);
         window.scrollTo(0, 0);
@@ -124,16 +116,13 @@ const AllOrdersPage = () => {
         setCurrentPage(1);
     };
 
-    
     const handleStatusChange = async (pedidoId, newStatusPedido, currentPaymentStatus) => {
-        
         if (currentPaymentStatus !== 'approved') {
             showToast('A edição do status do pedido só é permitida após a aprovação do pagamento.', 'warning');
             return;
         }
 
         try {
-            
             await apiClient.put(`/api/dashboard/orders/status/${pedidoId}`, { status: newStatusPedido });
             
             setPedidos(prevPedidos =>
@@ -150,7 +139,6 @@ const AllOrdersPage = () => {
         }
     };
 
-    
     const formatCurrency = (value) => {
         return new Intl.NumberFormat('pt-BR', {
             style: 'currency',
@@ -159,23 +147,17 @@ const AllOrdersPage = () => {
     };
 
     const formatPaymentStatus = (status) => {
-        
         return paymentStatusMap[status.toLowerCase()] || status;
     };
     
-   
     const formatOrderStatus = (status) => {
-        
         return orderStatusLogisticoMap[status] || status; 
     };
 
-    
     const getOrderStatusClass = (status) => {
         if (!status) return 'indefinido';
-        
         return status.toLowerCase(); 
     };
-
 
     if (loading && pedidos.length === 0) {
         return <ContentWrapper><div>Carregando pedidos...</div></ContentWrapper>;
@@ -198,17 +180,23 @@ const AllOrdersPage = () => {
                         onChange={handleFilterChange}
                         className="filter-input"
                     />
+                    
+                    {/* --- ALTERAÇÃO AQUI: FILTRO AGORA É POR STATUS DO PEDIDO --- */}
                     <select
                         name="status"
                         value={filters.status}
                         onChange={handleFilterChange}
                         className="filter-select"
                     >
-                        <option value="">Todos os Status (Pagamento)</option> 
-                        {paymentStatusOptions.map(status => (
-                            <option key={status} value={status}>{formatPaymentStatus(status)}</option>
+                        <option value="">Todos os Status (Pedido)</option> 
+                        {orderStatusOptions.map(status => (
+                            <option key={status} value={status}>
+                                {formatOrderStatus(status)}
+                            </option>
                         ))}
                     </select>
+                    {/* ---------------------------------------------------------- */}
+
                     <input
                         type="date"
                         name="startDate"
@@ -260,9 +248,9 @@ const AllOrdersPage = () => {
                                         <td>{new Date(pedido.dataPedido).toLocaleDateString('pt-BR')}</td>
                                         <td>{formatCurrency(pedido.total_pedido)}</td>
                                     
+                                        {/* Status de Pagamento (Apenas visualização) */}
                                         <td>
                                             <span 
-                                               
                                                 className={`status-badge status-${pedido.status}`} 
                                                 style={{ padding: '8px 12px', borderRadius: '5px' }}
                                             >
@@ -270,7 +258,7 @@ const AllOrdersPage = () => {
                                             </span>
                                         </td>
                                         
-                                        
+                                        {/* Status do Pedido (Editável) */}
                                         <td>
                                             <select
                                                 className={`status-select status-${getOrderStatusClass(pedido.status_pedido)}`} 
