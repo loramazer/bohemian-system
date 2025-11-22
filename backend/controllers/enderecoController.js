@@ -76,6 +76,13 @@ exports.deleteEndereco = async (req, res) => {
 
     } catch (error) {
         console.error("Erro ao deletar endereço:", error);
-        res.status(500).json({ message: "Erro ao deletar endereço." });
+
+        if (error.code === 'ER_ROW_IS_REFERENCED_2' || error.errno === 1451) {
+            return res.status(409).json({ 
+                message: "Não é possível excluir este endereço pois ele está vinculado a um pedido realizado." 
+            });
+        }
+
+        res.status(500).json({ message: "Erro interno ao tentar deletar o endereço." });
     }
 };

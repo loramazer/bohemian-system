@@ -1,20 +1,19 @@
-// loramazer/bohemian-system/bohemian-system-refatorar-organizacao/frontend/src/pages/UserOrderPage.jsx
 import React, { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
-import apiClient from '../api.js'; 
+import apiClient from '../api.js';
 import { AuthContext } from '../context/AuthContext.jsx';
-import '../styles/UserOrderPage.css'; 
+import '../styles/UserOrderPage.css';
 
 const formatPaymentStatus = (status) => {
     if (!status) return 'Indefinido';
-    
+
     const statusMap = {
         'pending': 'Pendente',
         'approved': 'Aprovado',
         'in_process': 'Em Processamento',
         'authorized': 'Autorizado',
-        'delivered': 'Entregue',     
+        'delivered': 'Entregue',
         'cancelled': 'Cancelado',
         'rejected': 'Rejeitado'
     };
@@ -22,26 +21,38 @@ const formatPaymentStatus = (status) => {
     return statusMap[status.toLowerCase()] || status.charAt(0).toUpperCase() + status.slice(1);
 };
 
-
 const formatOrderStatus = (status) => {
-    return status || 'Indefinido';
+    if (!status) return 'Indefinido';
+
+    const s = status.toLowerCase();
+
+    const translationMap = {
+        'pending': 'Pendente',
+        'in_process': 'Em Preparação',
+        'authorized': 'Enviado',
+        'delivered': 'Entregue',
+        'cancelled': 'Cancelado',
+        'rejected': 'Rejeitado'
+    };
+
+    return translationMap[s] || status;
 };
 
 const getOrderStatusClass = (status) => {
     if (!status) return 'indefinido';
     const s = status.toLowerCase();
-    
-    if (s === 'em preparação') return 'in-process'; 
-    if (s === 'pendente') return 'pending'; 
-    if (s === 'cancelado') return 'cancelled'; 
-    if (s === 'enviado') return 'authorized'; 
-    if (s === 'entregue') return 'approved'; 
-    
-    return 'indefinido'; 
+
+    if (s === 'em preparação' || s === 'in_process') return 'in-process';
+    if (s === 'pendente' || s === 'pending') return 'pending';
+    if (s === 'cancelado' || s === 'cancelled') return 'cancelled';
+    if (s === 'enviado' || s === 'authorized') return 'authorized';
+    if (s === 'entregue' || s === 'delivered') return 'approved';
+
+    return 'indefinido';
 };
 
 const PurchaseDetail = ({ order, onProductClick }) => {
-    
+
     let address = '';
     if (order.rua === 'Retirada na Loja' || order.cidade === null) {
         address = 'Retirada na Loja';
@@ -56,20 +67,19 @@ const PurchaseDetail = ({ order, onProductClick }) => {
     }
     const subtotal = parseFloat(order.total_pedido || 0);
     let frete = 15.00;
-    if (order.rua === 'Retirada na Loja') { frete = 0.00; 
-    }
-    
+    if (order.rua === 'Retirada na Loja') { frete = 0.00; }
+
     const totalComFrete = subtotal + frete;
 
     return (
         <div className="purchase-detail-card">
             <h4 className="detail-title">Detalhes da Compra <span className="order-id">#{order.id_pedido}</span></h4>
             <div className="detail-grid">
-                
+
                 <div className="detail-items">
                     {order.itens.map(item => (
                         <div key={item.id_produto} className="detail-item-row">
-                            <img src={item.imagem_url} alt={item.nome_produto} className="detail-item-img" /> 
+                            <img src={item.imagem_url} alt={item.nome_produto} className="detail-item-img" />
                             <div className="detail-item-info">
                                 <p className="item-name">{item.nome_produto}</p>
                                 <p className="item-qty">{item.quantidade} unidade(s)</p>
@@ -82,7 +92,6 @@ const PurchaseDetail = ({ order, onProductClick }) => {
                     ))}
                 </div>
 
-                {/* Resumo da Compra */}
                 <div className="detail-summary">
                     <h5 className="summary-heading">Resumo Financeiro</h5>
                     <div className="summary-row">
@@ -99,22 +108,21 @@ const PurchaseDetail = ({ order, onProductClick }) => {
                     </div>
                 </div>
             </div>
-            
+
             <div className="detail-shipping-info">
-                 <p>Status do Pagamento: <span className={`order-status status-${order.status.toLowerCase().replace(/_|-/g, '-')}`}>
+                <p>Status do Pagamento: <span className={`order-status status-${order.status.toLowerCase().replace(/_|-/g, '-')}`}>
                     {formatPaymentStatus(order.status)}
                 </span></p>
-                {/* CORREÇÃO AQUI: Usa a mesma lógica de classes para cores do Status do Pedido */}
+
                 <p>Status do Pedido: <span className={`order-status status-${getOrderStatusClass(order.status_pedido)}`}>
                     {formatOrderStatus(order.status_pedido)}
                 </span></p>
-                <p>Enviado para: {address}</p> 
+                <p>Enviado para: {address}</p>
             </div>
         </div>
     );
 };
 
-// Função groupOrdersByMonth (inalterada)
 const groupOrdersByMonth = (orders) => {
     return orders.reduce((groups, order) => {
         const month = new Date(order.dataPedido).toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
@@ -126,19 +134,17 @@ const groupOrdersByMonth = (orders) => {
     }, {});
 };
 
-
-// Componente Principal
 const UserOrdersPage = () => {
-    const navigate = useNavigate(); 
-    const { user, loading: authLoading } = useContext(AuthContext); 
-    
+    const navigate = useNavigate();
+    const { user, loading: authLoading } = useContext(AuthContext);
+
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    
+
     const [selectedOrderId, setSelectedOrderId] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const ordersPerPage = 4; 
+    const ordersPerPage = 4;
 
     useEffect(() => {
         if (!authLoading && user) {
@@ -148,19 +154,13 @@ const UserOrdersPage = () => {
                 try {
                     const response = await apiClient.get('/api/pedidos/meus-pedidos');
 
-                    // Adicione este log para ver o que a API está realmente retornando
-                    console.log("Resposta da API /meus-pedidos:", response.data);
-
-                    // Tenta encontrar o array. O 'data' do Axios está em 'response.data'.
-                    // Se sua API retornar { pedidos: [...] }, precisamos de response.data.pedidos
                     const ordersArray = response.data.pedidos || response.data.orders || response.data;
 
-                    // Verificação de segurança
                     if (Array.isArray(ordersArray)) {
                         setOrders(ordersArray);
                     } else {
                         console.error("Erro: A API /meus-pedidos não retornou um array.", response.data);
-                        setOrders([]); // Define como vazio para não quebrar
+                        setOrders([]);
                     }
 
                 } catch (err) {
@@ -174,24 +174,24 @@ const UserOrdersPage = () => {
         } else if (!authLoading && !user) {
             navigate('/login', { state: { from: '/meus-pedidos' } });
         }
-    }, [user, authLoading, navigate]); 
+    }, [user, authLoading, navigate]);
 
-    
+
     const handleViewPurchase = (orderId) => {
         setSelectedOrderId(selectedOrderId === orderId ? null : orderId);
     };
 
     const handleProductClick = (productId) => {
-        navigate(`/product/${productId}`); 
+        navigate(`/product/${productId}`);
     };
-    
+
     const handlePageChange = (page) => {
         if (page >= 1 && page <= totalPages) {
             setCurrentPage(page);
-            setSelectedOrderId(null); 
+            setSelectedOrderId(null);
         }
     };
-    
+
     const totalOrders = orders.length;
     const totalPages = Math.ceil(totalOrders / ordersPerPage);
     const startIndex = (currentPage - 1) * ordersPerPage;
@@ -213,7 +213,7 @@ const UserOrdersPage = () => {
                 <h1 className="page-title">Meu Histórico de Pedidos</h1>
 
                 <section className="orders-list-section">
-                    
+
                     {totalOrders === 0 ? (
                         <p className="no-results">Você ainda não fez nenhum pedido.</p>
                     ) : (
@@ -222,13 +222,12 @@ const UserOrdersPage = () => {
                                 <h2 className="month-title">{month}</h2>
                                 {groupedOrders[month].map(order => {
                                     const placeholderImg = 'https://placeholder.co/100x100?text=Sem+Img';
-                                    const firstItemImage = order.itens[0]?.imagem_url || placeholderImg; 
+                                    const firstItemImage = order.itens[0]?.imagem_url || placeholderImg;
 
                                     return (
                                         <div key={order.id_pedido} className="order-item-card">
-                                            
+
                                             <div className="order-header">
-                                                {/* Status do Pedido (logístico) no resumo */}
                                                 <span className={`order-status status-${getOrderStatusClass(order.status_pedido)}`}>
                                                     {formatOrderStatus(order.status_pedido)}
                                                 </span>
@@ -236,7 +235,7 @@ const UserOrdersPage = () => {
                                                     Pedido em: {new Date(order.dataPedido).toLocaleDateString('pt-BR')}
                                                 </span>
                                             </div>
-                                            
+
                                             <div className="order-summary-row">
                                                 <div className="product-info-summary">
                                                     <img src={firstItemImage} alt={order.itens[0]?.nome_produto || 'Item do pedido'} className="product-summary-img" />
@@ -249,15 +248,15 @@ const UserOrdersPage = () => {
                                                 </div>
 
                                                 <div className="order-actions single-action">
-                                                    <button 
-                                                        onClick={() => handleViewPurchase(order.id_pedido)} 
+                                                    <button
+                                                        onClick={() => handleViewPurchase(order.id_pedido)}
                                                         className={`action-btn view-btn ${selectedOrderId === order.id_pedido ? 'active' : ''}`}
                                                     >
                                                         {selectedOrderId === order.id_pedido ? 'Fechar Detalhes' : 'Ver Compra'}
                                                     </button>
                                                 </div>
                                             </div>
-                                            
+
                                             {selectedOrderId === order.id_pedido && (
                                                 <PurchaseDetail order={order} onProductClick={handleProductClick} />
                                             )}
@@ -267,21 +266,20 @@ const UserOrdersPage = () => {
                             </div>
                         ))
                     )}
-                    
+
                 </section>
-                
-                {/* PAGINAÇÃO */}
+
                 {totalPages > 1 && (
                     <div className="orders-pagination">
-                        <button 
-                            onClick={() => handlePageChange(currentPage - 1)} 
+                        <button
+                            onClick={() => handlePageChange(currentPage - 1)}
                             disabled={currentPage === 1}
                         >
                             Anterior
                         </button>
                         <span>Página {currentPage} de {totalPages}</span>
-                        <button 
-                            onClick={() => handlePageChange(currentPage + 1)} 
+                        <button
+                            onClick={() => handlePageChange(currentPage + 1)}
                             disabled={currentPage === totalPages}
                         >
                             Próximo
