@@ -131,7 +131,7 @@ const EditProductPage = () => {
             });
 
 
-            const response = await apiClient.put(`/produtos/${productId}`, formDataToSend, {
+            const response = await apiClient.put(`/api/produtos/${productId}`, formDataToSend, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },

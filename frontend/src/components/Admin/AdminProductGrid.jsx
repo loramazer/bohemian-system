@@ -3,7 +3,7 @@ import React from 'react';
 import AdminProductCard from './AdminProductCard.jsx';
 import '../../styles/AllProductsPage.css'; // Reutiliza o estilo .product-grid
 
-const AdminProductGrid = ({ products, onEdit, onDelete }) => {
+const AdminProductGrid = ({ products, onEdit, onToggleStatus }) => {
     return (
         // A classe 'product-grid' já está estilizada no seu AllProductsPage.css
         <div className="product-grid"> 
@@ -12,7 +12,7 @@ const AdminProductGrid = ({ products, onEdit, onDelete }) => {
                     key={product.id_produto}
                     product={product}
                     onEdit={() => onEdit(product.id_produto)}
-                    onDelete={() => onDelete(product)}
+                    onToggleStatus={onToggleStatus}
                 />
             ))}
         </div>
