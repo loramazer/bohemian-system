@@ -71,6 +71,12 @@ const PurchaseDetail = ({ order, onProductClick }) => {
 
     const totalComFrete = subtotal + frete;
 
+    // Helper para formatar data
+    const formatDate = (dateString) => {
+        if (!dateString) return null;
+        return new Date(dateString).toLocaleDateString('pt-BR');
+    };
+
     return (
         <div className="purchase-detail-card">
             <h4 className="detail-title">Detalhes da Compra <span className="order-id">#{order.id_pedido}</span></h4>
@@ -117,6 +123,15 @@ const PurchaseDetail = ({ order, onProductClick }) => {
                 <p>Status do Pedido: <span className={`order-status status-${getOrderStatusClass(order.status_pedido)}`}>
                     {formatOrderStatus(order.status_pedido)}
                 </span></p>
+
+                {/* NOVO: Exibe a data de entrega nos detalhes */}
+                {order.data_entrega && (
+                    <p>
+                        {order.status_pedido === 'delivered' ? 'Entregue em: ' : 'Previsão de Entrega: '}
+                        <strong>{formatDate(order.data_entrega)}</strong>
+                    </p>
+                )}
+
                 <p>Enviado para: {address}</p>
             </div>
         </div>
@@ -228,9 +243,28 @@ const UserOrdersPage = () => {
                                         <div key={order.id_pedido} className="order-item-card">
 
                                             <div className="order-header">
-                                                <span className={`order-status status-${getOrderStatusClass(order.status_pedido)}`}>
-                                                    {formatOrderStatus(order.status_pedido)}
-                                                </span>
+                                                {/* Agrupamento da Esquerda: Status + Data de Entrega */}
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '15px', flexWrap: 'wrap' }}>
+                                                    <span className={`order-status status-${getOrderStatusClass(order.status_pedido)}`}>
+                                                        {formatOrderStatus(order.status_pedido)}
+                                                    </span>
+
+                                                    {/* NOVO: Exibe Data de Entrega no Header */}
+                                                    {order.data_entrega && (
+                                                        <span className="delivery-date-badge" style={{ fontSize: '0.9rem', color: '#555', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                                            {order.status_pedido === 'delivered' ? (
+                                                                <i className="fas fa-check-circle" style={{ color: '#2ecc71' }}></i>
+                                                            ) : (
+                                                                <i className="fas fa-truck" style={{ color: '#3498db' }}></i>
+                                                            )}
+                                                            <span>
+                                                                {order.status_pedido === 'delivered' ? 'Entregue: ' : 'Previsão: '}
+                                                                <strong>{new Date(order.data_entrega).toLocaleDateString('pt-BR')}</strong>
+                                                            </span>
+                                                        </span>
+                                                    )}
+                                                </div>
+
                                                 <span className="order-date">
                                                     Pedido em: {new Date(order.dataPedido).toLocaleDateString('pt-BR')}
                                                 </span>

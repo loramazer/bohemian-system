@@ -40,6 +40,9 @@ const OrderDetailPage = () => {
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
     const [currentStatusLogistico, setCurrentStatusLogistico] = useState(''); 
+    
+    // NOVO: Estado para a data de entrega
+    const [deliveryDate, setDeliveryDate] = useState(''); 
 
     useEffect(() => {
         if (authLoading) return;
@@ -54,6 +57,17 @@ const OrderDetailPage = () => {
                 const response = await apiClient.get(`/api/dashboard/orders/${orderId}`);
                 setOrder(response.data);
                 setCurrentStatusLogistico(response.data.status_pedido || 'pending'); 
+                
+                // NOVO: Inicializa a data se ela existir
+                if (response.data.data_entrega) {
+                    // Tenta criar objeto data e formatar para YYYY-MM-DD
+                    const dateObj = new Date(response.data.data_entrega);
+                    // Pega apenas a parte da data ISO (yyyy-mm-dd) para o input
+                    if (!isNaN(dateObj)) {
+                        const formattedDate = dateObj.toISOString().split('T')[0];
+                        setDeliveryDate(formattedDate);
+                    }
+                }
             } catch (error) {
                 console.error('Erro ao buscar detalhes do pedido:', error);
                 showToast('Erro ao carregar pedido.', 'warning');
@@ -71,6 +85,11 @@ const OrderDetailPage = () => {
         setCurrentStatusLogistico(e.target.value); 
     };
 
+    // NOVO: Handler para mudança na data
+    const handleDateChange = (e) => {
+        setDeliveryDate(e.target.value);
+    };
+
     const handleStatusSave = async () => {
         if (!isEditable) {
             showToast('A edição do status do pedido só é permitida após a aprovação do pagamento.', 'warning');
@@ -78,9 +97,19 @@ const OrderDetailPage = () => {
         }
         
         try {
-            await apiClient.put(`/api/dashboard/orders/status/${orderId}`, { status: currentStatusLogistico });
-            setOrder(prevOrder => ({ ...prevOrder, status_pedido: currentStatusLogistico }));
-            showToast('Status logístico atualizado com sucesso!', 'success');
+            // ATUALIZADO: Envia status E data de entrega
+            await apiClient.put(`/api/dashboard/orders/status/${orderId}`, { 
+                status: currentStatusLogistico,
+                deliveryDate: deliveryDate 
+            });
+            
+            setOrder(prevOrder => ({ 
+                ...prevOrder, 
+                status_pedido: currentStatusLogistico,
+                data_entrega: deliveryDate // Atualiza visualmente
+            }));
+            
+            showToast('Dados logísticos atualizados com sucesso!', 'success');
         } catch (error) {
             console.error('Erro ao salvar status:', error);
             showToast('Falha ao salvar status logístico.', 'warning');
@@ -104,7 +133,6 @@ const OrderDetailPage = () => {
 
     const isEditable = order && order.status === 'approved';
 
-
     if (loading || authLoading) {
         return <ContentWrapper><div>Carregando detalhes do pedido...</div></ContentWrapper>;
     }
@@ -122,14 +150,31 @@ const OrderDetailPage = () => {
 
                     <div className="order-actions">
                         
-                        {}
+                        {/* NOVO: Input de Data */}
+                        <div className="action-group" style={{ marginRight: '10px' }}>
+                            <input 
+                                type="date" 
+                                className="date-input"
+                                value={deliveryDate}
+                                onChange={handleDateChange}
+                                disabled={!isEditable}
+                                title="Data de Entrega / Previsão"
+                                style={{ 
+                                    padding: '8px', 
+                                    borderRadius: '4px', 
+                                    border: '1px solid #ccc',
+                                    height: '38px' // Para alinhar com o select/button
+                                }}
+                            />
+                        </div>
+
                         <select 
                             value={currentStatusLogistico} 
                             onChange={handleStatusSelectChange}
                             className={`status-select status-${getLogisticStatusClass(currentStatusLogistico)}`} 
                             disabled={!isEditable} 
                         >
-                            <option value="">Mudar Status Logístico</option>
+                            <option value="">Mudar Status</option>
                             {orderStatusOptions.map(status => (
                                 <option key={status} value={status}>
                                     {formatLogisticStatus(status)}
@@ -140,14 +185,14 @@ const OrderDetailPage = () => {
                         <button 
                             className="save-btn" 
                             onClick={handleStatusSave}
-                            disabled={currentStatusLogistico === order.status_pedido || !isEditable}
+                            // Habilita se for editável (simplifiquei a lógica para permitir salvar se mudar só a data)
+                            disabled={!isEditable}
                         >
                             Salvar
                         </button>
                     </div>
                 </div>
                 
-                {}
                 <OrderInfoCards order={order} />
                 
                 <div className="products-summary-section">

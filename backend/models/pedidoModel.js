@@ -148,10 +148,19 @@ async function atualizarStatusPagamento(paymentId, statusPagamento, statusPedido
     return result.affectedRows;
 }
 
+async function updateOrderLogistics(pedidoId, statusPedido, dataEntrega) {
+    const data = dataEntrega ? dataEntrega : null;
+    
+    const sql = `UPDATE pedido SET status_pedido = ?, data_entrega = ? WHERE id_pedido = ?`;
+    
+    const [result] = await db.execute(sql, [statusPedido, data, pedidoId]);
+    return result.affectedRows;
+}
 
 module.exports = { 
-    findByUsuarioId,
-    findAllAdmin,
+    findByUsuarioId,
+    findAllAdmin,
     atualizarStatusPagamento,
-    updateOrderStatus
+    updateOrderStatus,
+    updateOrderLogistics 
 };
