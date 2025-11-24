@@ -84,7 +84,7 @@ async function getAll(req, res) {
         res.status(500).json({ message: 'Erro interno do servidor' });
     }
 }
--
+
 async function toggleStatus(req, res) {
     try {
         const { id } = req.params;

@@ -35,13 +35,6 @@ async function login(req, res) {
         const carrinho = await carrinhoModel.buscarCarrinhoAtivo(usuario.id_usuario);
         if (!carrinho) {
             await carrinhoModel.criarCarrinho(usuario.id_usuario);
-            console.log(`Carrinho criado para o usuário ${usuario.id_usuario} durante o login.`);
-        }
-
-        if (usuario.admin) {
-             
-        } else {
-            
         }
 
         const token = jwt.sign(
@@ -88,23 +81,26 @@ async function register(req, res) {
   }
 }
 
-
 async function forgotPassword(req, res) {
   const { email } = req.body;
   try {
-    const usuario= await usuarioModel.findByEmail(email);
+    const usuario = await usuarioModel.findByEmail(email);
     if (!usuario){
         return res.status(200).json({ message: 'Se as informações estiverem corretas, você receberá um e-mail com as instruções para redefinir sua senha.' });
     }
 
     const token = crypto.randomBytes(32).toString('hex');
-    const expiresAt = new Date(Date.now() + 3600000);
+    
+    const now = new Date();
+    now.setHours(now.getHours() + 1);
+    const expiresAt = now.toISOString().slice(0, 19).replace('T', ' ');
 
-  await db.execute(
-        'INSERT INTO password_resets (fk_cliente_id, fk_usuario_id, token, expires_at) VALUES (?, ?, ?, ?)', 
-        [usuario.id_usuario, usuario.id_usuario, token, expiresAt] 
+    await db.execute(
+        'INSERT INTO password_resets (fk_usuario_id, token, expires_at) VALUES (?, ?, ?)', 
+        [usuario.id_usuario, token, expiresAt] 
     );
-const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${token}`;
+
+    const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${token}`;
     const logoPath = path.join(__dirname, '..', '..', 'frontend', 'src', 'assets', 'bohemian-logo.png');
 
     const mailOptions = {

@@ -13,9 +13,9 @@ export default defineConfig({
     },
     host: true, 
     hmr: {
-        host: 'postcostal-rena-presufficiently.ngrok-free.dev', 
+        host: ['postcostal-rena-presufficiently.ngrok-free.dev', 'denis-unwelcoming-candida.ngrok-free.dev'],
       protocol: 'wss',
     },
-    allowedHosts: ['postcostal-rena-presufficiently.ngrok-free.dev'], 
+    allowedHosts: ['postcostal-rena-presufficiently.ngrok-free.dev', 'denis-unwelcoming-candida.ngrok-free.dev'], 
   } 
 }) 
