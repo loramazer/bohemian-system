@@ -1,5 +1,3 @@
-// src/utils/HelpContent.js (CONTEÚDO ADICIONAL)
-
 const HelpContent = {
     'ForgotPasswordPage': {
         title: 'Ajuda - Redefinir Senha',
@@ -25,8 +23,6 @@ const HelpContent = {
         title: 'Ajuda - Nova Senha',
         content: 'Você deve ter recebido um link de redefinição por e-mail para acessar esta página. Digite sua nova senha no campo e clique em "Redefinir Senha" para recuperar o acesso à sua conta.'
     },
-
-    // Páginas de Cliente/Admin
     'ProductDetailsPage': {
         title: 'Ajuda - Detalhes do Produto',
         content: 'Visualize a galeria de imagens, leia a descrição e verifique as especificações do produto. Use o botão "Adicionar ao Carrinho" para continuar a compra.'
@@ -42,7 +38,51 @@ const HelpContent = {
     'UserProfilePage': {
         title: 'Ajuda - Minha Conta',
         content: 'Gerencie suas informações pessoais e endereço de entrega. Clique em "Editar" para fazer alterações e em "Salvar" para confirmar. Use o link para "Mudar Senha".'
-    },
-
-
+    },
+    'AdminDashboardPage': {
+        title: 'Ajuda - Dashboard Administrativo',
+        content: 'Sua central de controle. Acompanhe métricas vitais da loja em tempo real, como faturamento total, contagem de pedidos, produtos mais vendidos e atividades recentes.'
+    },
+    'AdminProductsPage': {
+        title: 'Ajuda - Gerenciar Produtos',
+        content: 'Lista completa do catálogo. Use a barra de busca para encontrar itens e os botões de ação para Editar ou Excluir produtos cadastrados.'
+    },
+    'AddProductPage': {
+        title: 'Ajuda - Adicionar Produto',
+        content: 'Formulário de cadastro. Preencha nome, descrição, preço, estoque e faça o upload das imagens para disponibilizar um novo item na loja.'
+    },
+    'EditProductPage': {
+        title: 'Ajuda - Editar Produto',
+        content: 'Atualização de catálogo. Modifique as informações de um produto existente, altere preços ou substitua imagens.'
+    },
+    'AdminOrdersPage': {
+        title: 'Ajuda - Gerenciar Pedidos',
+        content: 'Visão geral das vendas. Acompanhe a lista de todos os pedidos realizados e utilize os filtros para visualizar por status (Pendente, Pago, Enviado).'
+    },
+    'CatalogPage': { // Alterado de 'ProductsPage' para 'CatalogPage' para coincidir com o componente
+        title: 'Ajuda - Catálogo',
+        content: 'Explore nossa coleção. Utilize os filtros laterais para navegar por categorias ou a ordenação para classificar os produtos por preço.'
+    },
+    'CartPage': {
+        title: 'Ajuda - Carrinho',
+        content: 'Revise sua seleção. Aqui você pode alterar a quantidade de itens, remover produtos e conferir o subtotal antes de prosseguir para o pagamento.'
+    },
+    'CheckoutPage': {
+        title: 'Ajuda - Finalizar Compra',
+        content: 'Última etapa! Confirme seu endereço de entrega (ou selecione retirada) e escolha o método de pagamento seguro para concluir o pedido.'
+    },
+    'WishlistPage': {
+        title: 'Ajuda - Lista de Desejos',
+        content: 'Seus favoritos. Produtos que você marcou com coração ficam salvos aqui para facilitar a compra em outro momento.'
+    },
+    'AboutPage': {
+        title: 'Ajuda - Sobre Nós',
+        content: 'Conheça a Bohemian Home. Saiba mais sobre nossa história, valores e a inspiração por trás dos nossos produtos.'
+    },
+    'ContactPage': {
+        title: 'Ajuda - Contato',
+        content: 'Fale com a gente. Utilize o formulário para enviar dúvidas, sugestões ou tratar de assuntos relacionados aos seus pedidos.'
+    }
 };
+
+export default HelpContent;
