@@ -6,31 +6,28 @@ import { AuthContext } from '../context/AuthContext';
 import '../styles/CartSummary.css';
 
 const CartSummary = ({ subtotal, items }) => {
-    // Estados
     const [shippingCost, setShippingCost] = useState(null);
     const [cep, setCep] = useState('');
     const [cepError, setCepError] = useState('');
-    const [isLoadingCep, setIsLoadingCep] = useState(false); // Para o loading do botão
+    const [isLoadingCep, setIsLoadingCep] = useState(false); 
 
     const { user } = useContext(AuthContext);
     const navigate = useNavigate();
     const total = subtotal + (shippingCost || 0);
 
-    // Limpa o frete e o erro quando o usuário digita
     const handleCepChange = (e) => {
         setCep(e.target.value);
         setShippingCost(null);
         setCepError('');
     };
 
-    // --- 1. FUNÇÃO ATUALIZADA COM A API ViaCEP ---
-    // (Lógica adaptada do seu AddressForm.jsx)
+  
     const handleCalculateShipping = async () => {
         setIsLoadingCep(true);
         setShippingCost(null);
         setCepError('');
 
-        const digitsOnly = cep.replace(/\D/g, ''); // Limpa o CEP
+        const digitsOnly = cep.replace(/\D/g, ''); 
 
         if (digitsOnly.length !== 8) {
             setCepError('CEP inválido. Por favor, digite 8 números.');
@@ -39,23 +36,20 @@ const CartSummary = ({ subtotal, items }) => {
         }
 
         try {
-            // Usando a mesma API ViaCEP do seu AddressForm
             const response = await fetch(`https://viacep.com.br/ws/${digitsOnly}/json/`);
             if (!response.ok) throw new Error('Erro ao buscar CEP.');
 
             const data = await response.json();
 
-            // Se 'data.erro' for true, o ViaCEP não encontrou o CEP
             if (data.erro) throw new Error('CEP não encontrado.');
 
-            // SUCESSO: O CEP é real. Aplicamos o frete fixo.
             setShippingCost(15.00);
 
         } catch (error) {
             console.error("Erro ao validar CEP:", error);
             setCepError(error.message || 'CEP inválido ou não encontrado.');
         } finally {
-            setIsLoadingCep(false); // Para o loading
+            setIsLoadingCep(false); 
         }
     };
 
@@ -110,7 +104,7 @@ const CartSummary = ({ subtotal, items }) => {
                     <button
                         className="calculate-btn"
                         onClick={handleCalculateShipping}
-                        disabled={isLoadingCep} // Desabilita enquanto carrega
+                        disabled={isLoadingCep} 
                     >
                         {isLoadingCep ? 'Validando...' : 'Calcular Frete'}
                     </button>

@@ -17,21 +17,17 @@ const AllProductsPage = () => {
     const { showToast } = useContext(FeedbackContext);
     const navigate = useNavigate();
 
-    // Estados Principais (Dados)
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [categoriesList, setCategoriesList] = useState([]);
     
-    // Paginação e Delete
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const [totalProducts, setTotalProducts] = useState(0);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [productToDelete, setProductToDelete] = useState(null);
 
-    // --- ESTADOS DOS FILTROS (APLICADOS) ---
-    // Estes são os que realmente disparam a busca na API
     const [appliedFilters, setAppliedFilters] = useState({
         status: 1, // 1=Ativos, 0=Ocultos
         categories: [],
@@ -40,20 +36,16 @@ const AllProductsPage = () => {
         search: ''
     });
 
-    // --- ESTADOS LOCAIS DA SIDEBAR (VISUAIS) ---
-    // Estes mudam enquanto o usuário mexe, mas não buscam dados ainda
     const [localCategories, setLocalCategories] = useState([]);
     const [localSort, setLocalSort] = useState('newest');
     const [localPrice, setLocalPrice] = useState(500);
 
-    // Carregar Categorias
     useEffect(() => {
         apiClient.get('/api/categorias')
             .then(res => setCategoriesList(res.data))
             .catch(err => console.error("Erro categorias", err));
     }, []);
 
-    // Buscar Produtos (Disparado quando appliedFilters ou currentPage mudam)
     useEffect(() => {
         if (!authLoading && (!user || user.admin !== 1)) {
             navigate('/');
@@ -86,7 +78,6 @@ const AllProductsPage = () => {
             }
         };
 
-        // Debounce apenas para a busca por texto
         const timeoutId = setTimeout(() => {
             fetchProducts();
         }, 500);
@@ -95,7 +86,6 @@ const AllProductsPage = () => {
 
     }, [user, authLoading, navigate, currentPage, appliedFilters]);
 
-    // --- HANDLERS DA SIDEBAR (ESTADO LOCAL) ---
     
     const handleLocalCategoryChange = (e) => {
         const catId = parseInt(e.target.value, 10);
@@ -114,24 +104,20 @@ const AllProductsPage = () => {
         }));
     };
 
-    // Status é aplicado imediatamente (Visualização)
     const handleStatusChange = (newStatus) => {
         setCurrentPage(1);
         setAppliedFilters(prev => ({ ...prev, status: newStatus }));
     };
 
-    // Busca é aplicada imediatamente (com debounce no useEffect)
     const handleSearchChange = (e) => {
         const val = e.target.value;
         setAppliedFilters(prev => ({ ...prev, search: val }));
     };
 
-    // --- AÇÕES DE PRODUTO ---
     const handleToggleStatus = async (product) => {
         try {
             await apiClient.patch(`/api/produtos/${product.id_produto}/status`);
             showToast(`Produto ${product.ativo ? 'desativado' : 'ativado'} com sucesso!`, 'success');
-            // Força recarregamento mantendo filtros
             setAppliedFilters(prev => ({ ...prev })); 
         } catch (err) { showToast('Erro status', 'error'); }
     };
@@ -165,13 +151,11 @@ const AllProductsPage = () => {
                     <Link to="/admin/products/add" className="add-product-btn">Adicionar Produto</Link>
                 </div>
 
-                {/* LAYOUT GRID: Sidebar + Content */}
                 <div className="admin-layout-grid">
                     
-                    {/* --- SIDEBAR (Igual ao Catálogo) --- */}
+                    
                     <aside className="sidebar">
                         
-                        {/* Visualização (Exclusivo Admin) */}
                         <div className="filter-section">
                             <div className="visualizar">
                             <h3>Visualização</h3>
@@ -186,7 +170,6 @@ const AllProductsPage = () => {
                             </div>
                         </div>
 
-                        {/* Categorias */}
                         <div className="filter-section">
                             <h3>Categorias</h3>
                             <ul className="category-list">
@@ -206,7 +189,6 @@ const AllProductsPage = () => {
                             </ul>
                         </div>
 
-                        {/* Ordenar */}
                         <div className="filter-section">
                             <h3>Ordenar por</h3>
                             <select value={localSort} onChange={(e) => setLocalSort(e.target.value)}>
@@ -218,7 +200,6 @@ const AllProductsPage = () => {
                             </select>
                         </div>
 
-                        {/* Preço (Slider) */}
                         <div className="filter-section">
                             <h3>Filtrar por Preço</h3>
                             <div className="price-display">
@@ -237,16 +218,14 @@ const AllProductsPage = () => {
                             </div>
                         </div>
 
-                        {/* Botão Aplicar */}
                         <button onClick={handleApplyFilters} className="apply-filters-btn">
                             Aplicar Filtros
                         </button>
 
                     </aside>
 
-                    {/* --- CONTEÚDO --- */}
                     <div className="admin-content-area">
-                        {/* Busca no topo do conteúdo */}
+                        
                         <div className="admin-top-search">
                             <input 
                                 type="text" 

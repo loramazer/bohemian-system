@@ -1,11 +1,10 @@
 // loramazer/bohemian-system/bohemian-system-refatorar-organizacao/frontend/src/components/Admin/AdminProductGrid.jsx
 import React from 'react';
 import AdminProductCard from './AdminProductCard.jsx';
-import '../../styles/AllProductsPage.css'; // Reutiliza o estilo .product-grid
+import '../../styles/AllProductsPage.css'; 
 
 const AdminProductGrid = ({ products, onEdit, onToggleStatus }) => {
     return (
-        // A classe 'product-grid' já está estilizada no seu AllProductsPage.css
         <div className="product-grid"> 
             {products.map(product => (
                 <AdminProductCard

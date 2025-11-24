@@ -1,6 +1,6 @@
 // frontend/src/components/Shared/Header.jsx
 import React, { useState, useContext } from 'react';
-import { Link, useNavigate } // Importe useNavigate
+import { Link, useNavigate } 
     from 'react-router-dom';
 import { FaHeart, FaShoppingCart, FaSearch, FaChevronDown, FaSignOutAlt } from 'react-icons/fa';
 import '../../styles/Header.css';
@@ -10,7 +10,7 @@ import logoImage from '../../../public/bohemian-logo.png';
 
 const Header = () => {
     const [adminOpen, setAdminOpen] = useState(false);
-    const [userOpen, setUserOpen] = useState(false); // NOVO: Estado para dropdown do usuário
+    const [userOpen, setUserOpen] = useState(false);
     const { user, logout } = useContext(AuthContext);
     const { cartItems } = useContext(CartContext);
     const navigate = useNavigate();
@@ -44,10 +44,8 @@ const Header = () => {
                 <div className="user-actions-group">
                     {user ? (
                         <>
-                            {/* Mensagem de Olá (visível para admin e comum) */}
                             <span className="welcome-message">Olá, {user.nome}</span>
 
-                            {/* SEÇÃO DO ADMIN */}
                             {user.admin === 1 && (
                                 <div className="admin-menu-toggle">
                                     <span className="admin-link" onClick={() => setAdminOpen(!adminOpen)}>
@@ -57,7 +55,6 @@ const Header = () => {
                                         <div className="admin-dropdown" onMouseLeave={() => setAdminOpen(false)}>
                                             <Link to="/dashboard">Dashboard</Link>
                                             <Link to="/admin/products/add">Criar Produto</Link>
-                                            {/* LINHA ADICIONADA CONFORME SOLICITADO */}
                                             <Link to="/admin/products">Ver Produtos</Link>
                                             <Link to="/admin/orders">Ver Pedidos</Link>
                                         </div>
@@ -65,10 +62,8 @@ const Header = () => {
                                 </div>
                             )}
 
-                            {/* --- NOVO: SEÇÃO DO USUÁRIO COMUM --- */}
                             {user.admin !== 1 && (
                                 <>
-                                    {/* Dropdown "Minha Conta" */}
                                     <div className="user-menu-toggle">
                                         <span className="user-link" onClick={() => setUserOpen(!userOpen)}>
                                             Minha Conta <FaChevronDown size={10} />
@@ -81,7 +76,6 @@ const Header = () => {
                                         )}
                                     </div>
 
-                                    {/* Ícones de Desejos e Carrinho */}
                                     <Link to="/wishlist" className="icon-link"><FaHeart /></Link>
                                     <Link to="/cart" className="icon-link cart-icon-container">
                                         <FaShoppingCart />
@@ -90,13 +84,11 @@ const Header = () => {
                                 </>
                             )}
 
-                            {/* Botão de Sair (comum a ambos) */}
                             <button onClick={handleLogout} className="logout-btn">
                                 Sair <FaSignOutAlt />
                             </button>
                         </>
                     ) : (
-                        // Usuário Deslogado
                         <Link to="/login" className="login-btn-final-style">Login</Link>
                     )}
 

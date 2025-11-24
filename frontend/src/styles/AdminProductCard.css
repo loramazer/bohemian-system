@@ -10,7 +10,7 @@
     flex-direction: column;
     text-align: left;
     height: 100%;
-    position: relative; /* Adicionado para o menu */
+    position: relative; 
 }
 
 .card-header-admin {
@@ -21,9 +21,9 @@
 }
 
 .admin-product-image {
-    width: 80px; /* Corrigido max-width para width */
-    height: 80px; /* Altura fixa para uniformidade */
-    object-fit: cover; /* Garante que a imagem preencha */
+    width: 80px; 
+    height: 80px; 
+    object-fit: cover; 
     border-radius: 4px;
     flex-shrink: 0;
     border: 1px solid #eee;
@@ -37,7 +37,7 @@
     font-size: 1rem;
     margin: 0;
     color: #333;
-    font-weight: 600; /* Destaque */
+    font-weight: 600; 
 }
 
 .admin-product-price {
@@ -46,7 +46,6 @@
     margin: 5px 0 0;
 }
 
-/* --- Menu Dropdown de Ações --- */
 .admin-card-menu-container {
     position: relative;
 }
@@ -64,7 +63,7 @@
 
 .admin-card-menu-dropdown {
     position: absolute;
-    top: 25px; /* Abaixo do ícone */
+    top: 25px; 
     right: 0;
     background-color: #fff;
     border: 1px solid #ddd;
@@ -94,9 +93,8 @@
 }
 
 .admin-card-menu-dropdown button:last-child {
-    color: #e74c3c; /* Vermelho para excluir */
+    color: #e74c3c; 
 }
-/* --- Fim do Menu --- */
 
 
 .admin-product-description {
@@ -106,8 +104,8 @@
     padding-top: 10px;
     margin-top: 10px;
     margin-bottom: 10px;
-    flex-grow: 1; /* Ocupa o espaço disponível */
-    min-height: 60px; /* Garante altura mínima */
+    flex-grow: 1; 
+    min-height: 60px; 
 }
 
 .admin-product-description p {
@@ -124,7 +122,7 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-    margin-top: auto; /* Empurra para baixo */
+    margin-top: auto; 
     border-top: 1px solid #f0f0f0;
     padding-top: 10px;
 }
@@ -149,5 +147,3 @@
     font-weight: bold;
     color: #5d7a7b;
 }
-
-/* (Estilos de barra de progresso removidos pois não temos dados de estoque) */

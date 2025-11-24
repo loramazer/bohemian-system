@@ -59,7 +59,7 @@ const HelpContent = {
         title: 'Ajuda - Gerenciar Pedidos',
         content: 'Visão geral das vendas. Acompanhe a lista de todos os pedidos realizados e utilize os filtros para visualizar por status (Pendente, Pago, Enviado).'
     },
-    'CatalogPage': { // Alterado de 'ProductsPage' para 'CatalogPage' para coincidir com o componente
+    'CatalogPage': { 
         title: 'Ajuda - Catálogo',
         content: 'Explore nossa coleção. Utilize os filtros laterais para navegar por categorias ou a ordenação para classificar os produtos por preço.'
     },

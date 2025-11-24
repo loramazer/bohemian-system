@@ -27,13 +27,9 @@ const CartItems = ({ items, onEmptyCart, onUpdateQuantity, onRemoveItem }) => {
                 <span></span>
             </div>
             {items.map(item => (
-                // Use o ID do item que vem do banco de dados como chave
                 <div key={item.id_item_carrinho} className="cart-item">
                     <div className="cart-item-product">
-                        {/* Imagem e nome do produto precisarão vir do backend no futuro */}
-                        {/* <img src={item.imagem_url} alt={item.nome_produto} className="cart-item-image" /> */}
                         <div className="cart-item-details">
-                            {/* Ajustado para usar os campos do backend */}
                             <h4>{item.nome_produto || 'Nome do Produto'}</h4>
                         </div>
                     </div>
@@ -56,7 +52,7 @@ const CartItems = ({ items, onEmptyCart, onUpdateQuantity, onRemoveItem }) => {
                         className="cart-item-remove-btn" 
                         onClick={() => onRemoveItem(item.id_item_carrinho)}
                     >
-                        <FaTrash /> {/* Usando o ícone */}
+                        <FaTrash /> 
                     </button>
                 </div>
             ))}

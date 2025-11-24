@@ -7,7 +7,7 @@ const GlobalHelp = () => {
     const location = useLocation();
     const path = location.pathname;
 
-    // Mapeia URLs para os nomes definidos no HelpContent.js
+
     const pageName = useMemo(() => {
         if (path === '/dashboard') return 'AdminDashboardPage';
         if (path === '/admin/products/add') return 'AddProductPage';

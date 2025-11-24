@@ -21,29 +21,25 @@ async function processarImagens(files) {
     const urls = [];
     if (files && files.length > 0) {
         for (const file of files) {
-            // Se for um arquivo temporário do multer, sobe para o Cloudinary
             if (file.path) {
                 const result = await cloudinary.uploader.upload(file.path);
                 urls.push(result.secure_url);
-                fs.unlinkSync(file.path); // remove arquivo temporário
+                fs.unlinkSync(file.path); 
             } else if (typeof file === 'string') {
-                // Caso seja uma URL existente que está sendo mantida na atualização
                 urls.push(file);
             }
         }
     }
-    // Retorna a lista de URLs como uma string JSON
     return JSON.stringify(urls);
 }
 
 async function create(req, res) {
     try {
-        let { nome, preco_venda, descricao, ativo, categoria } = req.body; // <-- OBTÉM a categoria
+        let { nome, preco_venda, descricao, ativo, categoria } = req.body; 
 
         preco_venda = formatarPreco(preco_venda);
 
         const imagem_url_json = await processarImagens(req.files);
-        // O campo 'imagem_url' agora contém a string JSON de todas as URLs.
         let imagem_url = imagem_url_json;
 
         const novoProduto = await produtoModel.create({ nome, preco_venda, descricao, ativo, imagem_url });
@@ -68,10 +64,9 @@ async function getAll(req, res) {
             maxPrice,
             page,
             limit,
-            ativo // <--- NOVO: Recebe o parâmetro ativo
+            ativo 
         } = req.query;
 
-        // Passa o parâmetro 'ativo' para o model
         const result = await produtoModel.getAll({
             categories,
             search,
@@ -79,7 +74,7 @@ async function getAll(req, res) {
             maxPrice: maxPrice ? parseFloat(maxPrice) : null,
             page: parseInt(page) || 1,
             limit: parseInt(limit) || 9,
-            ativo // <--- NOVO
+            ativo 
         });
         
         res.json(result); 
@@ -89,14 +84,11 @@ async function getAll(req, res) {
         res.status(500).json({ message: 'Erro interno do servidor' });
     }
 }
-
-// --- NOVA FUNÇÃO: Adicione esta função ---
+-
 async function toggleStatus(req, res) {
     try {
         const { id } = req.params;
-        // Chama o método no model para inverter o status (crie esse método no model se não existir)
-        // Se seu model não tiver 'toggleStatus', você pode usar uma query direta aqui ou no model.
-        // Exemplo genérico chamando o model:
+        
         await produtoModel.toggleStatus(id); 
         
         res.status(200).json({ message: 'Status do produto alterado com sucesso' });
@@ -119,7 +111,6 @@ async function getById(req, res) {
 
 async function update(req, res) {
     const { id } = req.params;
-    // Agora o req.body funcionará:
     let { nome, preco_venda, descricao, ativo, categoria, imagens } = req.body;
 
     try {
@@ -127,26 +118,19 @@ async function update(req, res) {
 
         let existingImageUrls = [];
         
-        // 1. Coleta imagens existentes (que vêm como strings de URL)
         if (imagens) {
             const imagesArray = Array.isArray(imagens) ? imagens : [imagens];
             existingImageUrls = imagesArray.filter(img => typeof img === 'string');
         }
 
-        // 2. Coleta imagens novas (que vêm via req.files)
         let newImageUrls = [];
         if (req.files && req.files.length > 0) {
-            // Reutiliza a lógica de processamento de imagens do Cloudinary
-            // (Assumindo que sua função processarImagens lida com 'req.files')
             const newUrlsJson = await processarImagens(req.files);
             newImageUrls = JSON.parse(newUrlsJson);
         }
-
-        // 3. Combina as listas e salva no formato JSON
         const allImageUrls = [...existingImageUrls, ...newImageUrls];
         const imagem_url_json = JSON.stringify(allImageUrls);
 
-        // 4. Atualiza os dados principais do produto (usando 'ativo = 1' como no seu model)
         const produtoAtualizado = await produtoModel.update(id, {
             nome,
             preco_venda,
@@ -155,10 +139,7 @@ async function update(req, res) {
             imagem_url: imagem_url_json
         });
 
-        // 5. Atualiza a categoria
         if (categoria) {
-            // Esta função (que vamos criar na Etapa 3) limpa as categorias antigas
-            // e adiciona a nova, evitando duplicatas.
             await produtoModel.updateProductCategory(id, categoria);
         }
         
@@ -186,6 +167,6 @@ module.exports = {
     getById,
     update,
     remove,
-    toggleStatus, // <--- NOVO: Não esqueça de exportar!
+    toggleStatus, 
     uploadMiddleware: upload.array('imagens', 4)
 };

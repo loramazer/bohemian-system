@@ -1,7 +1,7 @@
-import React, { useRef, useState, useContext } from 'react'; // Importar useContext
+import React, { useRef, useState, useContext } from 'react'; 
 import '../../styles/ImageUpload.css';
 import { FaImage, FaCheckCircle, FaTrashAlt } from 'react-icons/fa';
-import { FeedbackContext } from '../../context/FeedbackContext.jsx'; // Importar o Contexto
+import { FeedbackContext } from '../../context/FeedbackContext.jsx'; 
 
 const ImageUpload = ({ uploadedFiles, onFileChange, onSubmit, error }) => {
     const fileInputRef = useRef(null);
@@ -45,8 +45,6 @@ const handleUploadBoxClick = () => {
         if (uploadedFiles.length + filesToAdd.length > 4) {
             const message = `Você pode adicionar no máximo 4 imagens. Você já tem ${uploadedFiles.length}.`;
             
-            // *** CORREÇÃO AQUI ***
-            // Trocamos 'wishlist-removed' por 'warning'
             showToast(message, 'warning'); 
             return;
         }
@@ -76,7 +74,6 @@ const handleUploadBoxClick = () => {
     };
 
     const renderFileItem = (file, index) => (
-        // ... (o renderFileItem permanece igual) ...
         <div key={file.name} className="thumbnail-item">
             <img src={file.url} alt={`Thumbnail ${index + 1}`} />
             <div className="file-info">
@@ -97,7 +94,6 @@ const handleUploadBoxClick = () => {
     );
 
     return (
-        // ... (o retorno JSX permanece igual) ...
         <div className="image-upload-container">
             <h3>Imagem</h3>
             <div

@@ -4,7 +4,7 @@ const db = require('../config/db');
 const iniciarCronJobs = () => {
     
     cron.schedule('*/5 * * * *', async () => {
-        console.log('⏰ Iniciando varredura de pedidos pendentes expirados...');
+        console.log('Rotina para pedidos pendentes');
 
         try {
             const seteDiasAtras = new Date();
@@ -22,17 +22,17 @@ const iniciarCronJobs = () => {
             const [result] = await db.execute(query, [dataCorte]);
             
             if (result.affectedRows > 0) {
-                console.log(`✅ Sucesso: ${result.affectedRows} pedidos antigos foram cancelados automaticamente.`);
+                console.log(`Sucesso: ${result.affectedRows} pedidos antigos foram cancelados automaticamente.`);
             } else {
-                console.log('ℹ️ Nenhum pedido expirado encontrado hoje.');
+                console.log('Nenhum pedido expirado encontrado hoje.');
             }
 
         } catch (error) {
-            console.error('❌ Erro ao rodar cron de cancelamento:', error);
+            console.error('Erro ao rodar cron de cancelamento:', error);
         }
     });
 
-    console.log('🚀 Serviço de Cron Jobs iniciado (Varredura a cada 5 minutos).');
+    console.log('Serviço de Cron Jobs iniciado.');
 };
 
 module.exports = iniciarCronJobs;

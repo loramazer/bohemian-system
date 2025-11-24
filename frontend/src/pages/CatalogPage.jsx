@@ -51,7 +51,6 @@ function CatalogPage() {
   const [totalPages, setTotalPages] = useState(0);
   const [totalProducts, setTotalProducts] = useState(0);
 
-  // Buscar categorias (inalterado)
   useEffect(() => {
     const fetchCategories = async () => {
       try {

@@ -1,10 +1,10 @@
 // frontend/src/pages/WishlistPage.jsx
 
-import React, { useContext, useState } from 'react'; // NOVO: useState
+import React, { useContext, useState } from 'react'; 
 import { Link } from 'react-router-dom';
 import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
 import ProductCard from '../components/Shared/ProductCard.jsx';
-import Pagination from '../components/Shared/Pagination.jsx'; // NOVO: Importar Paginação
+import Pagination from '../components/Shared/Pagination.jsx'; 
 import { FaHeartBroken } from 'react-icons/fa';
 import '../styles/CatalogPage.css'; 
 import '../styles/WishlistPage.css'; 
@@ -12,7 +12,7 @@ import '../styles/WishlistPage.css';
 import { WishlistContext } from '../context/WishlistContext.jsx';
 import { CartContext } from '../context/CartContext.jsx';
 
-const ITEMS_PER_PAGE = 9; // Define quantos itens por página (ex: 8)
+const ITEMS_PER_PAGE = 9; 
 
 const WishlistPage = () => {
     const { wishlistItems, removeWishlistItem, isFavorited } = useContext(WishlistContext);
@@ -57,10 +57,8 @@ const WishlistPage = () => {
                 </div>
                 
                 {totalItems > 0 ? (
-                    // NOVO: Adicionado 'fragment' ( <>...</> ) para agrupar a grade e a paginação
                     <> 
                         <div className="wishlist-grid product-grid">
-                            {/* ATUALIZADO: Mapeia 'currentItems' (fatiados) em vez de 'wishlistItems' (todos) */}
                             {currentItems.map(product => (
                                 <div key={product.id_produto} className="wishlist-item-wrapper">
                                     <ProductCard 
@@ -73,7 +71,6 @@ const WishlistPage = () => {
                             ))}
                         </div>
 
-                        {/* NOVO: Componente de Paginação */}
                         <Pagination 
                             currentPage={currentPage}
                             totalItems={totalItems}

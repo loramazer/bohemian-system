@@ -8,23 +8,18 @@ async function getAll(options) {
         maxPrice,
         page = 1,
         limit = 9,
-        ativo // <--- 1. Recebemos o parametro aqui
+        ativo 
     } = options;
 
     let params = [];
     let countParams = [];
-    
-    // 2. MUDANÇA IMPORTANTE: Começamos com array vazio, não fixo em "ativo = 1"
     let whereClauses = []; 
 
-    // 3. Lógica de Filtro de Status
     if (ativo !== undefined && ativo !== null && ativo !== '') {
-        // Se o controller mandou um status (0 ou 1), usamos ele
         whereClauses.push("p.ativo = ?");
         params.push(ativo);
         countParams.push(ativo);
     } else {
-        // Se ninguém mandou nada (ex: cliente na loja), padrão é só ver ativos
         whereClauses.push("p.ativo = 1");
     }
 
@@ -57,7 +52,6 @@ async function getAll(options) {
         const placeholders = categoryIds.map(() => '?').join(',');
         whereClauses.push(`c.id_categoria IN (${placeholders})`);
         
-        // Adiciona aos params
         params.push(...categoryIds);
         countParams.push(...categoryIds);
     }
@@ -107,7 +101,6 @@ async function getAll(options) {
 
     sql += ` LIMIT ${safeLimit} OFFSET ${safeOffset}`;
 
-    // Debug útil para ver se o filtro está indo
     console.log('SQL executado:\n', sql);
     console.log('Parâmetros enviados:', params);
 
@@ -148,9 +141,7 @@ async function remove(id) {
     );
 }
 
-// --- 4. NOVA FUNÇÃO DE TOGGLE ---
 async function toggleStatus(id) {
-    // 'NOT ativo' ou '!ativo' inverte o booleano no MySQL (1 vira 0, 0 vira 1)
     const sql = 'UPDATE produto SET ativo = !ativo WHERE id_produto = ?';
     await db.execute(sql, [id]);
 }
@@ -212,7 +203,7 @@ module.exports = {
     create, 
     update, 
     remove, 
-    toggleStatus, // <--- 5. Exportamos a nova função
+    toggleStatus, 
     addCategoryToProduct,
     updateProductCategory 
 };

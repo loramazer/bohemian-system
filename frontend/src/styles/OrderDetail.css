@@ -11,37 +11,32 @@
     margin-bottom: 30px;
 }
 
-/* --- CORREÇÃO (ID ao lado do Título) --- */
 .order-detail-header h2 {
     font-size: 2rem;
     color: #333;
-    white-space: nowrap; /* Impede que quebre a linha */
+    white-space: nowrap; 
     margin-right: 50px;
 }
 
 .order-actions {
     display: flex;
     align-items: center;
-    gap: 15px; /* Aumentado o espaço */
-    /* NOVO: Permite quebrar linha em telas pequenas */
+    gap: 15px;
     flex-wrap: wrap; 
 }
 
-/* --- CORREÇÃO (Tamanho dos Controles) --- */
 .order-actions .order-status-badge,
 .order-actions select,
 .order-actions .save-btn {
-    padding: 10px 16px;    /* Aumenta o padding */
-    font-size: 0.95rem;    /* Aumenta a fonte */
+    padding: 10px 16px;   
     font-weight: 600;
-    height: 42px;          /* Define altura fixa para alinhar */
+    height: 42px;          
     box-sizing: border-box;
     border-radius: 5px;
 }
 
 .order-actions .order-status-badge {
-    line-height: 1.2; /* Alinha o texto do badge verticalmente */
-    /* NOVO: Garante o alinhamento com os controles */
+    line-height: 1.2; 
     display: flex; 
     align-items: center;
 }
@@ -50,7 +45,6 @@
     border: 1px solid #ccc;
     background-color: #fff;
     color: #333;
-    /* NOVO: Define largura mínima para o select */
     min-width: 150px; 
 }
 
@@ -64,9 +58,8 @@
     font-weight: 600;
 }
 
-/* --- NOVAS CLASSES DE STATUS (para o badge) --- */
 .order-status-badge.status-approved,
-.order-status-badge.status-delivered, /* Adicionado Delivered (Logístico) */
+.order-status-badge.status-delivered, 
 .order-status-badge.status-authorized {
     background-color: #d1e7dd;
     color: #0f5132;
@@ -83,8 +76,6 @@
     color: #721c24;
 }
 
-
-/* Estilos para os cartões de informação */
 .info-cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -114,21 +105,19 @@
     line-height: 1.6;
 }
 
-/* Seção de produtos e resumo */
 .products-summary-section {
     display: flex;
     gap: 40px;
-    flex-wrap: wrap; /* Adicionado para responsividade */
+    flex-wrap: wrap; 
 }
 
 .order-products-table-container {
     flex: 2;
-    min-width: 400px; /* Impede que fique muito pequeno */
+    min-width: 400px;
 }
 
 .order-products-table-header {
     display: grid;
-    /* CORREÇÃO: Removido o espaço para o checkbox (de 5 colunas para 4) */
     grid-template-columns: 2fr 1fr 1fr 1fr;
     gap: 10px;
     font-weight: bold;
@@ -138,7 +127,6 @@
 
 .order-product-row {
     display: grid;
-    /* CORREÇÃO: Removido o espaço para o checkbox (de 5 colunas para 4) */
     grid-template-columns: 2fr 1fr 1fr 1fr;
     gap: 10px;
     align-items: center;
@@ -165,7 +153,7 @@
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     height: fit-content;
-    min-width: 300px; /* Largura mínima */
+    min-width: 300px; 
 }
 
 .order-summary-container h3 {
@@ -187,7 +175,6 @@
     margin-top: 10px;
 }
 
-/* Responsividade */
 @media (max-width: 768px) {
     .order-detail-header {
         flex-direction: column;
@@ -199,7 +186,6 @@
     }
     
     .order-actions {
-        /* Garante que os botões/selects fiquem em linha cheia ou lado a lado */
         width: 100%;
         justify-content: space-between;
     }

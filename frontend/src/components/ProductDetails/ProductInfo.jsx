@@ -13,7 +13,6 @@ const ProductInfo = ({ product }) => {
     const { addWishlistItem, removeWishlistItem, isFavorited } = useContext(WishlistContext);
     const navigate = useNavigate();
 
-    // Lógica para formatar preço (do ProductCard.jsx)
     const priceToFormat = product.preco_promocao || product.preco_venda;
     const formattedPrice = new Intl.NumberFormat('pt-BR', {
         style: 'currency',
@@ -25,7 +24,6 @@ const ProductInfo = ({ product }) => {
         currency: 'BRL',
     }).format(product.preco_venda) : null;
 
-    // Lógica do carrinho: Redireciona se não estiver logado
     const handleAddToCart = () => {
         if (!user) {
             navigate('/require-login');
@@ -34,7 +32,6 @@ const ProductInfo = ({ product }) => {
         addItem(product);
     };
 
-    // Lógica de Wishlist: Redireciona se não estiver logado
     const handleAddToWishlist = () => {
         if (!user) {
             navigate('/require-login');
@@ -58,7 +55,6 @@ const ProductInfo = ({ product }) => {
         <div className="product-info-section">
             <h1 className="product-title">{product.nome}</h1>
             
-            {/* 1. PREÇO */}
             <div className="product-prices">
                 {oldPrice && (
                     <span className="old-price">{oldPrice}</span>
@@ -68,13 +64,11 @@ const ProductInfo = ({ product }) => {
                 </span>
             </div>
             
-            {/* 2. DESCRIÇÃO (MOVIDO AQUI: ANTES DOS BOTÕES) */}
             <div className="product-description-detail">
                 <h3>Sobre o Produto:</h3>
                 <p>{product.descricao}</p>
             </div>
             
-            {/* 3. BOTÕES DE AÇÃO */}
             <div className="detail-actions"> 
                 <button className="add-to-cart-btn" onClick={handleAddToCart}>
                     <FaShoppingCart /> Adicionar ao Carrinho
@@ -84,7 +78,6 @@ const ProductInfo = ({ product }) => {
                 </button>
             </div>
             
-            {/* 4. COMPARTILHAR */}
             <div className="share-section">
                 <span>Compartilhar:</span>
                 <button className="share-btn" onClick={handleShare}>

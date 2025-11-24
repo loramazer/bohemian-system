@@ -8,9 +8,6 @@ const ForgotPasswordForm = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Em um projeto real, aqui você faria uma chamada para a sua API
-        // para enviar o e-mail de recuperação de senha.
-        // Por agora, vamos simular a resposta.
 
         if (email) {
             setMessage('Se um e-mail com este endereço for encontrado, um link de recuperação será enviado.');

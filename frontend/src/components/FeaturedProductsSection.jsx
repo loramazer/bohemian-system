@@ -13,19 +13,16 @@ const FeaturedProductsSection = () => {
     const [error, setError] = useState(null);
     const { addItem } = useContext(CartContext);
     const { user } = useContext(AuthContext);
-    // Consumir o WishlistContext
     const { addWishlistItem, removeWishlistItem, isFavorited } = useContext(WishlistContext);
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                // CORREÇÃO 1: Pede especificamente 8 produtos para a API
                 const response = await apiClient.get('/api/produtos', { params: { limit: 8 } });
                 
-                // CORREÇÃO 2: Verifica 'response.data.products' (o objeto) em vez de 'response.data' (o array)
                 if (response.data && Array.isArray(response.data.products)) {
-                    setProducts(response.data.products); // Pega os produtos de dentro do objeto
+                    setProducts(response.data.products); 
                 } else {
                     setError('Formato de dados inesperado recebido do servidor.');
                     setProducts([]);
@@ -40,7 +37,6 @@ const FeaturedProductsSection = () => {
         fetchProducts();
     }, []);
 
-    // Função do Carrinho
     const handleAddToCartClick = (e, product) => {
         e.preventDefault(); 
         e.stopPropagation();
@@ -48,10 +44,10 @@ const FeaturedProductsSection = () => {
             navigate('/require-login'); 
             return;
         }
-        addItem(product); // Chama o Contexto do Carrinho
+        addItem(product); 
     };
 
-    // Função da Lista de Desejos
+    
     const handleAddToWishlistClick = (e, product) => {
         e.preventDefault(); 
         e.stopPropagation();
@@ -59,11 +55,11 @@ const FeaturedProductsSection = () => {
             navigate('/require-login'); 
             return;
         }
-        // Lógica de adicionar/remover
+        
         if (isFavorited(product.id_produto)) {
             removeWishlistItem(product.id_produto);
         } else {
-            addWishlistItem(product); // Chama o Contexto da Wishlist
+            addWishlistItem(product); 
         }
     };
 
@@ -84,11 +80,8 @@ const FeaturedProductsSection = () => {
                         key={product.id_produto} 
                         product={product} 
                         
-                        // --- CORREÇÃO AQUI ---
-                        // Garanta que o botão de Carrinho (onAddToCart) chama a função do Carrinho
                         onAddToCart={(e) => handleAddToCartClick(e, product)}
                         
-                        // Garanta que o botão de Coração (onAddToWishlist) chama a função de Desejos
                         onAddToWishlist={(e) => handleAddToWishlistClick(e, product)}
                     />
                 ))}

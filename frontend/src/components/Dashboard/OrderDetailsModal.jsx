@@ -2,7 +2,6 @@
 import React from 'react';
 import '../../styles/OrderDetailsModal.css';
 
-// Mapeamento de status para exibição (Texto)
 const mapStatusToLabel = (status) => {
     if (!status) return 'N/A';
     switch (status.toLowerCase()) {
@@ -13,29 +12,27 @@ const mapStatusToLabel = (status) => {
       case 'pending':
         return 'Pendente';
       case 'in_process':
-        return 'Em Preparação'; // Mapeando in_process para Em Preparação
+        return 'Em Preparação'; 
       case 'rejected':
         return 'Rejeitado';
       case 'cancelled':
         return 'Cancelado';
       case 'delivered':
-        return 'Entregue'; // Mapeando delivered
+        return 'Entregue'; 
       default:
         return status.charAt(0).toUpperCase() + status.slice(1);
     }
 };
 
-// Mapeamento para Status Logístico (Classe CSS) - MANTIDO, MAS NÃO USADO NO SPAN
 const getLogisticStatusClass = (status) => {
     if (!status) return 'desconhecido';
     const s = status.toLowerCase();
     
-    // Mapeia o status logístico do DB para a classe CSS do status de pagamento (que tem as cores)
-    if (s === 'em preparação') return 'in_process'; // Azul/Amarelo
-    if (s === 'pendente') return 'pending';       // Amarelo
-    if (s === 'cancelado') return 'cancelled';     // Vermelho
-    if (s === 'enviado') return 'authorized';      // Verde
-    if (s === 'entregue') return 'approved';      // Verde
+    if (s === 'em preparação') return 'in_process'; 
+    if (s === 'pendente') return 'pending';       
+    if (s === 'cancelado') return 'cancelled';     
+    if (s === 'enviado') return 'authorized';      
+    if (s === 'entregue') return 'approved';      
     
     return 'desconhecido';
 };
@@ -45,10 +42,8 @@ const OrderDetailsModal = ({ order, onClose }) => {
     return null;
   }
 
-  // Garante que o valor total é um número para toFixed
   const totalValue = order.prices ? order.prices.total : 0;
 
-  // Função utilitária para formatar datas, tratando null/inválido
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     try {
@@ -78,10 +73,9 @@ const OrderDetailsModal = ({ order, onClose }) => {
           <p><strong>Data de Entrega:</strong> {formatDate(order.data_entrega)}</p>
           <p><strong>Forma de Pagamento:</strong> {order.paymentInfo?.method || 'N/A'}</p>
           
-          {/* Status do Pedido (Logístico) - CORRIGIDO: Usa a função de mapeamento e remove o estilo inline, garantindo a mesma fonte/formatação dos demais campos */}
+        
           <p><strong>Status do Pedido:</strong> {mapStatusToLabel(order.status_pedido)}</p>
 
-          {/* Status do Pagamento (Financeiro) - CORRIGIDO: Usa a função de mapeamento e remove o estilo inline */}
           <p><strong>Status do Pagamento:</strong> {mapStatusToLabel(order.status)}</p>
           
           <p><strong>Valor Total:</strong> {`R$${totalValue.toFixed(2).replace('.', ',')}`}</p>

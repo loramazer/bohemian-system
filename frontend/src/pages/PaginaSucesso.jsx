@@ -6,7 +6,7 @@ function PaginaSucesso() {
     const [mensagem, setMensagem] = useState('Processando seu pagamento...');
 
     useEffect(() => {
-        console.log("--- PÁGINA DE STATUS CARREGADA ---");
+        console.log("PÁGINA DE STATUS CARREGADA");
 
         const paymentId = searchParams.get('payment_id');
         const status = searchParams.get('status');

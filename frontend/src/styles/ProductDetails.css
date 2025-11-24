@@ -1,6 +1,5 @@
 /* src/styles/ProductDetails.css */
 
-/* --- Título --- */
 .product-info-section .product-title {
   font-size: 2rem;
   font-weight: 600;
@@ -8,7 +7,6 @@
   margin-bottom: 10px;
 }
 
-/* --- Preços --- */
 .product-info-section .product-prices {
   display: flex;
   align-items: baseline;
@@ -28,7 +26,6 @@
   font-weight: 700;
 }
 
-/* Os overrides garantem que o ProductCard.css não quebre o layout */
 .detail-actions {
   display: flex;
   gap: 15px;
@@ -55,10 +52,8 @@
   transition: 0.3s;
 }
 
-/* AJUSTE DOS ÍCONES */
-/* Torna o ícone do carrinho menor */
 .add-to-cart-btn > svg {
-    font-size: 1.1rem; /* Carrinho Menor */
+    font-size: 1.1rem; 
 }
 
 
@@ -81,9 +76,8 @@
   color: #5d7a7b;
 }
 
-/* Torna o ícone do coração maior */
 .add-to-wishlist-btn > svg {
-    font-size: 1.5rem; /* Favoritar Maior */
+    font-size: 1.5rem; 
 }
 
 .add-to-wishlist-btn:hover {
@@ -91,7 +85,6 @@
   border-color: #5d7a7b;
 }
 
-/* --- Compartilhar --- */
 .share-section {
   display: flex;
   align-items: center;
@@ -119,13 +112,11 @@
   border-color: #5d7a7b;
 }
 
-/* AJUSTE DO BOTÃO DE COMPARTILHAR (ÍCONE) */
+
 .share-btn > svg {
-    font-size: 1.1rem; /* Tamanho do ícone de compartilhar */
+    font-size: 1.1rem; 
 }
 
-
-/* NOVO: Estilo para a Descrição (dentro do ProductInfo) */
 .product-description-detail {
     margin-top: 30px;
     padding-top: 30px;

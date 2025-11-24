@@ -47,5 +47,5 @@ exports.create = async (id_usuario, dadosEndereco) => {
 exports.remove = async (id_endereco, id_usuario) => {
     const sql = 'DELETE FROM endereco WHERE id_endereco = ? AND fk_id_usuario = ?';
     const [result] = await db.execute(sql, [id_endereco, id_usuario]);
-    return result.affectedRows; // Retorna 1 se deletou, 0 se não
+    return result.affectedRows; 
 };

@@ -1,6 +1,6 @@
 // frontend/src/components/Shared/ConfirmationModal.jsx
 import React from 'react';
-import '../../styles/ConfirmationModal.css'; // Novo CSS
+import '../../styles/ConfirmationModal.css'; 
 import { FaExclamationTriangle } from 'react-icons/fa';
 
 const ConfirmationModal = ({

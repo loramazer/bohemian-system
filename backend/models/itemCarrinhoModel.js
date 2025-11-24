@@ -6,7 +6,7 @@ exports.adicionarItem = async (id_carrinho, produto_id, quantidade, preco_unitar
   const [rows] = await db.execute(selectSql, [id_carrinho, produto_id]);
 
   if (rows.length > 0) {
-    console.log(`[itemCarrinhoModel] Produto ${produto_id} JÁ EXISTE. Atualizando quantidade.`); // Seu log
+    console.log(`[itemCarrinhoModel] Produto ${produto_id} JÁ EXISTE. Atualizando quantidade.`); 
     const itemExistente = rows[0];
     const novaQuantidade = itemExistente.quantidade + quantidade;
     
@@ -15,7 +15,7 @@ exports.adicionarItem = async (id_carrinho, produto_id, quantidade, preco_unitar
     await db.execute(updateSql, [novaQuantidade, itemExistente.id_item_carrinho]);
 
   } else {
-    console.log(`[itemCarrinhoModel] Produto ${produto_id} NÃO EXISTE. Inserindo novo item.`); // Seu log
+    console.log(`[itemCarrinhoModel] Produto ${produto_id} NÃO EXISTE. Inserindo novo item.`); 
     const insertSql = 'INSERT INTO item_carrinho (id_carrinho, id_produto, quantidade, preco_unitario) VALUES (?, ?, ?, ?)';
     await db.execute(insertSql, [id_carrinho, produto_id, quantidade, preco_unitario]);
   }

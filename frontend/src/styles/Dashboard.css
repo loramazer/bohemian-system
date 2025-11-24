@@ -37,33 +37,25 @@
   align-items: center;
 }
 
-/* Dashboard.css */
-
-/* Garantir que o contêiner de info agrupe os itens verticalmente */
 .kpi-info {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  /* Talvez adicionar um pequeno gap aqui, se os elementos estiverem muito próximos */
   gap: 2px; 
 }
 
-/* Título, garantindo que ele não tenha margens extras */
 .kpi-info .kpi-title {
   font-size: 0.9rem;
   color: #888;
-  margin: 0; /* Limpando margens desnecessárias */
+  margin: 0; 
 }
 
 .kpi-value {
   font-size: 1.5rem;
   color: #333;
   font-weight: bold;
-  
-  /* MUDANÇA: Remover a margem completamente (ou quase) para que o valor suba */
-  /* ANTES: margin: 2px 0; */
-  margin: 0; /* REMOVE TODA A MARGEM */
-  line-height: 1.2; /* Pode ser necessário ajustar a altura da linha para eliminar espaço vertical extra */
+  margin: 0; 
+  line-height: 1.2; 
 }
 
 .kpi-change, .kpi-comparison {
@@ -169,36 +161,34 @@
   border-bottom: 1px solid #eee;
 }
 
-/* O Status Badge principal */
 .status-badge {
   padding: 5px 10px;
   border-radius: 12px;
   font-size: 0.8rem;
-  color: #fff !important; /* FIX DEFINITIVO: Garante cor da fonte branca */
+  color: #fff !important; 
   align-items: center;
 }
 
-/* Estilos de Cores para Pagamento/Status Logístico */
 .status-badge.status-approved, 
 .status-badge.status-authorized {
-  background-color: #4CAF50; /* Verde */
+  background-color: #4CAF50; 
 }
 
 .status-badge.status-pending {
-  background-color: #ff9800; /* Laranja */
+  background-color: #ff9800; 
 }
 
 .status-badge.status-in_process {
-  background-color: #2196f3; /* Azul */
+  background-color: #2196f3; 
 }
 
 .status-badge.status-rejected, 
 .status-badge.status-cancelled {
-  background-color: #f44336; /* Vermelho */
+  background-color: #f44336; 
 }
 
 .status-badge.status-desconhecido {
-  background-color: #607d8b; /* Cinza */
+  background-color: #607d8b; 
 }
 
 .orders-table tbody tr {

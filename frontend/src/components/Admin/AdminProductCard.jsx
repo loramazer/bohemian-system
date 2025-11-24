@@ -9,7 +9,6 @@ const ActionMenu = ({ onEdit, onToggleStatus, isActive }) => (
             <FaPencilAlt /> Editar
         </button>
         
-        {/* ÚNICA AÇÃO DE STATUS: Ativar ou Desativar */}
         <button onClick={onToggleStatus} style={{ color: isActive ? '#e67e22' : '#27ae60' }}>
             {isActive ? <><FaEyeSlash /> Desativar</> : <><FaEye /> Ativar</>}
         </button>
@@ -29,7 +28,6 @@ const AdminProductCard = ({ product, onEdit, onToggleStatus }) => {
     
     const formattedPrice = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(product.preco_venda);
     
-    // Verifica status
     const isActive = product.ativo === 1 || product.ativo === true;
 
     return (

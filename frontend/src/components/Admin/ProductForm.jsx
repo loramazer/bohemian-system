@@ -19,7 +19,6 @@ const ProductForm = ({ categories = [], formData = {}, onFormChange, formErrors 
                     name="nome"
                     value={formData.nome || ''}
                     onChange={onFormChange}
-                    // Dica ajustada para FLORES
                     title="Ex: Buquê de Rosas, Orquídea Branca em Vaso, Arranjo Seco Boho" 
                 />
                 <ErrorText field="nome" />
@@ -32,7 +31,6 @@ const ProductForm = ({ categories = [], formData = {}, onFormChange, formErrors 
                     name="descricao"
                     value={formData.descricao || ''}
                     onChange={onFormChange}
-                    // Dica ajustada para FLORES
                     title="Ex: Arranjo delicado com mix de flores do campo e eucalipto. Acompanha vaso de vidro. Ideal para centro de mesa."
                 ></textarea>
                 <ErrorText field="descricao" />
