@@ -5,7 +5,6 @@
   background-color: #fafafa;
 }
 
-/* --- Breadcrumbs --- */
 .product-breadcrumbs {
   margin-bottom: 30px;
   font-size: 0.9rem;
@@ -34,11 +33,10 @@
   margin-bottom: 60px;
 }
 
-/* --- Galeria (Esquerda) --- */
 .product-gallery {
   flex: 1.3;
   display: flex;
-  gap: 10px; /* CORREÇÃO: Gap pequeno é melhor que 'gap: 0' + margens negativas */
+  gap: 10px; 
   justify-content: center;
   align-items: flex-start;
 }
@@ -47,8 +45,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-top: 10px; /* Ajuste para alinhar com o topo da imagem principal */
-  /* REMOVIDO: 'margin-right: -20-x;' (Erro de sintaxe e desnecessário com gap) */
+  margin-top: 10px; 
 }
 
 .thumbnail {
@@ -75,7 +72,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  /* REMOVIDO: 'margin-left: -20px;' (Desnecessário com gap) */
 }
 
 .main-image {
@@ -87,7 +83,6 @@
   margin-left: -40px;
 }
 
-/* --- Info (Direita) --- */
 .product-info-section {
   flex: 1;
   max-width: 480px;
@@ -113,32 +108,26 @@
     max-width: 200px;
 }
 
-/* * CORREÇÃO: Aumenta o botão de favoritar 
- * (Sobrescreve width/height de ProductDetails.css) 
- */
+
 .product-info-section .add-to-wishlist-btn {
-    width: 200px;  /* Aumentado de 50px */
-    height: 70px; /* Aumentado de 50px */
+    width: 200px;  
+    height: 70px; 
 }
 
-/* E aumenta o ícone (coração) dentro dele */
 .product-info-section .add-to-wishlist-btn > svg {
-    font-size: 1.8rem; /* Aumentado de 1.5rem */
+    font-size: 1.8rem; 
 }
 
 
 .product-info-section .share-btn {
-    width: 50px;  /* Aumentado de 42px */
-    height: 50px; /* Aumentado de 42px */
+    width: 50px;  
+    height: 50px; 
 }
 
-/* E aumenta o ícone (compartilhar) dentro dele */
 .product-info-section .share-btn > svg {
-    font-size: 2.5rem; /* Aumentado de 1.1rem */
+    font-size: 2.5rem; 
 }
 
-/* --- Descrição (Abaixo) --- */
-/* Esta seção agora é para os Produtos Relacionados */
 .product-tabs-container {
   background-color: white;
   border-radius: 12px;
@@ -148,9 +137,7 @@
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
   border: 1px solid #eee;
 }
-/* ... (regras de estilo para h3 e p de tabs/descrição que agora estão em .product-description-detail) */
 
-/* --- Responsivo --- */
 @media (max-width: 900px) {
   .product-details-layout {
     flex-direction: column;
@@ -174,10 +161,9 @@
     max-width: 100%;
     align-items: center;
     text-align: center;
-    margin-top: 0; /* Resetar margem */
+    margin-top: 0; 
   }
   
-  /* Resetar margem no responsivo */
   .product-info-section .product-prices {
     margin-left: 0;
   }

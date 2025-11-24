@@ -21,10 +21,10 @@ export const CartProvider = ({ children }) => {
             setCartItems(response.data.itens || []);
         } catch (err) {
             console.error("Erro ao buscar carrinho:", err);
-            // --- REFINAMENTO 1: Avisar o usuário se o carrinho falhar ---
+            
             showToast("Não foi possível carregar seu carrinho.");
         }
-    }, [user, showToast]); // A dependência [user] está correta
+    }, [user, showToast]); 
 
     const ensureCartExists = async () => {
         if (!user) return false;
@@ -39,9 +39,7 @@ export const CartProvider = ({ children }) => {
 
     const addItem = async (produto) => {
         if (!user) {
-            // --- REFINAMENTO 2: Substituir o alert() por toast ---
             showToast('Você precisa estar logado para adicionar itens ao carrinho.');
-            // (Usando toast.warn para ser informativo, não um erro)
             return;
         }
 
@@ -51,13 +49,12 @@ export const CartProvider = ({ children }) => {
             return;
         }
 
-        // A sua lógica de preço aqui está perfeita.
         const precoVenda = produto.preco_promocao || produto.preco_venda;
         const precoUnitario = parseFloat(precoVenda);
 
         if (isNaN(precoUnitario) || precoUnitario <= 0) {
             console.error("Erro: Preço unitário inválido para o produto:", produto);
-            showToast('Erro: O produto não tem um preço de venda válido.'); // Trocado alert por toast
+            showToast('Erro: O produto não tem um preço de venda válido.'); 
             return;
         }
 
@@ -69,10 +66,10 @@ export const CartProvider = ({ children }) => {
             });
 
             setCartItems(response.data.itens || []);
-            showCartSuccess(); // Chama o feedback visual
+            showCartSuccess(); 
         } catch (err) {
             console.error("Erro ao adicionar item:", err);
-            showToast("Erro ao adicionar item ao carrinho."); // Avisa o usuário da falha
+            showToast("Erro ao adicionar item ao carrinho."); 
         }
     };
 

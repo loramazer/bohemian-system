@@ -4,7 +4,6 @@
     padding-bottom: 80px;
 }
 
-/* --- HERO SECTION --- */
 .about-hero {
     position: relative;
     height: 60vh;
@@ -80,17 +79,16 @@
     transform: translateY(-2px);
 }
 
-/* --- INTRO SECTION (Corrigindo espaçamento excessivo) --- */
 .about-intro-section {
     text-align: center;
-    padding: 60px 20px 40px; /* Reduzido para aproximar mais a próxima seção */
+    padding: 60px 20px 40px; 
     max-width: 800px;
     margin: 0 auto;
 }
 
 .about-section-main-title {
     font-size: 2.2rem;
-    color: #5d7a7b; /* Usando cor principal do site */
+    color: #5d7a7b; 
     font-weight: 600;
     margin-bottom: 15px;
     position: relative;
@@ -101,7 +99,7 @@
     content: '';
     display: block;
     width: 100%; 
-    height: 3px; /* Linha mais fina e elegante */
+    height: 3px; 
     background-color: #a4d4c5; 
     position: absolute;
     bottom: -5px;
@@ -114,16 +112,14 @@
     font-size: 1.15rem;
     line-height: 1.8;
     color: #666;
-    margin-top: 25px; /* Reduzido para evitar espaço em branco */
+    margin-top: 25px; 
 }
 
-/* --- FEATURE SECTIONS (Alinhamento Horizontal - Texto ao lado da Imagem) --- */
 .about-feature-section {
     display: flex;
     align-items: center;
-    /* Espaçamento interno da seção, o gap é entre os elementos */
     padding: 60px 0; 
-    gap: 40px; /* Reduzido o gap entre colunas */
+    gap: 40px; 
     max-width: 1200px;
     margin: 0 auto;
 }
@@ -134,7 +130,6 @@
 
 .about-text-content {
     flex: 1;
-    /* Garante que o texto dentro do ContentWrapper tenha um pequeno padding lateral no mobile */
     padding: 0 20px; 
 }
 
@@ -149,14 +144,13 @@
     line-height: 1.7;
     font-size: 1rem;
     color: #666;
-    margin-bottom: 15px; /* Reduzido para evitar o "vazio" entre parágrafos */
+    margin-bottom: 15px; 
 }
 
 .about-image-block {
     flex: 1;
     min-width: 350px;
     max-width: 500px;
-    /* Usando altura fixa para alinhamento em desktop */
     height: 400px; 
     position: relative;
     display: flex;
@@ -170,18 +164,16 @@
     height: 100%;
     object-fit: cover;
     border-radius: 10px; 
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15); /* Sombra destacada e moderna */
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15); 
     z-index: 2;
     position: relative;
 }
 
-/* Removendo shapes para um design mais focado na imagem e coeso */
 .about-image-block::before {
     display: none; 
 }
 
 
-/* --- VALUES SECTION (Corrigido espaçamento e cor do título) --- */
 .about-values-section {
     padding: 80px 20px;
     background-color: #f0f0f5;
@@ -192,7 +184,7 @@
     display: flex;
     justify-content: center;
     gap: 30px; 
-    margin-top: 30px; /* Reduzido de 40px para 30px */
+    margin-top: 30px; 
     flex-wrap: wrap;
 }
 
@@ -214,7 +206,7 @@
 
 .value-item h4 {
     font-size: 1.4rem;
-    color: #5d7a7b; /* Consistente com a cor principal */
+    color: #5d7a7b; 
     margin-bottom: 10px;
     font-weight: 700;
 }
@@ -225,7 +217,6 @@
     font-size: 0.95rem;
 }
 
-/* --- RESPONSIVIDADE --- */
 @media (max-width: 900px) {
     .about-feature-section {
         flex-direction: column;
@@ -245,7 +236,7 @@
     .about-image-block {
         order: 1;
         min-width: unset;
-        width: 90%; /* Ajuste para ter margem nas laterais */
+        width: 90%; 
         max-width: 450px;
         height: 300px;
     }

@@ -62,7 +62,7 @@ const RegisterForm = () => {
                     <input type="tel" id="telefone" name="telefone" placeholder="Seu telefone" value={formData.telefone} onChange={handleChange} required />
                 </div>
                 <div className="form-group">
-                    <div className="label-wrapper"> {/* Novo div para alinhar label e ícone */}
+                    <div className="label-wrapper"> 
                         <label htmlFor="senha">Senha</label>
                         <button type="button" onClick={togglePasswordVisibility} className="password-toggle-btn"
                             title={showPassword ? 'Ocultar senha' : 'Mostrar senha'}>
@@ -82,7 +82,7 @@ const RegisterForm = () => {
                 <div className="form-group">
                     <label htmlFor="confirmarSenha">Confirmar Senha</label>
                     <input
-                        // O tipo também é dinâmico para ser consistente
+                        
                         type={showPassword ? 'text' : 'password'}
                         id="confirmarSenha"
                         name="confirmarSenha"

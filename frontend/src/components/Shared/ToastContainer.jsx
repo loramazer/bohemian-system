@@ -1,18 +1,17 @@
 // loramazer/bohemian-system/bohemian-system-refatorar-organizacao/frontend/src/components/Shared/ToastContainer.jsx
 
 import React from 'react';
-// *** MUDANÇA AQUI: Adicionar FaTrash ***
+
 import { FaCheckCircle, FaHeart, FaShoppingCart, FaTimes, FaExclamationTriangle, FaTrash } from 'react-icons/fa';
 import '../../styles/ToastContainer.css';
 
-// *** MUDANÇA AQUI: Adicionar o novo ícone ao map ***
 const IconMap = {
     success: FaCheckCircle,
     cart: FaShoppingCart,
     wishlist: FaHeart,
     'wishlist-removed': FaHeart,
     'warning': FaExclamationTriangle,
-    'trash-removed': FaTrash // <-- NOVO TIPO
+    'trash-removed': FaTrash 
 };
 
 const ToastContainer = ({ toast, onClose }) => {
@@ -21,7 +20,6 @@ const ToastContainer = ({ toast, onClose }) => {
         return null;
     }
 
-    // Agora IconComponent vai encontrar 'trash-removed' e usar FaTrash
     const IconComponent = IconMap[toast.type] || IconMap.success;
 
     return (

@@ -13,7 +13,6 @@ const LoginForm = () => {
     const { login } = useContext(AuthContext);
     const navigate = useNavigate();
 
-    // Corrigido: Removida a declaração duplicada
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
@@ -40,7 +39,6 @@ const LoginForm = () => {
                         onChange={(e) => setEmail(e.target.value)}
                         required
                         />
-                    {/* Corrigido: Removido o input de email duplicado */}
                 </div>
 
                 <div className="form-group">
@@ -73,11 +71,10 @@ const LoginForm = () => {
                     <p>Não tem uma conta? <Link to="/register">Cadastre-se</Link></p>
                 </div>
 
-                {/* Corrigido: Removidos os blocos duplicados */}
 
             </form>
         </div>
     );
-}; // Corrigido: Removida a chave '}' extra que estava aqui
+}; 
 
 export default LoginForm;

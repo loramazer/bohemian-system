@@ -1,10 +1,10 @@
 .register-form-container {
     background-color: #fff;
-    padding: 30px; /* reduzido para combinar com o login */
+    padding: 30px; 
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
-    max-width: 500px; /* <-- MUDANÇA: alterado de 400px para 500px */
+    max-width: 500px; 
     width: 100%;
 }
 
@@ -38,12 +38,12 @@
     border: 1px solid #ccc;
     border-radius: 5px;
     box-sizing: border-box;
-    font-size: 1rem;      /* <-- ADICIONADO */
+    font-size: 1rem;      
     font-family: inherit;
 }
 
 .register-button {
-    width: 100%; /* mesmo tamanho dos inputs */
+    width: 100%; 
     padding: 12px;
     background-color: #5d7a7b;
     color: #fff;

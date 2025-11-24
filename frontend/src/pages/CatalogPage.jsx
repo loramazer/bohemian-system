@@ -5,12 +5,19 @@ import ProductGrid from '../components/Catalog/ProductGrid';
 import Pagination from '../components/Shared/Pagination';
 import { getProducts, getCategories } from '../api';
 import '../styles/CatalogPage.css';
+import HelpPopup from '../components/HelpPoupup';
+import useHelpContext from '../components/hooks/useHelpContext';
+
+const PAGE_NAME = 'CatalogPage';
 
 const useQuery = () => {
   return new URLSearchParams(useLocation().search);
 };
 
+
 function CatalogPage() {
+  const helpContent = useHelpContext(PAGE_NAME);
+  
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -44,7 +51,6 @@ function CatalogPage() {
   const [totalPages, setTotalPages] = useState(0);
   const [totalProducts, setTotalProducts] = useState(0);
 
-  // Buscar categorias (inalterado)
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -179,6 +185,8 @@ function CatalogPage() {
                         onPageChange={handlePageChange}
                     />
                     )}
+
+                    <HelpPopup title={helpContent.title} content={helpContent.content} />
 
                     {!loading && products.length === 0 && (
                     <div className="no-products-found">

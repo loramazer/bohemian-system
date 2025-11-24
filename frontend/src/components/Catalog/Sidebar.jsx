@@ -1,19 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import '../../styles/Sidebar.css';
 
-// Componente Sidebar.jsx atualizado
 function Sidebar({
   categories,
-  onApplyFilters, // Prop trocada: de onFilterChange para onApplyFilters
-  initialFilters = {} // Props para receber os filtros iniciais da URL/CatalogPage
+  onApplyFilters, 
+  initialFilters = {} 
 }) {
   const [localSelectedCategories, setLocalSelectedCategories] = useState(initialFilters.categories || []);
   const [localSortOrder, setLocalSortOrder] = useState(initialFilters.sort || 'name_asc');
-  // Usamos 500 como o máximo padrão se não for fornecido
   const [localPriceRange, setLocalPriceRange] = useState(initialFilters.price || 500); 
-  const [maxPrice, setMaxPrice] = useState(500); // Define um máximo fixo para o slider
+  const [maxPrice, setMaxPrice] = useState(500); 
 
-  // Efeito para atualizar o estado local se os filtros iniciais mudarem (ex: navegação)
   useEffect(() => {
     setLocalSelectedCategories(initialFilters.categories || []);
     setLocalSortOrder(initialFilters.sort || 'name_asc');
@@ -80,7 +77,6 @@ function Sidebar({
 
       <div className="filter-section">
         <h3>Filtrar por Preço</h3>
-        {/* NOVO: Exibição do valor do preço */}
         <div className="price-display">
           Até: R$ {localPriceRange.toFixed(2)}
         </div>
@@ -88,7 +84,7 @@ function Sidebar({
           type="range"
           id="price-range"
           min="0"
-          max={maxPrice} // Usar o maxPrice
+          max={maxPrice} 
           value={localPriceRange}
           onChange={handlePriceChange}
           className="price-slider"
@@ -99,7 +95,6 @@ function Sidebar({
         </div>
       </div>
 
-      {/* Botão funcional */}
       <button onClick={handleApply} className="apply-filters-btn">
         Aplicar
       </button>

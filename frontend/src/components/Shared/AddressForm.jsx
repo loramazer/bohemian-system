@@ -21,9 +21,8 @@ const AddressForm = ({ onSave, onCancel, initialData = {} }) => {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    // Lógica de busca de CEP (Bônus)
     const handleCepBlur = async (e) => {
-        const cep = e.target.value.replace(/\D/g, ''); // Limpa o CEP
+        const cep = e.target.value.replace(/\D/g, ''); 
         if (cep.length !== 8) return;
 
         try {
@@ -33,14 +32,13 @@ const AddressForm = ({ onSave, onCancel, initialData = {} }) => {
             const data = await response.json();
             if (data.erro) throw new Error('CEP não encontrado');
 
-            // Preenche o formulário com os dados do ViaCEP
             setFormData(prev => ({
                 ...prev,
                 rua: data.logradouro,
                 bairro: data.bairro,
                 cidade: data.localidade,
                 estado: data.uf,
-                cep: data.cep, // Formata o CEP
+                cep: data.cep, 
             }));
             setError('');
         } catch (err) {
@@ -52,7 +50,6 @@ const AddressForm = ({ onSave, onCancel, initialData = {} }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Validação simples
         if (!formData.rua || !formData.numero || !formData.cidade || !formData.cep) {
             setError('Preencha todos os campos obrigatórios (Rua, Nº, Cidade, CEP).');
             return;
@@ -62,7 +59,6 @@ const AddressForm = ({ onSave, onCancel, initialData = {} }) => {
         setError('');
 
         try {
-            // A função onSave é o 'handleSaveAddress' que veio da CheckoutPage
             await onSave(formData);
         } catch (error) {
             setError('Falha ao salvar. Tente novamente.');
@@ -84,7 +80,7 @@ const AddressForm = ({ onSave, onCancel, initialData = {} }) => {
                     name="cep"
                     value={formData.cep}
                     onChange={handleChange}
-                    onBlur={handleCepBlur} // Adiciona a busca de CEP
+                    onBlur={handleCepBlur} 
                     placeholder="00000-000"
                     required
                 />
