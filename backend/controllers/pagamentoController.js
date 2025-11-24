@@ -11,7 +11,22 @@ const client = new MercadoPagoConfig({ accessToken: process.env.MERCADOPAGO_ACCE
 
 exports.criarPreferencia = async (req, res) => {
     try {
-        const { cartItems, shippingCost, deliveryOption, selectedAddressId, clienteId } = req.body;
+        const { cartItems, deliveryOption, selectedAddressId, clienteId } = req.body;
+        
+        if (!clienteId) return res.status(400).json({ message: "O clienteId é obrigatório." });
+
+        let custoFreteCalculado = 0;
+
+        if (deliveryOption === 'entrega') {
+            if (!selectedAddressId) {
+                return res.status(400).json({ message: "Endereço de entrega é obrigatório para esta opção." });
+            }
+            custoFreteCalculado = 15.00; 
+        } else if (deliveryOption === 'retirada') {
+            custoFreteCalculado = 0;
+        } else {
+            return res.status(400).json({ message: "Opção de entrega inválida." });
+        }
         
         if (!clienteId) return res.status(400).json({ message: "O clienteId é obrigatório." });
 

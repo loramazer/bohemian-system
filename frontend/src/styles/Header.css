@@ -40,6 +40,10 @@
     transition: opacity 0.2s;
 }
 
+.welcome-message {
+    margin-right: 24px;
+}
+
 /* --- NOVO: Ajuste para o link do usuário comum ficar igual ao de admin --- */
 .user-actions-group .user-link {
     display: flex;
@@ -93,7 +97,7 @@
     align-items: center;
     gap: 5px;
     margin-left: 25px;
-    margin-right: -20px;
+    margin-right: -39px;
 }
 
 /* Badge de contagem do carrinho */
@@ -119,6 +123,7 @@
     text-align: center;
     line-height: 1.2;
     font-size: 0.8rem;
+
 }
 
 
@@ -126,7 +131,7 @@
 .admin-menu-toggle,
 .user-menu-toggle { /* NOVO: Aplicando mesmo estilo */
     position: relative;
-    margin-right: -25px;
+    margin-left: -25px;
 }
 
 .admin-dropdown,
