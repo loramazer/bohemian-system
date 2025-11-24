@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useContext } from 'react'; 
-import ProductForm from '../components/Admin/ProductForm.jsx'; 
+import React, { useState, useEffect, useContext } from 'react';
+import ProductForm from '../components/Admin/ProductForm.jsx';
 import ImageUpload from '../components/Shared/ImageUpload.jsx';
 import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
-import apiClient from '../api.js'; 
-import { FeedbackContext } from '../context/FeedbackContext.jsx'; 
+import apiClient from '../api.js';
+import { FeedbackContext } from '../context/FeedbackContext.jsx';
 
 import '../styles/AddProductPage.css';
 
@@ -19,20 +19,20 @@ const AddProductPage = () => {
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [formErrors, setFormErrors] = useState({}); 
-  
+  const [formErrors, setFormErrors] = useState({});
+
   const { showToast } = useContext(FeedbackContext);
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await apiClient.get('/api/categorias'); 
-        
+        const response = await apiClient.get('/api/categorias');
+
         const data = response.data;
-        
-        if (!response.status === 200) throw new Error('Erro ao buscar categorias');
-        
-        setCategories(data); 
+
+        if (response.status !== 200) throw new Error('Erro ao buscar categorias');
+
+        setCategories(data);
       } catch (err) {
         setError(err.message);
         console.error('Erro ao buscar categorias:', err);
@@ -52,7 +52,7 @@ const AddProductPage = () => {
   const handleFileChange = (updater) => {
     setUploadedFiles(updater);
   };
-  
+
   const validateForm = () => {
     const errors = {};
     if (!formData.nome.trim()) errors.nome = 'O Nome do Produto é obrigatório.';
@@ -67,29 +67,29 @@ const AddProductPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
-        return; 
+      return;
     }
 
     try {
       const formDataToSend = new FormData();
       formDataToSend.append('nome', formData.nome);
       formDataToSend.append('descricao', formData.descricao);
-      formDataToSend.append('status', 'ativo'); 
+      formDataToSend.append('status', 'ativo');
       formDataToSend.append('preco_venda', formData.precoRegular);
       formDataToSend.append('categoria', formData.categoria);
 
       if (uploadedFiles.length > 0) {
         uploadedFiles.forEach((fileWrapper) => {
-          formDataToSend.append('imagens', fileWrapper.file); 
+          formDataToSend.append('imagens', fileWrapper.file);
         });
       }
 
       const response = await apiClient.post('/api/produtos', formDataToSend, {
-          headers: {
-              'Content-Type': 'multipart/form-data',
-          },
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
 
       if (response.status !== 201) throw new Error('Erro ao salvar produto');
@@ -108,9 +108,28 @@ const AddProductPage = () => {
 
     } catch (err) {
       console.error('Erro ao salvar produto:', err);
-      
-      const errorMsg = err.response?.data?.message || 'Erro ao salvar produto. Tente novamente.';
-      showToast(errorMsg, 'wishlist-removed');
+
+      let errorMsg = 'Erro ao salvar produto. Tente novamente.';
+
+      if (err.response) {
+        const data = err.response.data || {};
+        const message = (data.message || '').toLowerCase();
+        const code = data.code;
+
+        if (
+          err.response.status === 409 ||
+          message.includes('duplicate') ||
+          message.includes('duplicado') ||
+          message.includes('já existe') ||
+          code === 'ER_DUP_ENTRY'
+        ) {
+          errorMsg = `Não foi possível adicionar. Já existe um produto com o nome "${formData.nome}".`;
+        } else if (data.message) {
+          errorMsg = data.message;
+        }
+      }
+
+      showToast(errorMsg, 'error');
     }
   };
 
@@ -133,7 +152,7 @@ const AddProductPage = () => {
               <ImageUpload
                 uploadedFiles={uploadedFiles}
                 onFileChange={handleFileChange}
-                error={formErrors.imagens} 
+                error={formErrors.imagens}
               />
               <div className="upload-buttons">
                 <button type="submit" className="save-btn">
@@ -151,7 +170,7 @@ const AddProductPage = () => {
                       precoPromocao: ''
                     });
                     setUploadedFiles([]);
-                    setFormErrors({}); 
+                    setFormErrors({});
                   }}
                 >
                   Cancelar

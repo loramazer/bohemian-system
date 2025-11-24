@@ -13,7 +13,7 @@ const upload = multer({ dest: 'uploads/' });
 
 function formatarPreco(preco) {
     if (!preco) return 0;
-    const valor = preco.replace(/\s/g, '').replace('R$', '').replace(',', '.');
+    const valor = preco.toString().replace(/\s/g, '').replace('R$', '').replace(',', '.');
     return parseFloat(valor);
 }
 
@@ -22,9 +22,15 @@ async function processarImagens(files) {
     if (files && files.length > 0) {
         for (const file of files) {
             if (file.path) {
-                const result = await cloudinary.uploader.upload(file.path);
-                urls.push(result.secure_url);
-                fs.unlinkSync(file.path); 
+                try {
+                    const result = await cloudinary.uploader.upload(file.path);
+                    urls.push(result.secure_url);
+                    if (fs.existsSync(file.path)) {
+                        fs.unlinkSync(file.path);
+                    }
+                } catch (error) {
+                    console.error('Erro no upload Cloudinary:', error);
+                }
             } else if (typeof file === 'string') {
                 urls.push(file);
             }
@@ -51,6 +57,14 @@ async function create(req, res) {
         res.status(201).json({ message: 'Produto criado com sucesso', produto: novoProduto });
     } catch (error) {
         console.error('Erro ao criar produto:', error);
+
+        if (error.code === 'ER_DUP_ENTRY' || error.errno === 1062) {
+            return res.status(409).json({ 
+                message: `Já existe um produto cadastrado com o nome "${req.body.nome}".`,
+                code: 'ER_DUP_ENTRY'
+            });
+        }
+
         res.status(500).json({ message: 'Erro interno do servidor' });
     }
 }
@@ -147,6 +161,14 @@ async function update(req, res) {
 
     } catch (error) {
         console.error('Erro ao atualizar produto:', error); 
+
+        if (error.code === 'ER_DUP_ENTRY' || error.errno === 1062) {
+            return res.status(409).json({ 
+                message: `Já existe outro produto com o nome "${nome}".`,
+                code: 'ER_DUP_ENTRY'
+            });
+        }
+
         res.status(500).json({ message: 'Erro interno no servidor' });
     }
 }
@@ -157,6 +179,9 @@ async function remove(req, res) {
         res.json({ message: 'Produto removido com sucesso' });
     } catch (error) {
         console.error('Erro ao remover produto:', error);
+        if (error.code === 'ER_ROW_IS_REFERENCED_2') {
+            return res.status(409).json({ message: 'Não é possível excluir este produto pois ele possui pedidos vinculados.' });
+        }
         res.status(500).json({ message: 'Erro interno do servidor' });
     }
 }
