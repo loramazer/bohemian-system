@@ -265,7 +265,17 @@ async function updatePedidoStatus(req, res) {
 
         const statusParaSalvar = statusToDbMap[newCode] || status;
 
-        await db.execute('UPDATE pedido SET status_pedido = ? WHERE id_pedido = ?', [statusParaSalvar, id]);
+        let sql = 'UPDATE pedido SET status_pedido = ?';
+        const params = [statusParaSalvar];
+
+        if (newCode === 'delivered') {
+            sql += ', data_entrega = NOW()';
+        }
+
+        sql += ' WHERE id_pedido = ?';
+        params.push(id);
+
+        await db.execute(sql, params);
 
         res.status(200).json({ message: "Status atualizado com sucesso.", novoStatus: statusParaSalvar });
 

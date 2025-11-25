@@ -11,7 +11,7 @@ const client = new MercadoPagoConfig({ accessToken: process.env.MERCADOPAGO_ACCE
 
 exports.criarPreferencia = async (req, res) => {
     try {
-        const { cartItems, deliveryOption, selectedAddressId, clienteId } = req.body;
+        const { cartItems, shippingCost, deliveryOption, selectedAddressId, clienteId } = req.body;
         
         if (!clienteId) return res.status(400).json({ message: "O clienteId é obrigatório." });
 
