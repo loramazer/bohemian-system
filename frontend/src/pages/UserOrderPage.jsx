@@ -123,11 +123,9 @@ const PurchaseDetail = ({ order, onProductClick }) => {
                 <p>Status do Pedido: <span className={`order-status status-${getOrderStatusClass(order.status_pedido)}`}>
                     {formatOrderStatus(order.status_pedido)}
                 </span></p>
-
-                {/* NOVO: Exibe a data de entrega nos detalhes */}
                 {order.data_entrega && (
                     <p>
-                        {order.status_pedido === 'delivered' ? 'Entregue em: ' : 'Previsão de Entrega: '}
+                        {order.status_pedido === 'Entregue' ? 'Entregue em: ' : 'Previsão de Entrega: '}
                         <strong>{formatDate(order.data_entrega)}</strong>
                     </p>
                 )}
@@ -258,7 +256,7 @@ const UserOrdersPage = () => {
                                                                 <i className="fas fa-truck" style={{ color: '#3498db' }}></i>
                                                             )}
                                                             <span>
-                                                                {order.status_pedido === 'delivered' ? 'Entregue: ' : 'Previsão: '}
+                                                                {order.status_pedido === 'Entregue' ? 'Entregue: ' : 'Previsão: '}
                                                                 <strong>{new Date(order.data_entrega).toLocaleDateString('pt-BR')}</strong>
                                                             </span>
                                                         </span>

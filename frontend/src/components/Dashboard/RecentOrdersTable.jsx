@@ -12,7 +12,7 @@ const RecentOrdersTable = ({ orders, onSelectOrder }) => {
     'pending': 'Pendente', 
     'cancelled': 'Cancelado', 
     'authorized': 'Enviado', 
-    'delivered': 'Entregue'  
+    'Entregue': 'Entregue'  
   };
 
   const mapStatusToLabel = (status) => {

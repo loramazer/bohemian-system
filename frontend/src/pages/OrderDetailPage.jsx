@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import ContentWrapper from '../components/Shared/ContentWrapper.jsx';
 import OrderInfoCards from '../components/Admin/OrderInfoCards.jsx';
 import OrderProductsTable from '../components/Admin/OrderProductsTable.jsx';
@@ -14,19 +14,19 @@ const paymentStatusMap = {
     'pending': 'Pendente',
     'approved': 'Aprovado',
     'in_process': 'Em Processamento',
-    'authorized': 'Autorizado',      
-    'delivered': 'Entregue',     
+    'authorized': 'Autorizado',
+    'delivered': 'Entregue',
     'cancelled': 'Cancelado',
     'rejected': 'Rejeitado',
     'failure': 'Falhou'
 };
 
 const orderStatusLogisticoMap = {
-    'in_process': 'Em Preparação', 
-    'pending': 'Pendente', 
-    'cancelled': 'Cancelado', 
-    'authorized': 'Enviado', 
-    'delivered': 'Entregue' 
+    'in_process': 'Em Preparação',
+    'pending': 'Pendente',
+    'cancelled': 'Cancelado',
+    'authorized': 'Enviado',
+    'delivered': 'Entregue'
 };
 
 const orderStatusOptions = Object.keys(orderStatusLogisticoMap);
@@ -39,10 +39,8 @@ const OrderDetailPage = () => {
 
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [currentStatusLogistico, setCurrentStatusLogistico] = useState(''); 
-    
-    // NOVO: Estado para a data de entrega
-    const [deliveryDate, setDeliveryDate] = useState(''); 
+    const [currentStatusLogistico, setCurrentStatusLogistico] = useState('');
+    const [deliveryDate, setDeliveryDate] = useState('');
 
     useEffect(() => {
         if (authLoading) return;
@@ -55,19 +53,16 @@ const OrderDetailPage = () => {
             try {
                 setLoading(true);
                 const response = await apiClient.get(`/api/dashboard/orders/${orderId}`);
-                setOrder(response.data);
-                setCurrentStatusLogistico(response.data.status_pedido || 'pending'); 
-                
-                // NOVO: Inicializa a data se ela existir
-                if (response.data.data_entrega) {
-                    // Tenta criar objeto data e formatar para YYYY-MM-DD
-                    const dateObj = new Date(response.data.data_entrega);
-                    // Pega apenas a parte da data ISO (yyyy-mm-dd) para o input
-                    if (!isNaN(dateObj)) {
-                        const formattedDate = dateObj.toISOString().split('T')[0];
-                        setDeliveryDate(formattedDate);
-                    }
+                const data = response.data;
+
+                setOrder(data);
+                setCurrentStatusLogistico(data.status_pedido || 'pending');
+
+                if (data.data_entrega) {
+                    const cleanDate = String(data.data_entrega).split('T')[0];
+                    setDeliveryDate(cleanDate);
                 }
+
             } catch (error) {
                 console.error('Erro ao buscar detalhes do pedido:', error);
                 showToast('Erro ao carregar pedido.', 'warning');
@@ -82,43 +77,36 @@ const OrderDetailPage = () => {
     }, [orderId, user, authLoading, navigate, showToast]);
 
     const handleStatusSelectChange = (e) => {
-        setCurrentStatusLogistico(e.target.value); 
+        setCurrentStatusLogistico(e.target.value);
     };
 
-    // NOVO: Handler para mudança na data
     const handleDateChange = (e) => {
         setDeliveryDate(e.target.value);
     };
 
     const handleStatusSave = async () => {
         if (!isEditable) {
-            showToast('A edição do status do pedido só é permitida após a aprovação do pagamento.', 'warning');
+            showToast('A edição do pedido só é permitida após a aprovação do pagamento.', 'warning');
             return;
         }
-        
+
         try {
-            // ATUALIZADO: Envia status E data de entrega
-            await apiClient.put(`/api/dashboard/orders/status/${orderId}`, { 
+            await apiClient.put(`/api/dashboard/orders/status/${orderId}`, {
                 status: currentStatusLogistico,
-                deliveryDate: deliveryDate 
+                deliveryDate: deliveryDate
             });
-            
-            setOrder(prevOrder => ({ 
-                ...prevOrder, 
+
+            setOrder(prevOrder => ({
+                ...prevOrder,
                 status_pedido: currentStatusLogistico,
-                data_entrega: deliveryDate // Atualiza visualmente
+                data_entrega: deliveryDate
             }));
-            
+
             showToast('Dados logísticos atualizados com sucesso!', 'success');
         } catch (error) {
             console.error('Erro ao salvar status:', error);
             showToast('Falha ao salvar status logístico.', 'warning');
         }
-    };
-    
-    const formatPaymentStatus = (status) => {
-        if (!status) return 'Indefinido';
-        return paymentStatusMap[status.toLowerCase()] || status;
     };
 
     const formatLogisticStatus = (status) => {
@@ -145,34 +133,34 @@ const OrderDetailPage = () => {
         <ContentWrapper>
             <main className="order-detail-main">
                 <div className="order-detail-header">
-                    
+
                     <h2>Pedido ID: {order.id}</h2>
 
                     <div className="order-actions">
-                        
-                        {/* NOVO: Input de Data */}
+
                         <div className="action-group" style={{ marginRight: '10px' }}>
-                            <input 
-                                type="date" 
+                            <input
+                                type="date"
                                 className="date-input"
                                 value={deliveryDate}
                                 onChange={handleDateChange}
                                 disabled={!isEditable}
                                 title="Data de Entrega / Previsão"
-                                style={{ 
-                                    padding: '8px', 
-                                    borderRadius: '4px', 
+                                style={{
+                                    padding: '8px',
+                                    borderRadius: '4px',
                                     border: '1px solid #ccc',
-                                    height: '38px' // Para alinhar com o select/button
+                                    height: '42px',
+                                    fontFamily: 'inherit'
                                 }}
                             />
                         </div>
 
-                        <select 
-                            value={currentStatusLogistico} 
+                        <select
+                            value={currentStatusLogistico}
                             onChange={handleStatusSelectChange}
-                            className={`status-select status-${getLogisticStatusClass(currentStatusLogistico)}`} 
-                            disabled={!isEditable} 
+                            className={`status-select status-${getLogisticStatusClass(currentStatusLogistico)}`}
+                            disabled={!isEditable}
                         >
                             <option value="">Mudar Status</option>
                             {orderStatusOptions.map(status => (
@@ -181,20 +169,19 @@ const OrderDetailPage = () => {
                                 </option>
                             ))}
                         </select>
-                        
-                        <button 
-                            className="save-btn" 
+
+                        <button
+                            className="save-btn"
                             onClick={handleStatusSave}
-                            // Habilita se for editável (simplifiquei a lógica para permitir salvar se mudar só a data)
                             disabled={!isEditable}
                         >
                             Salvar
                         </button>
                     </div>
                 </div>
-                
+
                 <OrderInfoCards order={order} />
-                
+
                 <div className="products-summary-section">
                     <OrderProductsTable products={order.products} />
                     <OrderSummary prices={order.prices} />

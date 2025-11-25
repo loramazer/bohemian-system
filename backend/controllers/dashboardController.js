@@ -1,6 +1,17 @@
 const db = require('../config/db');
 const pedidoModel = require('../models/pedidoModel');
 
+const reverseStatusMap = {
+    'pendente': 'pending',
+    'em preparação': 'in_process',
+    'em preparacao': 'in_process',
+    'enviado': 'authorized',
+    'entregue': 'delivered',
+    'cancelado': 'cancelled',
+    'rejeitado': 'rejected',
+    'aprovado': 'approved'
+};
+
 function parseImageUrl(imageUrlString) {
     if (!imageUrlString) return null;
     try {
@@ -11,7 +22,6 @@ function parseImageUrl(imageUrlString) {
     } catch (e) {
 
     }
-
     return imageUrlString;
 }
 
@@ -75,20 +85,23 @@ async function getMonthlyRevenue(req, res) {
 
 async function getRecentOrders(req, res) {
     try {
-        const FRETE_FIXO = 15.00;
+        const query = `SELECT p.id_pedido, p.dataPedido, p.fk_endereco_id_endereco, u.nome AS cliente, p.status_pedido AS status_pedido, SUM(ip.precoUnitario * ip.quantidade) AS valor_subtotal, GROUP_CONCAT(pr.nome SEPARATOR ', ') AS nome_produtos FROM pedido p LEFT JOIN usuario u ON p.fk_id_usuario = u.id_usuario LEFT JOIN forma_pagamento fp ON p.fk_forma_pagamento_id_forma_pagamento = fp.id_forma_pagamento LEFT JOIN itempedido ip ON p.id_pedido = ip.fk_pedido_id_pedido LEFT JOIN produto pr ON ip.fk_produto_id_produto = pr.id_produto GROUP BY p.id_pedido, p.dataPedido, p.fk_endereco_id_endereco, u.nome, p.status_pedido ORDER BY p.dataPedido DESC LIMIT 6;`;
 
-        const query = `SELECT p.id_pedido, p.dataPedido, u.nome AS cliente, p.status_pedido AS status_pedido, (SUM(ip.precoUnitario * ip.quantidade) + ?) AS valor_total_com_frete, SUM(ip.precoUnitario * ip.quantidade) AS valor_subtotal, GROUP_CONCAT(pr.nome SEPARATOR ', ') AS nome_produtos FROM pedido p LEFT JOIN usuario u ON p.fk_id_usuario = u.id_usuario LEFT JOIN forma_pagamento fp ON p.fk_forma_pagamento_id_forma_pagamento = fp.id_forma_pagamento LEFT JOIN itempedido ip ON p.id_pedido = ip.fk_pedido_id_pedido LEFT JOIN produto pr ON ip.fk_produto_id_produto = pr.id_produto GROUP BY p.id_pedido, p.dataPedido, u.nome, p.status_pedido ORDER BY p.dataPedido DESC LIMIT 6;`;
+        const [rows] = await db.execute(query);
 
-        const [rows] = await db.execute(query, [FRETE_FIXO]);
+        const formattedRows = rows.map(order => {
+            const frete = order.fk_endereco_id_endereco ? 15.00 : 0.00;
+            const total = parseFloat(order.valor_subtotal) + frete;
 
-        const formattedRows = rows.map(order => ({
-            id_pedido: order.id_pedido,
-            dataPedido: order.dataPedido,
-            cliente: order.cliente,
-            status: order.status_pedido,
-            valor_total_pedido: parseFloat(order.valor_total_com_frete).toFixed(2),
-            nome_produtos: order.nome_produtos
-        }));
+            return {
+                id_pedido: order.id_pedido,
+                dataPedido: order.dataPedido,
+                cliente: order.cliente,
+                status: order.status_pedido,
+                valor_total_pedido: total.toFixed(2),
+                nome_produtos: order.nome_produtos
+            };
+        });
 
         res.json(formattedRows);
     } catch (error) {
@@ -132,11 +145,18 @@ async function getOrderDetails(req, res) {
         const shipping = firstRow.endereco_nome ? 15.00 : 0.00;
         const total = subtotal + shipping;
 
+        const rawStatus = firstRow.status_pedido ? firstRow.status_pedido.toLowerCase() : '';
+        const statusCode = reverseStatusMap[rawStatus] || rawStatus;
+
+
         const orderDetails = {
             id: `#${firstRow.id_pedido}`,
             date: new Date(firstRow.dataPedido).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }),
+            
+            data_entrega: firstRow.data_entrega,
             status: firstRow.status_pagamento,
-            status_pedido: firstRow.status_pedido,
+            status_pedido: statusCode, 
+            status_label: firstRow.status_pedido, 
 
             client: {
                 name: firstRow.cliente_nome,
@@ -213,7 +233,7 @@ const normalizeStatus = (status) => {
 
 async function updatePedidoStatus(req, res) {
     const { id } = req.params;
-    const { status } = req.body;
+    const { status, deliveryDate } = req.body; 
 
     const statusHierarchy = {
         'pending': 1,
@@ -245,39 +265,50 @@ async function updatePedidoStatus(req, res) {
         const currentCode = normalizeStatus(currentStatusDb);
         const newCode = normalizeStatus(status);
 
-        const currentRank = statusHierarchy[currentCode] || 0;
-        const newRank = statusHierarchy[newCode] || 0;
+        if (currentCode !== newCode) {
+             const currentRank = statusHierarchy[currentCode] || 0;
+             const newRank = statusHierarchy[newCode] || 0;
 
-        if (currentCode === 'delivered' || currentCode === 'cancelled' || currentCode === 'rejected') {
-            return res.status(400).json({
-                message: `Ação bloqueada: O pedido já foi finalizado como '${currentStatusDb}' e não aceita mais alterações.`
-            });
-        }
+             if (currentCode === 'delivered' || currentCode === 'cancelled' || currentCode === 'rejected') {
+                 return res.status(400).json({
+                     message: `Ação bloqueada: O pedido já foi finalizado como '${currentStatusDb}' e não aceita mais alterações.`
+                 });
+             }
 
-        const isCancelling = (newCode === 'cancelled' || newCode === 'rejected');
+             const isCancelling = (newCode === 'cancelled' || newCode === 'rejected');
 
-        if (!isCancelling && newRank <= currentRank) {
-            const newStatusName = statusToDbMap[newCode] || status;
-            return res.status(400).json({
-                message: `Fluxo inválido: Não é permitido voltar de '${currentStatusDb}' para '${newStatusName}'. O status deve seguir a ordem cronológica.`
-            });
+             if (!isCancelling && newRank <= currentRank) {
+                 const newStatusName = statusToDbMap[newCode] || status;
+                 return res.status(400).json({
+                     message: `Fluxo inválido: Não é permitido voltar de '${currentStatusDb}' para '${newStatusName}'. O status deve seguir a ordem cronológica.`
+                 });
+             }
         }
 
         const statusParaSalvar = statusToDbMap[newCode] || status;
+        
+        let dataEntregaParaSalvar = deliveryDate;
 
-        let sql = 'UPDATE pedido SET status_pedido = ?';
-        const params = [statusParaSalvar];
-
-        if (newCode === 'delivered') {
-            sql += ', data_entrega = NOW()';
+        if (newCode === 'delivered' && !dataEntregaParaSalvar) {
+            const hoje = new Date();
+            const ano = hoje.getFullYear();
+            const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+            const dia = String(hoje.getDate()).padStart(2, '0');
+            dataEntregaParaSalvar = `${ano}-${mes}-${dia}`;
+        } else if (!dataEntregaParaSalvar) {
+            dataEntregaParaSalvar = null;
         }
 
-        sql += ' WHERE id_pedido = ?';
-        params.push(id);
+        await db.execute(
+            'UPDATE pedido SET status_pedido = ?, data_entrega = ? WHERE id_pedido = ?', 
+            [statusParaSalvar, dataEntregaParaSalvar, id]
+        );
 
-        await db.execute(sql, params);
-
-        res.status(200).json({ message: "Status atualizado com sucesso.", novoStatus: statusParaSalvar });
+        res.status(200).json({ 
+            message: "Dados logísticos atualizados com sucesso.", 
+            novoStatus: statusParaSalvar,
+            novaData: dataEntregaParaSalvar
+        });
 
     } catch (error) {
         console.error("Erro ao atualizar status:", error);
